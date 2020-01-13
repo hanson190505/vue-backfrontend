@@ -1,0 +1,62 @@
+@import "./normalize.css";
+
+/* :root获取根元素,即html
+定义相关变量
+*/
+:root {
+  --color-text: #666;
+  --color-high-text: #ff5777;
+  --color-tint: #ff8189;
+  --color-background: #fff;
+  --font-size: 14px;
+  --line-height: 1.5;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif, 'Courier New', Courier, monospace;
+  user-select: none;
+  /* 禁止用户鼠标在页面上选中文字,图片等 */
+  /* webkit是苹果流浪器引擎,tap点击,highlight背景高亮,color颜色,颜色用数值调节 */
+  -webkit-tap-highlight-color: transparent;
+  /* 直接饮用之前定义的变量 */
+  background: var(--color-background);
+  width: 100vw;
+}
+
+a {
+  color: var(--color-text);
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  visibility: hidden;
+}
+
+.clear-fix::after {
+  clear: both;
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  visibility: hidden;
+}
+
+.clear-fix {
+  zoom: 1;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}

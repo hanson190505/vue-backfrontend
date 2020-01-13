@@ -1,26 +1,8 @@
 from django.db import models
 from datetime import datetime
-from django.contrib.auth.models import User
 from django.utils.html import format_html
 # from ckeditor.fields import RichTextField
-
-
-class UserInfo(models.Model):
-    user_type_chiose = (
-        (1, '普通用户'),
-        (2, 'VIP'),
-        (3, 'SVIP')
-    )
-    user_type = models.IntegerField(choices=user_type_chiose)
-    username = models.CharField(max_length=32, unique=True)
-    password = models.CharField(max_length=64)
-    objects = models.Manager()
-
-
-class UserToken(models.Model):
-    user = models.OneToOneField(to='UserInfo', on_delete=models.CASCADE)
-    token = models.CharField(max_length=64)
-    objects = models.Manager()
+from user.models import UserInfo
 
 
 class Customers(models.Model):
@@ -57,8 +39,9 @@ class Customers(models.Model):
                               on_delete=models.CASCADE, null=True, blank=True)
     line_credits = models.DecimalField(
         '信用额度', default=0, max_digits=10, decimal_places=2)
-    input_time = models.DateField('添加日期', default=datetime.now)
+    input_time = models.DateField('添加日期', auto_now_add=True)
     text = models.CharField('备注', max_length=480, default='选填')
+    is_delete = models.BooleanField(default=False)
     # 让模型代码用objects能自动补全
     objects = models.Manager()
 
@@ -97,6 +80,7 @@ class OrderCatalog(models.Model):
     text = models.CharField('备注', max_length=480, default='选填')
     # ship_type = models.IntegerField('出货方式', choices=SHIP_TYPE)
     ship_addr = models.CharField('出货地点', max_length=200, default=1)
+    is_delete = models.BooleanField(default=False)
     objects = models.Manager()
 
     class Meta:
@@ -148,12 +132,13 @@ class SubOrder(models.Model):
         verbose_name='单重(g)', max_digits=10, decimal_places=2)
     order_number = models.ForeignKey(OrderCatalog, on_delete=models.CASCADE, verbose_name='订单编号',
                                      related_name='sub_orders')
-    sales = models.ForeignKey(User, verbose_name='业务',
+    sales = models.ForeignKey(UserInfo, verbose_name='业务',
                               on_delete=models.CASCADE, null=True, blank=True)
     sub_ex_rate = models.FloatField(verbose_name='汇率', default=0)
     sub_amount = models.DecimalField(
         '订单金额($)', default=0, max_digits=10, decimal_places=2)
     sub_input_date = models.DateField("录入日期", auto_now=datetime.now)
+    is_delete = models.BooleanField(default=False)
     objects = models.Manager()
 
     def __str__(self):
@@ -187,7 +172,7 @@ class PurchaseOrder(models.Model):
 
     purchaser = models.ForeignKey(
         Customers, verbose_name='供应商', on_delete=models.CASCADE)
-    sales = models.ForeignKey(User, verbose_name='业务',
+    sales = models.ForeignKey(UserInfo, verbose_name='业务',
                               on_delete=models.CASCADE, null=True, blank=True)
     purchase_date = models.DateField('采购日期', default=datetime.now)
     deliver_date = models.DateField("采购交期")
@@ -196,6 +181,7 @@ class PurchaseOrder(models.Model):
         '采购单号', max_length=50, default=create_purchase_number)
     text = models.CharField('备注', max_length=400, default='选填')
     # purchase_amount = models.DecimalField('采购金额', max_digits=10, decimal_places=2, default=0)
+    is_delete = models.BooleanField(default=False)
     objects = models.Manager()
 
     class Meta:
@@ -218,6 +204,7 @@ class PurchaseDetail(models.Model):
         '采购数量(个)', max_digits=10, decimal_places=2, default=0)
     purchase_amount = models.DecimalField(
         '采购金额($)', max_digits=10, decimal_places=2, default=0)
+    is_delete = models.BooleanField(default=False)
     objects = models.Manager()
 
     class Meta:
@@ -257,9 +244,10 @@ class ShipOrder(models.Model):
     ship_cost = models.DecimalField('出货费用(¥)', max_digits=10, decimal_places=2)
     ship_weight = models.DecimalField(
         '重量(kg)', max_digits=10, decimal_places=2)
-    sales = models.ForeignKey(User, verbose_name='业务',
+    sales = models.ForeignKey(UserInfo, verbose_name='业务',
                               on_delete=models.CASCADE, null=True, blank=True)
     text = models.CharField('备注', max_length=480, default='选填')
+    is_delete = models.BooleanField(default=False)
     objects = models.Manager()
 
     class Meta:
@@ -280,6 +268,7 @@ class ShipDetail(models.Model):
         '出货费用(¥)', max_digits=10, decimal_places=2, default=0)
     ship_weight = models.DecimalField(
         '出货重量(kg)', max_digits=8, decimal_places=2, default=0)
+    is_delete = models.BooleanField(default=False)
     objects = models.Manager()
 
     class Meta:
@@ -288,6 +277,7 @@ class ShipDetail(models.Model):
 
     def __str__(self):
         return '%s-%s' % (self.ship_number, self.id)
+
 
 class ProductsType(models.Model):
     TYPE = (
@@ -302,6 +292,7 @@ class ProductsType(models.Model):
     sub_type = models.CharField(
         '产品子类', unique=True, help_text='用英文填写产品子类', max_length=20)
     pub_date = models.DateField('添加日期', auto_now=datetime.now)
+    is_delete = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = '产品类别'
@@ -327,6 +318,7 @@ class Products(models.Model):
     pro_desc = models.TextField('详情')
     # pro_desc = RichTextField()
     isfont = models.BooleanField('首页展示', default=False)
+    is_delete = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = '产品目录'
@@ -342,4 +334,3 @@ class Products(models.Model):
         )
 
     image_data.short_description = '图片'
-
