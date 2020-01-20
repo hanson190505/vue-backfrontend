@@ -9,6 +9,9 @@ class UserInfo(models.Model):
     is_delete = models.BooleanField(default=False)
     is_use = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.u_name
+
     # @property
     # def u_password(self, password):
     #     pass

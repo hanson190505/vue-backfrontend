@@ -9,3 +9,13 @@ class UserTokenAuthentication(BaseAuthentication):
 		user = cache.get(token)
 		if user:
 			return user, token
+
+
+class GetTokenAuthentication(BaseAuthentication):
+
+	def authenticate(self, request):
+		token = request.query_params.get('token')
+		user = cache.get(token)
+		if user:
+			return user, token
+

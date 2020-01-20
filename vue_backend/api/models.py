@@ -139,10 +139,11 @@ class SubOrder(models.Model):
         '订单金额($)', default=0, max_digits=10, decimal_places=2)
     sub_input_date = models.DateField("录入日期", auto_now=datetime.now)
     is_delete = models.BooleanField(default=False)
+    status = models.IntegerField(default=1)
     objects = models.Manager()
 
     def __str__(self):
-        return '%s-%s-%s' % (self.order_number, self.id, self.pro_name)
+        return '%s-%s' % (self.pro_name, self.order_number)
 
     class Meta:
         verbose_name = '订单明细'
