@@ -1,7 +1,6 @@
 from django.db import models
 from datetime import datetime
 from django.utils.html import format_html
-# from ckeditor.fields import RichTextField
 from user.models import UserInfo
 
 
@@ -22,7 +21,7 @@ class Customers(models.Model):
     type = models.IntegerField('客户类别', choices=CS_TYPE)
     name = models.CharField('公司名称', max_length=100, default='选填')
     lite_name = models.CharField(
-        '公司简称', max_length=20, primary_key=True, help_text='如无公司则填联系人或CEO名称')
+        '公司简称', max_length=32, primary_key=True, help_text='如无公司则填联系人或CEO名称')
     address = models.CharField('公司地址', max_length=200, default='选填')
     phone = models.CharField('公司电话', max_length=40, default='选填')
     website = models.URLField('网址', max_length=200, default='example.com')
@@ -41,7 +40,7 @@ class Customers(models.Model):
         '信用额度', default=0, max_digits=10, decimal_places=2)
     input_time = models.DateField('添加日期', auto_now_add=True)
     text = models.CharField('备注', max_length=480, default='选填')
-    is_delete = models.BooleanField(default=False)
+    is_delete = models.IntegerField(default=1)
     # 让模型代码用objects能自动补全
     objects = models.Manager()
 
@@ -72,15 +71,14 @@ class OrderCatalog(models.Model):
                               on_delete=models.CASCADE, null=True, blank=True)
     input_date = models.DateField("录入日期", auto_now=datetime.now)
     ex_rate = models.DecimalField("汇率", max_digits=10, decimal_places=2)
-    order_picture = models.ImageField(
-        upload_to='images/%Y/%m/%d', default='上传图片', verbose_name='图片')
+    order_amount = models.DecimalField("金额", max_digits=10, decimal_places=2)
+    # order_picture = models.ImageField(
+    #     upload_to='images/%Y/%m/%d', default='上传图片', verbose_name='图片')
+    order_pic = models.CharField(max_length=128)
     is_done = models.IntegerField('完成状态', choices=ORDER_STATUS, default=1)
-    order_amount = models.DecimalField(
-        '订单金额($)', default=0, max_digits=10, decimal_places=2)
     text = models.CharField('备注', max_length=480, default='选填')
-    # ship_type = models.IntegerField('出货方式', choices=SHIP_TYPE)
     ship_addr = models.CharField('出货地点', max_length=200, default=1)
-    is_delete = models.BooleanField(default=False)
+    is_delete = models.IntegerField(default=1)
     objects = models.Manager()
 
     class Meta:
@@ -90,13 +88,13 @@ class OrderCatalog(models.Model):
     def __str__(self):
         return self.order_number
 
-    def image_data(self):
-        return format_html(
-            '<img src="{}" width="100px"/>',
-            self.order_picture.url,
-        )
-
-    image_data.short_description = '图片'
+    # def image_data(self):
+    #     return format_html(
+    #         '<img src="{}" width="100px"/>',
+    #         self.order_picture.url,
+    #     )
+    #
+    # image_data.short_description = '图片'
 
 # def save(self, *args, **kwargs):
 # 	# 批量更新订单明细的汇率值
@@ -134,11 +132,10 @@ class SubOrder(models.Model):
                                      related_name='sub_orders')
     sales = models.ForeignKey(UserInfo, verbose_name='业务',
                               on_delete=models.CASCADE, null=True, blank=True)
-    sub_ex_rate = models.FloatField(verbose_name='汇率', default=0)
     sub_amount = models.DecimalField(
         '订单金额($)', default=0, max_digits=10, decimal_places=2)
     sub_input_date = models.DateField("录入日期", auto_now=datetime.now)
-    is_delete = models.BooleanField(default=False)
+    is_delete = models.IntegerField(default=1)
     status = models.IntegerField(default=1)
     objects = models.Manager()
 
@@ -149,19 +146,19 @@ class SubOrder(models.Model):
         verbose_name = '订单明细'
         verbose_name_plural = '订单明细'
 
-    def save(self, *args, **kwargs):
-        # 给订单明细合计列赋值
-        self.sub_amount = self.pro_qt * self.pro_price
-
-        # 新增数据的时候执行这里，自动填充sales和汇率,下单日期，订单交期
-        self.sales = OrderCatalog.objects.get(
-            order_number=self.order_number).sales
-        self.sub_ex_rate = OrderCatalog.objects.get(
-            order_number=self.order_number).ex_rate
-        # self.sub_order_date = OrderCatalog.objects.get(order_number=self.order_num).order_date
-        # self.sub_deliver_date = OrderCatalog.objects.get(order_number=self.order_num).deliver_date
-        super(SubOrder, self).save(*args, **kwargs)
-    # 先保存订单明细的数据到数据库，再执行下面的方法合计订单总额
+    # def save(self, *args, **kwargs):
+    #     # 给订单明细合计列赋值
+    #     self.sub_amount = self.pro_qt * self.pro_price
+    #
+    #     # 新增数据的时候执行这里，自动填充sales和汇率,下单日期，订单交期
+    #     self.sales = OrderCatalog.objects.get(
+    #         order_number=self.order_number).sales
+    #     self.sub_ex_rate = OrderCatalog.objects.get(
+    #         order_number=self.order_number).ex_rate
+    #     # self.sub_order_date = OrderCatalog.objects.get(order_number=self.order_num).order_date
+    #     # self.sub_deliver_date = OrderCatalog.objects.get(order_number=self.order_num).deliver_date
+    #     super(SubOrder, self).save(*args, **kwargs)
+    # # 先保存订单明细的数据到数据库，再执行下面的方法合计订单总额
 
 
 class PurchaseOrder(models.Model):
@@ -182,7 +179,7 @@ class PurchaseOrder(models.Model):
         '采购单号', max_length=50, default=create_purchase_number)
     text = models.CharField('备注', max_length=400, default='选填')
     # purchase_amount = models.DecimalField('采购金额', max_digits=10, decimal_places=2, default=0)
-    is_delete = models.BooleanField(default=False)
+    is_delete = models.IntegerField(default=1)
     objects = models.Manager()
 
     class Meta:
@@ -205,7 +202,7 @@ class PurchaseDetail(models.Model):
         '采购数量(个)', max_digits=10, decimal_places=2, default=0)
     purchase_amount = models.DecimalField(
         '采购金额($)', max_digits=10, decimal_places=2, default=0)
-    is_delete = models.BooleanField(default=False)
+    is_delete = models.IntegerField(default=1)
     objects = models.Manager()
 
     class Meta:
@@ -215,11 +212,11 @@ class PurchaseDetail(models.Model):
     def __str__(self):
         return '%s-%s' % (self.purchase_number, self.id)
 
-    def save(self, *args, **kwargs):
-        print(self.purchase_amount)
-        self.purchase_amount = self.purchase_price * self.purchase_qt
-        print(self.purchase_amount)
-        super(PurchaseDetail, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     print(self.purchase_amount)
+    #     self.purchase_amount = self.purchase_price * self.purchase_qt
+    #     print(self.purchase_amount)
+    #     super(PurchaseDetail, self).save(*args, **kwargs)
 
 
 class ShipOrder(models.Model):
@@ -248,7 +245,7 @@ class ShipOrder(models.Model):
     sales = models.ForeignKey(UserInfo, verbose_name='业务',
                               on_delete=models.CASCADE, null=True, blank=True)
     text = models.CharField('备注', max_length=480, default='选填')
-    is_delete = models.BooleanField(default=False)
+    is_delete = models.IntegerField(default=1)
     objects = models.Manager()
 
     class Meta:
@@ -269,7 +266,7 @@ class ShipDetail(models.Model):
         '出货费用(¥)', max_digits=10, decimal_places=2, default=0)
     ship_weight = models.DecimalField(
         '出货重量(kg)', max_digits=8, decimal_places=2, default=0)
-    is_delete = models.BooleanField(default=False)
+    is_delete = models.IntegerField(default=1)
     objects = models.Manager()
 
     class Meta:
@@ -293,7 +290,7 @@ class ProductsType(models.Model):
     sub_type = models.CharField(
         '产品子类', unique=True, help_text='用英文填写产品子类', max_length=20)
     pub_date = models.DateField('添加日期', auto_now=datetime.now)
-    is_delete = models.BooleanField(default=False)
+    is_delete = models.IntegerField(default=1)
 
     class Meta:
         verbose_name = '产品类别'
@@ -314,12 +311,13 @@ class Products(models.Model):
         '产品颜色', max_length=50, null=False, blank=False)
     pro_weight = models.DecimalField(
         verbose_name='单重(g)', max_digits=10, decimal_places=2)
-    pro_image = models.ImageField(
-        upload_to='images/%Y/%m/%d', default='上传图片', verbose_name='图片')
+    pro_pic = models.CharField(max_length=128)
+    # pro_image = models.ImageField(
+    #     upload_to='images/%Y/%m/%d', default='上传图片', verbose_name='图片')
     pro_desc = models.TextField('详情')
     # pro_desc = RichTextField()
-    isfont = models.BooleanField('首页展示', default=False)
-    is_delete = models.BooleanField(default=False)
+    is_font = models.BooleanField('首页展示', default=False)
+    is_delete = models.IntegerField(default=1)
 
     class Meta:
         verbose_name = '产品目录'
@@ -328,10 +326,10 @@ class Products(models.Model):
     def __str__(self):
         return self.pro_name
 
-    def image_data(self):
-        return format_html(
-            '<img src="{}" width="100px"/>',
-            self.pro_image.url,
-        )
-
-    image_data.short_description = '图片'
+    # def image_data(self):
+    #     return format_html(
+    #         '<img src="{}" width="100px"/>',
+    #         self.pro_image.url,
+    #     )
+    #
+    # image_data.short_description = '图片'

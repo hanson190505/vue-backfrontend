@@ -6,8 +6,8 @@ class UserInfo(models.Model):
     u_name = models.CharField(max_length=32, unique=True)
     u_password = models.CharField(max_length=256)
     creat_time = models.DateTimeField(auto_now_add=True)
-    is_delete = models.BooleanField(default=False)
-    is_use = models.BooleanField(default=False)
+    is_delete = models.IntegerField(default=1)
+    is_use = models.IntegerField(default=1)
 
     def __str__(self):
         return self.u_name

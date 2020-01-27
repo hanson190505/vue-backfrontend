@@ -11,74 +11,68 @@
         inline-message
       >
         <el-row>
-          <el-col :span="8">
-            <el-form-item label="订单编号" prop="order_number">
-              <el-input v-model="orderData.order_number"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="客户名称">
-              <el-select
-                v-model="orderData.customer"
-                filterable
-                placeholder="请选择"
-                @visible-change="selectTest"
-              >
-                <el-option
-                  v-for="item in customerData"
-                  :key="item.lite_name"
-                  :label="item.lite_name"
-                  :value="item.lite_name"
-                ></el-option>
-              </el-select>
-            </el-form-item>
+          <el-col :span="24">
+            <el-row>
+              <el-col :span="6">
+                <el-form-item label="订单编号" prop="order_number">
+                  <el-input v-model="orderData.order_number"></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="客户名称">
+                  <el-select
+                    v-model="orderData.customer"
+                    filterable
+                    placeholder="请选择"
+                    @visible-change="selectTest"
+                  >
+                    <el-option
+                      v-for="item in customerData"
+                      :key="item.lite_name"
+                      :label="item.lite_name"
+                      :value="item.lite_name"
+                    ></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="4">
+                <el-form-item label="汇率" prop="ex_rate">
+                  <el-input v-model="orderData.ex_rate"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="6">
+                <el-form-item label="下单日期">
+                  <!-- <el-input v-model="orderData.order_date"></el-input> -->
+                  <el-date-picker
+                    v-model="orderData.order_date"
+                    type="date"
+                    placeholder="选择日期"
+                    value-format="yyyy-MM-dd"
+                  ></el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item label="订单交期">
+                  <!-- <el-input v-model="orderData.deliver_date"></el-input> -->
+                  <el-date-picker
+                    v-model="orderData.deliver_date"
+                    type="date"
+                    placeholder="选择日期"
+                    value-format="yyyy-MM-dd"
+                  ></el-date-picker>
+                </el-form-item>
+              </el-col>
+              <el-col :span="4">
+                <el-form-item label="金额">
+                  <el-input v-model="orderData.order_amount"></el-input>
+                </el-form-item>
+              </el-col>
+            </el-row>
           </el-col>
         </el-row>
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="下单日期">
-              <!-- <el-input v-model="orderData.order_date"></el-input> -->
-              <el-date-picker
-                v-model="orderData.order_date"
-                type="date"
-                placeholder="选择日期"
-                value-format="yyyy-MM-dd"
-              ></el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="订单交期">
-              <!-- <el-input v-model="orderData.deliver_date"></el-input> -->
-              <el-date-picker
-                v-model="orderData.deliver_date"
-                type="date"
-                placeholder="选择日期"
-                value-format="yyyy-MM-dd"
-              ></el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="汇率" prop="ex_rate">
-              <el-input v-model="orderData.ex_rate"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="金额">
-              <el-input v-model="orderData.order_amount"></el-input>
-            </el-form-item>
-          </el-col>
-          <!-- <el-col :span="8">
-            <el-form-item label="完成状态">
-              <el-switch
-                v-model="orderData.is_done"
-                active-color="#13ce66"
-                inactive-color="#ff4949"
-              ></el-switch>
-            </el-form-item>
-          </el-col>-->
-        </el-row>
+
         <el-row>
           <el-col :span="24">
             <el-form-item label="出货地址">
@@ -91,6 +85,30 @@
             <el-form-item label="备注">
               <el-input v-model="orderData.text"></el-input>
             </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-upload
+              class="upload-demo"
+              action="http://0.0.0.0:8000/upload/"
+              :on-remove="handleRemove"
+              :before-remove="beforeRemove"
+              :on-success="uploadSuccess"
+              :file-list="fileList"
+              :limit="1"
+              :before-upload="handlebeforeupload"
+              :data="uploadData"
+              accept="image/jpg, image/jpeg, image/png"
+            >
+              <el-button size="mini" type="primary">点击上传</el-button>
+              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+            </el-upload>
+          </el-col>
+          <el-col :span="16">
+            <div class="order-img">
+              <img :src="this.orderData.order_pic" @click="imgLook" class="orderImg" />
+            </div>
           </el-col>
         </el-row>
         <el-button size="mini" type="primary" @click="addSubOrder()">订单明细</el-button>
@@ -180,11 +198,16 @@
       </el-form>
       <el-button type="primary" @click="onSubmit">保存</el-button>
     </el-dialog>
+    <el-dialog :visible.sync="imgdialogVisible" width="96%">
+      <div>
+        <img :src="this.orderData.order_pic" width="99%" />
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { request } from '../../network/rquest'
+import { request, getSubToken } from '../../network/rquest'
 import qs from 'qs'
 export default {
   name: 'AddOrder',
@@ -201,21 +224,10 @@ export default {
         ex_rate: 0,
         order_amount: 0,
         ship_addr: '',
-        text: ''
+        text: '',
+        order_pic: ''
       },
-      subOrderData: [
-        // {
-        //   //   pro_name: '',
-        //   //   pro_item: '',
-        //   //   pro_desc: '',
-        //   //   pro_qt: '',
-        //   //   pro_price: '',
-        //   //   pro_weight: '',
-        //   //   order_number: '',
-        //   //   sub_ex_rate: '',
-        //   //   sub_amount: ''
-        // }
-      ],
+      subOrderData: [],
       addOrderFormRoles: {
         order_number: [
           { required: true, message: '请输入订单编号', trigger: 'blur' }
@@ -242,24 +254,50 @@ export default {
       ],
       dialogVisible: false,
       //保存按钮显示状态
-      onSubmitStatus: false
+      onSubmitStatus: false,
+      //上传七牛图片的token
+      dialogImageUrl: '',
+      imagedialogVisible: false,
+      disabled: false,
+      fileList: [],
+      //放大图片弹出框
+      imgdialogVisible: false,
+      //图片上传附加数据
+      uploadData: {
+        token: window.sessionStorage.getItem('token')
+      }
     }
   },
   methods: {
+    //查看原图
+    imgLook() {
+      this.imgdialogVisible = true
+    },
+    beforeRemove() {},
+    handleRemove() {},
+    //图片上传成功后的返回结果
+    uploadSuccess(res) {
+      console.log(res.file)
+      this.orderData.order_pic = 'http://192.168.3.45:8000' + res.file
+    },
+    //图片上传前的相关控制
+    handlebeforeupload(file) {},
     //打开新增订单表单
     dialogStatus() {
       this.dialogVisible = true
-      request({
-        url: 'orders/',
-        params: {
-          token: window.sessionStorage.getItem('token'),
-          st: 'addorder'
-        }
-      }).then(res => {
-        window.sessionStorage.setItem('subtoken', res.data.subtoken)
-      })
+      //从后端获取限制连续提交
+      getSubToken()
+      // request({
+      //   url: 'orders/',
+      //   params: {
+      //     token: window.sessionStorage.getItem('token'),
+      //     st: 'addorder'
+      //   }
+      // }).then(res => {
+      //   window.sessionStorage.setItem('subtoken', res.data.subtoken)
+      // })
     },
-    //提交订单明细
+    //提交订单和订单明细
     onSubmit() {
       for (const i of this.subOrderData) {
         i.status = 0
@@ -308,7 +346,12 @@ export default {
                       this.$store.state.suborderdetail.push(res.data)
                     })
                     .catch(err => {
-                      console.log(err)
+                      console.log(err.response.request)
+                      console.log(typeof err.response.request.response)
+                      let errmsg = qs.parse(err.response.request.response, {
+                        delimiter: ','
+                      })
+                      this.responseMessage(errmsg)
                     })
                 }
               })
@@ -407,8 +450,19 @@ export default {
         })
       }
     }
-  }
+  },
+  created() {}
 }
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.order-img {
+  height: 150px;
+  overflow: hidden;
+}
+.orderImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+</style>

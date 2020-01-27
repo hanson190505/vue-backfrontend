@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'user',
     'corsheaders',
     'django_filters',
+    'upload.apps.UploadConfig',
 ]
 
 REST_FRAMEWORK = {
@@ -82,6 +83,7 @@ MIDDLEWARE = [
 # 跨域设置
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:8080",
+    "http://192.168.3.45:8080"
 ]
 
 CORS_ALLOW_HEADERS = [
@@ -131,6 +133,11 @@ DATABASES = {
         'PORT': '3306'
     }
 }
+# 七牛云
+QI_NIU_ACCESS_KEY = 'mLTdlxcvJQk3Eec9WSMJbysaXjmN6wV9FBUEcr6q'   #AK
+QI_NIU_SECRET_KEY = 'yKywwAD_x_VkHvM0RuNy5N7UwKnFGh8CvucT1Jdd' #SK
+QI_NIU_BUCKET_NAME = 'coteam'  #存储空间的名字
+# 缓存配置
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
@@ -176,3 +183,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")

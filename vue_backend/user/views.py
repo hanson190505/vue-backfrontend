@@ -78,33 +78,34 @@ class UserInfoApiView(viewsets.ModelViewSet):
             return Response(data)
         elif ac == 'login':
             users = self.queryset.filter(u_name=username)
+            user = users.first()
             if not users.exists():
                 data = {
                     'msg': '用户不存在',
                     'status': 410,
                 }
                 return Response(data)
-            user = users.first()
-            if not user.verify_password(request.data.get('password')):
+            elif not user.verify_password(request.data.get('password')):
                 data = {
                     'msg': '密码错误',
                     'status': 411,
                 }
                 return Response(data)
-            if not user.is_use:
+            elif not user.is_use:
                 data = {
                     'msg': '用户审核中',
                     'status': 412,
                 }
                 return Response(data)
-            token = uuid.uuid4().hex
-            cache.set(token, user, 60*60*24*7)
-            data = {
-                'msg': '登录成功',
-                'status': 200,
-                'token': token
-            }
-            return Response(data)
+            else:
+                token = uuid.uuid4().hex
+                cache.set(token, user, 60*60*24*7)
+                data = {
+                    'msg': '登录成功',
+                    'status': 2000,
+                    'token': token
+                }
+                return Response(data)
         elif ac == 'logout':
             cache.delete(request.data.get('token'))
             data = {

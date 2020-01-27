@@ -6,7 +6,9 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
     state: {
         orderdetail: null,
-        suborderdetail: []
+        suborderdetail: [],
+        order_number: '',
+        username: ''
     },
     mutations: {
         //方法,定义操作state的一些方法,所有函数能自动接收state

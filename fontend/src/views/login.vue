@@ -3,7 +3,7 @@
     <div class="login_box">
       <!-- logo -->
       <div class="avatar_box">
-        <img src="../assets/img/logo.png" alt="" />
+        <img src="../assets/img/logo.png" alt />
       </div>
       <!-- 登录框 -->
       <el-form
@@ -11,13 +11,10 @@
         :rules="LoginFormRoles"
         ref="LoginFormRef"
         class="login_form"
+        inline-message
       >
         <el-form-item prop="username">
-          <el-input
-            placeholder="请输入用户名"
-            prefix-icon="el-icon-user"
-            v-model="loginform.username"
-          ></el-input>
+          <el-input placeholder="请输入用户名" prefix-icon="el-icon-user" v-model="loginform.username"></el-input>
         </el-form-item>
         <el-form-item prop="password">
           <el-input
@@ -30,6 +27,7 @@
         <el-form-item class="btns">
           <el-button type="primary" @click="login">登录</el-button>
           <el-button type="info" @click="resetlogin">重置</el-button>
+          <el-button type="primary" @click="tetsrouter">跳转</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -60,6 +58,9 @@ export default {
     }
   },
   methods: {
+    tetsrouter() {
+      this.$router.replace('/home')
+    },
     resetlogin() {
       this.$refs.LoginFormRef.resetFields()
     },
@@ -71,25 +72,33 @@ export default {
         request({
           url: 'users/',
           method: 'POST',
-          // params: { ac: "login" },
-          headers: {
-            'content-type': 'application/x-www-form-urlencoded'
-          },
           data: qs.stringify(this.loginform)
         })
           .then(res => {
-            if (res.data.status === 410) {
-              return this.$message.error('用户名不存在')
+            let status = res.data.status
+            switch (status) {
+              case 410:
+                this.$message('用户名错误')
+                break
+              case 411:
+                this.$message('密码错误')
+                break
+              case 412:
+                this.$message('用户审核未通过')
+                break
+              case 2000:
+                this.$message('用户审核未通过')
+                //要用catch捕获这个错误,不然会报错
+                this.$router.replace('/home').catch(err => {
+                  console.log('all good')
+                })
+                this.$message.success('登录成功')
+                window.sessionStorage.setItem('token', res.data.token)
+                this.$store.state.username = loginform.username
+                break
+              default:
+                break
             }
-            if (res.data.status === 411) {
-              return this.$message.error('密码错误')
-            }
-            if (res.data.status === 412) {
-              return this.$message.error('用户审核中')
-            }
-            this.$message.success('登录成功')
-            window.sessionStorage.setItem('token', res.data.token)
-            this.$router.replace('/home')
           })
           .catch(res => {})
       })
