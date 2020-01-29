@@ -9,8 +9,18 @@ from api.serializer import OrdersSerializer, CustomersSerializer, SubOrderSerial
 from api.models import OrderCatalog, Customers, SubOrder
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework import mixins
+
+from middleware.pagenation import SubOrderPagination
 from user.authentications import GetTokenAuthentication
 from vuebackend import settings
+
+
+# 获取两个日期之间的查询参数
+def get_search_date(self):
+    start = self.request.query_params.get('start_date', None)
+    end = self.request.query_params.get('end_date', None)
+    argument = self.request.query_params.get('argument', None)
+    return start, end, argument
 
 
 class OrdersViewSet(ModelViewSet):
@@ -25,10 +35,7 @@ class OrdersViewSet(ModelViewSet):
         serializer.save(sales=self.request.user)
 
     def get_queryset(self):
-        # 获取两个日期之间的订单信息
-        start = self.request.query_params.get('start_date', None)
-        end = self.request.query_params.get('end_date', None)
-        argument = self.request.query_params.get('argument', None)
+        start, end, argument = get_search_date(self)
         if start and end and argument == 'order_date':
             return self.queryset.filter(order_date__gte=start).filter(order_date__lte=end)
         return self.queryset
@@ -46,18 +53,6 @@ class OrdersViewSet(ModelViewSet):
                 'subtoken': subtoken
             }
             return Response(data)
-        # 获取七牛云token
-        elif st == 'upload':
-            access_key = settings.QI_NIU_ACCESS_KEY
-            secret_key = settings.QI_NIU_SECRET_KEY
-            # 设置七牛空间(自己刚刚创建的)
-            bucket_name = settings.QI_NIU_BUCKET_NAME
-            # 构建鉴权对象,授权
-            q = qiniu.Auth(access_key, secret_key)
-            # 生成token
-            token = q.upload_token(bucket_name)
-            # 返回token,key必须为uptoken
-            return Response({"uptoken": token})
         else:
             serializer = self.get_serializer(queryset, many=True)
             return Response(serializer.data)
@@ -109,9 +104,18 @@ class SubOrderViewSet(ModelViewSet):
     queryset = SubOrder.objects.filter(is_delete=1).order_by('status')
     serializer_class = SubOrderSerializer
     authentication_classes = GetTokenAuthentication,
+    pagination_class = SubOrderPagination
 
     def perform_create(self, serializer):
         serializer.save(sales=self.request.user)
+
+    def get_queryset(self):
+        param = self.request.query_params.get('param')
+        print(param)
+        if param:
+            return self.queryset.filter(order_number__order_number__contains=param)
+        else:
+            return self.queryset
 
     def create(self, request, *args, **kwargs):
         subtoken = self.request.query_params.get('subtoken')
@@ -131,10 +135,14 @@ class SubOrderViewSet(ModelViewSet):
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         order_number = self.request.query_params.get('order_number')
+        page = self.paginate_queryset(queryset)
         if order_number:
             sub_order_list = self.queryset.filter(order_number=order_number).all()
             serializer = self.get_serializer(sub_order_list, many=True)
             return Response(serializer.data)
+        elif page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
         else:
             serializer = self.get_serializer(queryset, many=True)
             return Response(serializer.data)

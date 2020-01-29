@@ -19,8 +19,8 @@ export function request(config) {
         config.headers.content_type = 'application/x-www-form-urlencoded'
       }
     }
-    console.log('打印请求拦截');
-    console.log(config);
+    // console.log('打印请求拦截');
+    // console.log(config);
     return config
   }), err => {
     console.log(err);

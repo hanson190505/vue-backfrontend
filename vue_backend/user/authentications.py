@@ -15,9 +15,10 @@ class GetTokenAuthentication(BaseAuthentication):
 
 	def authenticate(self, request):
 		# print(request.headers)
-		for i in request.headers:
-			print(i, request.headers[i])
-		token = request.query_params.get('token')
+		# for i in request.headers:
+		# 	print(i, request.headers[i])
+		# token = request.query_params.get('token')
+		token = request.headers['authorization']
 		user = cache.get(token)
 		if user:
 			return user, token

@@ -24,5 +24,6 @@ class SubOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubOrder
         # exclude = ['is_delete']
-        fields="__all__"
+        fields = "__all__"
+        depth = 1
 

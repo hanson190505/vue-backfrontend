@@ -23,11 +23,12 @@
                   <el-select
                     v-model="orderData.customer"
                     filterable
+                    :filter-method="customerFilter"
                     placeholder="请选择"
                     @visible-change="selectTest"
                   >
                     <el-option
-                      v-for="item in customerData"
+                      v-for="item in customerList"
                       :key="item.lite_name"
                       :label="item.lite_name"
                       :value="item.lite_name"
@@ -207,8 +208,15 @@
 </template>
 
 <script>
-import { request, getSubToken } from '../../network/rquest'
+import { getSubToken } from '@/network/rquest'
 import qs from 'qs'
+import {
+  getOrderList,
+  getSubOrderList,
+  postOrder,
+  postSubOrder,
+  getCustomer
+} from '@/api/order'
 export default {
   name: 'AddOrder',
   components: {},
@@ -216,6 +224,7 @@ export default {
     return {
       //客户表数据
       customerData: [],
+      customerList: [],
       orderData: {
         order_number: '',
         customer: '',
@@ -285,20 +294,21 @@ export default {
     //打开新增订单表单
     dialogStatus() {
       this.dialogVisible = true
-      //从后端获取限制连续提交
+      //从后端获取subToken限制连续提交
       getSubToken()
-      // request({
-      //   url: 'orders/',
-      //   params: {
-      //     token: window.sessionStorage.getItem('token'),
-      //     st: 'addorder'
-      //   }
-      // }).then(res => {
-      //   window.sessionStorage.setItem('subtoken', res.data.subtoken)
-      // })
+    },
+    //订单合计所有订单明细金额
+    sumOrderAmount() {
+      let count = 0
+      for (const i of this.subOrderData) {
+        count += i.sub_amount * 1
+      }
+      this.orderData.order_amount = count
+      // return count
     },
     //提交订单和订单明细
     onSubmit() {
+      this.sumOrderAmount()
       for (const i of this.subOrderData) {
         i.status = 0
       }
@@ -309,39 +319,15 @@ export default {
           this.$message.error('请勿重复提交,或刷新重试')
         } else {
           let promise = new Promise((resolve, reject) => {
-            request({
-              url: 'orders/',
-              method: 'POST',
-              params: {
-                token: window.sessionStorage.getItem('token'),
-                subtoken: window.sessionStorage.getItem('subtoken')
-              },
-              headers: {
-                'content-type': 'application/x-www-form-urlencoded'
-              },
-              data: qs.stringify(this.orderData)
-            })
+            postOrder(this.orderData)
               .then(res => {
                 resolve(res)
-                console.log(res)
                 //把返回的订单信息存储到vuex中
                 this.$store.state.orderdetail = res.data
                 //循环提交订单明细
                 for (const val of this.subOrderData) {
-                  request({
-                    url: 'suborders/',
-                    method: 'POST',
-                    params: {
-                      token: window.sessionStorage.getItem('token'),
-                      subtoken: window.sessionStorage.getItem('subtoken')
-                    },
-                    headers: {
-                      'content-type': 'application/x-www-form-urlencoded'
-                    },
-                    data: qs.stringify(val)
-                  })
+                  postSubOrder(val)
                     .then(res => {
-                      console.log(res.data)
                       //把返回的订单明细保存在vuex中
                       this.$store.state.suborderdetail.push(res.data)
                     })
@@ -358,7 +344,6 @@ export default {
               .catch(err => {
                 // 请求失败的返回信息不能直接在err中拿,要像下面这样拿到
                 console.log(err.response.request)
-                console.log(typeof err.response.request.response)
                 let errmsg = qs.parse(err.response.request.response, {
                   delimiter: ','
                 })
@@ -367,7 +352,6 @@ export default {
           })
           promise.then(res => {
             // //请求刚提交的订单
-            console.log(res)
             window.sessionStorage.removeItem('subtoken')
             this.$router.replace('orders/' + res.order_number + '/')
           })
@@ -436,16 +420,23 @@ export default {
     subAmount(row) {
       row.sub_amount = row.pro_price * row.pro_qt * 1
     },
+    //控制下拉菜单显示数量
+    customerFilter(query = '') {
+      let arr = this.customerData.filter(item => {
+        return (
+          item.lite_name.includes(query) || item.contact_name.includes(query)
+        )
+      })
+      if (arr.length > 50) {
+        this.customerList = arr.slice(0, 50)
+      } else {
+        this.customerList = arr
+      }
+    },
     //客户名称选择时,调用后台客户数据
     selectTest(v) {
       if (v === true) {
-        request({
-          url: 'customers/',
-          method: 'GET',
-          params: {
-            token: window.sessionStorage.getItem('token')
-          }
-        }).then(res => {
+        getCustomer().then(res => {
           this.customerData = res.data
         })
       }

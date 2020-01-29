@@ -30,6 +30,7 @@
               <el-submenu index="2">
                 <template slot="title">订单管理</template>
                 <el-menu-item index="/orders">订单列表</el-menu-item>
+                <el-menu-item index="/suborders">订单明细</el-menu-item>
               </el-submenu>
             </el-menu>
           </el-col>

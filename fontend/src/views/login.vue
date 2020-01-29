@@ -35,8 +35,9 @@
 </template>
 
 <script>
-import { request } from '../network/rquest'
-import qs from 'qs'
+// import { request } from '../network/rquest'
+// import qs from 'qs'
+import { login } from '../api/user'
 export default {
   data() {
     return {
@@ -69,11 +70,12 @@ export default {
         if (!valid) {
           return
         }
-        request({
-          url: 'users/',
-          method: 'POST',
-          data: qs.stringify(this.loginform)
-        })
+        // request({
+        //   url: 'users/',
+        //   method: 'POST',
+        //   data: qs.stringify(this.loginform)
+        // })
+        login(this.loginform)
           .then(res => {
             let status = res.data.status
             switch (status) {
@@ -88,8 +90,8 @@ export default {
                 break
               case 2000:
                 this.$message('用户审核未通过')
-                //要用catch捕获这个错误,不然会报错
-                this.$router.replace('/home').catch(err => {
+                //要用catch捕获这个错误,不然会报错,用replace不能跳转,会报错
+                this.$router.push('/home').catch(err => {
                   console.log('all good')
                 })
                 this.$message.success('登录成功')

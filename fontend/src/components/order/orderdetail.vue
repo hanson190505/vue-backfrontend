@@ -129,7 +129,7 @@
       <el-button type="primary" @click="editOrderDetail" v-show="editOrder">修改订单</el-button>
       <el-button type="warning" @click="saveOrderDetail" v-show="saveOrder">保存订单</el-button>
       <el-button type="primary" @click="addSubOrderRow">新增明细</el-button>
-      <el-table :data="suborderdetail" style="width: 99.9%">
+      <el-table :data="suborderdetail" style="width: 99.9%" show-summary>
         <!-- <el-table-column type="selection" width="40"></el-table-column> -->
         <el-table-column label="产品名称" width="150">
           <template slot-scope="scope">
@@ -232,8 +232,16 @@
 </template>
 
 <script>
-import { request, getSubToken } from '../../network/rquest'
-import qs from 'qs'
+import { getSubToken } from '@/network/rquest'
+import {
+  getSubOrder,
+  getCustomer,
+  patchSubOrder,
+  postSubOrder,
+  getOrder,
+  getSubOrderList,
+  patchOrder
+} from '@/api/order'
 export default {
   name: 'OrderDetail',
   data() {
@@ -306,13 +314,7 @@ export default {
     //客户名称选择时,调用后台客户数据
     selectTest(v) {
       if (v === true) {
-        request({
-          url: 'customers/',
-          method: 'GET',
-          params: {
-            token: window.sessionStorage.getItem('token')
-          }
-        }).then(res => {
+        getCustomer().then(res => {
           this.customerData = res.data
         })
       }
@@ -337,22 +339,19 @@ export default {
     imgLook() {
       this.imgdialogVisible = true
     },
-    //保存订单
+    //保存修改订单
     saveOrderDetail() {
       this.formdisabl = true
       this.editOrder = true
       this.saveOrder = false
-      let msg = '修改'
-      let url = 'orders/'
-      delete this.orderdetail.order_picture
       console.log('保存订单')
-      this.handleSubOrder(
-        msg,
-        this.orderdetail.order_number,
-        this.orderdetail,
-        url,
-        'patch'
-      )
+      patchOrder(this.orderdetail.order_number, '', this.orderdetail)
+        .then(res => {
+          this.$message('订单修改成功')
+        })
+        .catch(_ => {
+          this.$message('网络错误,刷新重试')
+        })
     },
     //订单合计所有订单明细金额
     sumOrderAmount() {
@@ -368,39 +367,29 @@ export default {
     subAmount(row) {
       row.sub_amount = row.pro_price * row.pro_qt * 1
     },
+    //保存订单明细
     firstSaveSuborder() {
       // console.log(this.suborderdetail)
+      this.sumOrderAmount()
       if (!window.sessionStorage.getItem('subtoken')) {
         this.$message.error('请勿重复提交,或刷新重试')
       } else {
         this.suborderdetail.forEach(el => {
           if (el.hasOwnProperty('id')) {
             if (el.status === 1) {
-              let msg = '明细修改'
-              let num = el.id
-              let url = 'suborders/'
-              el.status = 0
-              el.sub_amount = el.pro_price * el.pro_qt * 1
-              this.handleSubOrder(msg, num, el, url, 'patch')
+              console.log(el.id)
+              patchSubOrder(el.id, '', el).then(() => {
+                el.status = 0
+                this.saveOrderDetail()
+              })
             } else {
               // console.log('无更改')
             }
           } else {
             el.status = 0
-            request({
-              url: 'suborders/',
-              method: 'post',
-              params: {
-                token: window.sessionStorage.getItem('token'),
-                subtoken: window.sessionStorage.getItem('subtoken')
-              },
-              headers: {
-                'content-type': 'application/x-www-form-urlencoded'
-              },
-              data: qs.stringify(el)
-            })
+            postSubOrder(el)
               .then(res => {
-                this.sumOrderAmount()
+                this.saveOrderDetail()
               })
               .catch(res => {
                 const h = this.$createElement
@@ -437,62 +426,6 @@ export default {
     //编辑订单明细
     editSubOrderRow(index, row) {
       row.status = 1
-      // let rebtn = 'rebtn' + index
-      // console.log(this.$refs[rebtn])
-      // // 动态设置dom的样式
-      // this.$nextTick(res => {
-      //   this.$refs.rebtn.$el.style.display = 'none'
-      //   this.$refs.savebtn.$el.style.display = 'contents'
-      // })
-    },
-    //保存修改后的订单明细
-    // saveSubOrderRow(index, row) {
-    //   console.log(row)
-
-    //   if (!row.hasOwnProperty('id')) {
-    //     this.$notify.error({
-    //       title: '错误',
-    //       message: '新增订单明细需要点击提交,不能修改后再保存'
-    //     })
-    //   } else {
-    //     let msg = '明细修改'
-    //     let num = row.id
-    //     let url = 'suborders/'
-    //     row.status = 0
-    //     row.sub_amount = row.pro_price * row.pro_qt * 1
-    //     this.handleSubOrder(msg, num, row, url)
-    //   }
-    // },
-    //访问订单明细api
-    handleSubOrder(msg, num, row, url, method) {
-      request({
-        url: url + num + '/',
-        method: method,
-        params: {
-          token: window.sessionStorage.getItem('token')
-        },
-        headers: {
-          'content-type': 'application/x-www-form-urlencoded'
-        },
-        data: qs.stringify(row)
-      })
-        .then(res => {
-          this.sumOrderAmount()
-          if (res.status === 200) {
-            const h = this.$createElement
-            this.$notify({
-              title: res.data.order_number,
-              message: h('i', { style: 'color: teal' }, '订单' + msg + '成功')
-            })
-          }
-        })
-        .catch(res => {
-          const h = this.$createElement
-          this.$notify({
-            title: '警告',
-            message: h('i', { style: 'color: teal' }, '网络错误,请刷新重试')
-          })
-        })
     },
     //删除订单明细,index是当个订单明细在suborderdetail中的索引位置,row是当行数据
     delSubOrderRow(index, row) {
@@ -525,16 +458,7 @@ export default {
             console.log(index)
             console.log(row)
             this.suborderdetail.splice(index, 1)
-            request({
-              url: 'suborders/' + row.id + '/',
-              method: 'patch',
-              params: {
-                token: window.sessionStorage.getItem('token')
-              },
-              data: {
-                is_delete: 0
-              }
-            }).then(res => {
+            patchSubOrder(row.id, '', { is_delete: 0 }).then(res => {
               this.$message({
                 type: 'success',
                 message: '删除成功!'
@@ -552,24 +476,13 @@ export default {
   },
   beforeCreate() {
     let number = window.sessionStorage.getItem('order_number')
-    request({
-      url: 'orders/' + number + '/',
-      method: 'GET',
-      params: {
-        token: window.sessionStorage.getItem('token')
-      }
-    }).then(res => {
+    getOrder(number).then(res => {
       this.orderdetail = res.data
-      request({
-        url: 'suborders/',
-        method: 'GET',
-        params: {
-          token: window.sessionStorage.getItem('token'),
-          order_number: number
-        }
-      }).then(res => {
+      getSubOrderList({ order_number: number }).then(res => {
         this.suborderdetail = res.data
-        this.sumOrderAmount()
+        res.data.forEach(el => {
+          el.status = 0
+        })
         if (res.data.length === 0) {
         }
       })

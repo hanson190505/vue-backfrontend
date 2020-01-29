@@ -204,10 +204,7 @@ export default {
   },
   created() {
     request({
-      url: 'customers/',
-      params: {
-        token: window.sessionStorage.getItem('token')
-      }
+      url: 'customers/'
     })
       .then(res => {
         // console.log(res)

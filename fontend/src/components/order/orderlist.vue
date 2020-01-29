@@ -10,15 +10,6 @@
     <!-- 搜索框 -->
     <el-row :gutter="20">
       <el-col :span="6">
-        <!-- <el-input placeholder="请输入内容" v-model="input1" class="input-with-select">
-            <el-select v-model="select" slot="prepend" placeholder="请选择">
-              <el-option label="订单编号" value="1"></el-option>
-              <el-option label="客户名称" value="2"></el-option>
-              <el-option label="出货地址" value="3"></el-option>
-              <el-option label="备注" value="4"></el-option>
-            </el-select>
-            <el-button slot="append" icon="el-icon-search"></el-button>
-        </el-input>-->
         <el-input v-model="search" size="mini" placeholder="关键字搜索:订单/日期/客户/地址/备注" />
       </el-col>
       <el-col :span="2">
@@ -53,6 +44,7 @@
       @selection-change="handleSelectionChange"
       border
       stripe
+      show-summary
       style="width=99.9%"
       v-loading="loading"
       element-loading-text="拼命加载中"
@@ -60,15 +52,7 @@
       element-loading-background="rgba(0, 0, 0, 0.8)"
     >
       <el-table-column type="selection" width="40"></el-table-column>
-      <!-- <el-table-column
-          v-for="col in tableColData"
-          :prop="col.id"
-          :key="col.id"
-          :label="col.label"
-          :width="col.width"
-          :show-overflow-tooltip="true"
-      ></el-table-column>-->
-      <el-table-column label="订单编号" align="center" width="140">
+      <el-table-column label="订单编号" align="center" width="120">
         <template slot-scope="scope">
           <span class="col-cont" v-html="showDate(scope.row.order_number)"></span>
         </template>
@@ -84,8 +68,12 @@
         </template>
       </el-table-column>
       <el-table-column label="订单交期" prop="deliver_date" width="100" align="center"></el-table-column>
-      <el-table-column label="汇率" prop="ex_rate" width="70" align="center"></el-table-column>
-      <el-table-column label="订单金额" prop="order_amount" width="80" align="center"></el-table-column>
+      <el-table-column label="汇率" width="70" align="center">
+        <template slot-scope="scope">
+          <span>{{scope.row.ex_rate}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="订单金额($)" prop="order_amount" width="100" align="center"></el-table-column>
       <el-table-column label="出货地址" width="300" :show-overflow-tooltip="true" align="center">
         <template slot-scope="scope">
           <span class="col-cont" v-html="showDate(scope.row.ship_addr)"></span>
@@ -130,8 +118,8 @@
 </template>
 
 <script>
-import { request, getRangeDateRequest } from '../../network/rquest'
 import AddOrder from './addorder'
+import { getOrderList } from '../../api/order'
 export default {
   components: {
     AddOrder
@@ -203,7 +191,8 @@ export default {
     handleClick(row) {
       this.$store.state.order_number = row.order_number
       window.sessionStorage.setItem('order_number', row.order_number)
-      this.$router.push('orders/' + row.order_number + '/')
+      // this.$router.push('orders/' + row.order_number + '/')
+      this.$router.push(`orders/${row.order_number}/`)
     },
     // 控制表格多选
     handleSelectionChange(val) {
@@ -212,24 +201,15 @@ export default {
     // 日期选择器选择日期之后的执行查询函数, 通过@change拿到日期
     dateRangeChange(value2) {
       if (!value2) {
-        request({
-          url: 'orders/',
-          method: 'GET',
-          params: {
-            token: window.sessionStorage.getItem('token')
-          }
-        }).then(res => {
+        getOrderList().then(res => {
           this.tableData = res.data
           this.count = res.data.length
         })
       } else {
-        getRangeDateRequest({
-          params: {
-            token: window.sessionStorage.getItem('token'),
-            start_date: value2[0],
-            end_date: value2[1],
-            argument: 'order_date'
-          }
+        getOrderList({
+          start_date: value2[0],
+          end_date: value2[1],
+          argument: 'order_date'
         }).then(res => {
           this.tableData = res.data
         })
@@ -292,13 +272,7 @@ export default {
     },
     //请求订单数据
     getOrderList() {
-      request({
-        url: 'orders/',
-        method: 'GET',
-        params: {
-          token: window.sessionStorage.getItem('token')
-        }
-      }).then(res => {
+      getOrderList().then(res => {
         this.loading = false
         this.tableData = res.data
         this.count = res.data.length

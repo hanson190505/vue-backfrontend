@@ -9,6 +9,7 @@ Vue.use(Element, {
   size: 'mini',
   zIndex: 3000
 })
+
 Vue.config.productionTip = false
 //全局注册vuex实例,store
 Vue.prototype.$store = store

@@ -74,7 +74,7 @@ class OrderCatalog(models.Model):
     order_amount = models.DecimalField("金额", max_digits=10, decimal_places=2)
     # order_picture = models.ImageField(
     #     upload_to='images/%Y/%m/%d', default='上传图片', verbose_name='图片')
-    order_pic = models.CharField(max_length=128)
+    order_pic = models.CharField(max_length=128, null=True, blank=True)
     is_done = models.IntegerField('完成状态', choices=ORDER_STATUS, default=1)
     text = models.CharField('备注', max_length=480, default='选填')
     ship_addr = models.CharField('出货地点', max_length=200, default=1)

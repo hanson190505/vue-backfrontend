@@ -159,7 +159,6 @@ export default {
       request({
         url: 'customers/',
         params: {
-          token: window.sessionStorage.getItem('token'),
           st: 'addcustomer'
         }
       })
@@ -183,7 +182,6 @@ export default {
               url: 'customers/',
               method: 'POST',
               params: {
-                token: window.sessionStorage.getItem('token'),
                 subtoken: window.sessionStorage.getItem('subtoken')
               },
               headers: {

@@ -160,10 +160,7 @@ export default {
     handleReCustomer() {
       this.reCustomerDia = true
       request({
-        url: 'customers/' + this.customer + '/',
-        params: {
-          token: window.sessionStorage.getItem('token')
-        }
+        url: 'customers/' + this.customer + '/'
       })
         .then(res => {
           this.customerData = res.data
@@ -190,9 +187,6 @@ export default {
           request({
             url: 'customers/' + this.customer + '/',
             method: 'patch',
-            params: {
-              token: window.sessionStorage.getItem('token')
-            },
             data: qs.stringify(this.customerData)
           })
             .then(res => {
