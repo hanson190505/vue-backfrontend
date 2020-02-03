@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
-from api.views import OrdersViewSet, CustomerViewSet, SubOrderViewSet
+from api.views import OrdersViewSet, CustomerViewSet, SubOrderViewSet, PurchaseOrderViewSet, PurchaseDetailViewSet
 from user.views import UserInfoApiView
 from vuebackend import settings
 
@@ -26,6 +26,8 @@ router = routers.DefaultRouter()
 router.register('orders', OrdersViewSet)
 router.register('customers', CustomerViewSet)
 router.register('suborders', SubOrderViewSet)
+router.register('purchases', PurchaseOrderViewSet)
+router.register('purchasedetails', PurchaseDetailViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

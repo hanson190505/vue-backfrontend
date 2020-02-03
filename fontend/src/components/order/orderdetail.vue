@@ -232,7 +232,7 @@
 </template>
 
 <script>
-import { getSubToken } from '@/network/rquest'
+import { getSubToken } from '@/api/token'
 import {
   getSubOrder,
   getCustomer,
@@ -480,6 +480,8 @@ export default {
       this.orderdetail = res.data
       getSubOrderList({ order_number: number }).then(res => {
         this.suborderdetail = res.data
+        console.log(res)
+
         res.data.forEach(el => {
           el.status = 0
         })

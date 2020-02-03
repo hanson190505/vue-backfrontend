@@ -25,7 +25,7 @@ export function postOrder(data) {
         params: {
             subtoken: window.sessionStorage.getItem('subtoken')
         },
-        data: data
+        data: qs.stringify(data)
     })
 }
 
@@ -34,7 +34,7 @@ export function patchOrder(pk, params, data) {
         url: `orders/${pk}/`,
         method: 'patch',
         params: params,
-        data: data
+        data: qs.stringify(data)
     })
 }
 
@@ -57,7 +57,7 @@ export function patchSubOrder(pk, params, data) {
         url: `suborders/${pk}/`,
         method: 'patch',
         params: params,
-        data: data
+        data: qs.stringify(data)
     })
 }
 
@@ -68,7 +68,7 @@ export function postSubOrder(data) {
         params: {
             subtoken: window.sessionStorage.getItem('subtoken')
         },
-        data: data
+        data: qs.stringify(data)
     })
 }
 

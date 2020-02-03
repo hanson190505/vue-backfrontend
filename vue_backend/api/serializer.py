@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Customers, OrderCatalog, SubOrder
+from api.models import Customers, OrderCatalog, SubOrder, PurchaseOrder, PurchaseDetail
 
 
 class CustomersSerializer(serializers.ModelSerializer):
@@ -16,6 +16,15 @@ class OrdersSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderCatalog
         exclude = ['is_delete']
+        depth = 1
+
+
+class PostOrdersSerializer(serializers.ModelSerializer):
+    sales = serializers.StringRelatedField()
+
+    class Meta:
+        model = OrderCatalog
+        exclude = ['is_delete']
 
 
 class SubOrderSerializer(serializers.ModelSerializer):
@@ -27,3 +36,50 @@ class SubOrderSerializer(serializers.ModelSerializer):
         fields = "__all__"
         depth = 1
 
+
+class PostSubOrderSerializer(serializers.ModelSerializer):
+    sales = serializers.StringRelatedField()
+
+    class Meta:
+        model = SubOrder
+        # exclude = ['is_delete']
+        fields = "__all__"
+
+
+class PurchaseOrderSerializer(serializers.ModelSerializer):
+    sales = serializers.StringRelatedField()
+
+    class Meta:
+        model = PurchaseOrder
+        # exclude = ['is_delete']
+        fields = "__all__"
+        depth = 1
+
+
+# 添加depth之后,无法正常post数据,外键字段始终报null,再定义一个没有depth的序列化器解决
+class PostPurchaseOrderSerializer(serializers.ModelSerializer):
+    sales = serializers.StringRelatedField()
+
+    class Meta:
+        model = PurchaseOrder
+        # exclude = ['is_delete']
+        fields = "__all__"
+
+
+class PurchaseDetailSerializer(serializers.ModelSerializer):
+    sales = serializers.StringRelatedField()
+
+    class Meta:
+        model = PurchaseDetail
+        # exclude = ['is_delete']
+        fields = "__all__"
+        depth = 1
+
+
+class PostPurchaseDetailSerializer(serializers.ModelSerializer):
+    sales = serializers.StringRelatedField()
+
+    class Meta:
+        model = PurchaseDetail
+        # exclude = ['is_delete']
+        fields = "__all__"

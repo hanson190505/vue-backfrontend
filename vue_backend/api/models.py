@@ -71,7 +71,7 @@ class OrderCatalog(models.Model):
                               on_delete=models.CASCADE, null=True, blank=True)
     input_date = models.DateField("录入日期", auto_now=datetime.now)
     ex_rate = models.DecimalField("汇率", max_digits=10, decimal_places=2)
-    order_amount = models.DecimalField("金额", max_digits=10, decimal_places=2)
+    order_amount = models.DecimalField("金额", max_digits=20, decimal_places=4)
     # order_picture = models.ImageField(
     #     upload_to='images/%Y/%m/%d', default='上传图片', verbose_name='图片')
     order_pic = models.CharField(max_length=128, null=True, blank=True)
@@ -123,11 +123,11 @@ class SubOrder(models.Model):
     pro_item = models.IntegerField('产品类别', choices=PRO_ITEM)
     pro_desc = models.CharField("详细描述", max_length=400)
     pro_qt = models.DecimalField(
-        verbose_name='数量(个)', max_digits=10, decimal_places=2)
+        verbose_name='数量(个)', max_digits=20, decimal_places=2)
     pro_price = models.DecimalField(
-        verbose_name='单价($)', max_digits=10, decimal_places=2)
+        verbose_name='单价($)', max_digits=20, decimal_places=4)
     pro_weight = models.DecimalField(
-        verbose_name='单重(g)', max_digits=10, decimal_places=2)
+        verbose_name='单重(g)', max_digits=20, decimal_places=4)
     order_number = models.ForeignKey(OrderCatalog, on_delete=models.CASCADE, verbose_name='订单编号',
                                      related_name='sub_orders')
     sales = models.ForeignKey(UserInfo, verbose_name='业务',
@@ -136,6 +136,9 @@ class SubOrder(models.Model):
         '订单金额($)', default=0, max_digits=10, decimal_places=2)
     sub_input_date = models.DateField("录入日期", auto_now=datetime.now)
     is_delete = models.IntegerField(default=1)
+    is_purchase = models.IntegerField(default=1)
+    is_ship = models.IntegerField(default=1)
+    is_account = models.IntegerField(default=1)
     status = models.IntegerField(default=1)
     objects = models.Manager()
 
@@ -164,10 +167,6 @@ class SubOrder(models.Model):
 class PurchaseOrder(models.Model):
     """采购订单"""
 
-    # 生成采购单号,purchase_number的default属性直接调用这个函数，生成采购单号
-    def create_purchase_number(self):
-        return 'pc-%s' % (int(datetime.today().timestamp() * 100))
-
     purchaser = models.ForeignKey(
         Customers, verbose_name='供应商', on_delete=models.CASCADE)
     sales = models.ForeignKey(UserInfo, verbose_name='业务',
@@ -176,7 +175,8 @@ class PurchaseOrder(models.Model):
     deliver_date = models.DateField("采购交期")
     # 采购单号default直接调用create_purchase_number函数
     purchase_number = models.CharField(
-        '采购单号', max_length=50, default=create_purchase_number)
+        '采购单号', max_length=50, primary_key=True)
+    input_date = models.DateTimeField(auto_now_add=True)
     text = models.CharField('备注', max_length=400, default='选填')
     # purchase_amount = models.DecimalField('采购金额', max_digits=10, decimal_places=2, default=0)
     is_delete = models.IntegerField(default=1)
@@ -197,11 +197,12 @@ class PurchaseDetail(models.Model):
     sub_order = models.ForeignKey(
         SubOrder, on_delete=models.CASCADE, verbose_name='订单明细')
     purchase_price = models.DecimalField(
-        '采购单价($)', max_digits=10, decimal_places=2, default=0)
+        '采购单价($)', max_digits=20, decimal_places=4, default=0)
     purchase_qt = models.DecimalField(
-        '采购数量(个)', max_digits=10, decimal_places=2, default=0)
+        '采购数量(个)', max_digits=20, decimal_places=2, default=0)
     purchase_amount = models.DecimalField(
-        '采购金额($)', max_digits=10, decimal_places=2, default=0)
+        '采购金额($)', max_digits=20, decimal_places=4, default=0)
+    text = models.CharField('备注', max_length=400, default='选填')
     is_delete = models.IntegerField(default=1)
     objects = models.Manager()
 
@@ -239,7 +240,7 @@ class ShipOrder(models.Model):
         Customers, on_delete=models.CASCADE, verbose_name='货代')
     ship_number = models.CharField('出货单号', max_length=50)
     ship_date = models.DateField('出货日期', default=datetime.now)
-    ship_cost = models.DecimalField('出货费用(¥)', max_digits=10, decimal_places=2)
+    ship_cost = models.DecimalField('出货费用(¥)', max_digits=20, decimal_places=4)
     ship_weight = models.DecimalField(
         '重量(kg)', max_digits=10, decimal_places=2)
     sales = models.ForeignKey(UserInfo, verbose_name='业务',

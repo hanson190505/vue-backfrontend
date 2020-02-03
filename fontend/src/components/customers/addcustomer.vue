@@ -83,6 +83,7 @@
 <script>
 import { request } from '../../network/rquest'
 import qs from 'qs'
+import { postCustomer } from '../../api/customer'
 export default {
   name: 'addCustomer',
   data() {
@@ -178,17 +179,18 @@ export default {
           if (!window.sessionStorage.getItem('subtoken')) {
             this.$message.error('请勿重复提交,或刷新重试')
           } else {
-            request({
-              url: 'customers/',
-              method: 'POST',
-              params: {
-                subtoken: window.sessionStorage.getItem('subtoken')
-              },
-              headers: {
-                'content-type': 'application/x-www-form-urlencoded'
-              },
-              data: qs.stringify(this.customerData)
-            })
+            // request({
+            //   url: 'customers/',
+            //   method: 'POST',
+            //   params: {
+            //     subtoken: window.sessionStorage.getItem('subtoken')
+            //   },
+            //   headers: {
+            //     'content-type': 'application/x-www-form-urlencoded'
+            //   },
+            //   data: qs.stringify(this.customerData)
+            // })
+            postCustomer(this.customerData)
               .then(res => {
                 let newCustomerdata = res.data
                 this.$emit('addNewCustomer', newCustomerdata)

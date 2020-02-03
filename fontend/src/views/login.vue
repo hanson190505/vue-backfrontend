@@ -89,13 +89,12 @@ export default {
                 this.$message('用户审核未通过')
                 break
               case 2000:
-                this.$message('用户审核未通过')
                 //要用catch捕获这个错误,不然会报错,用replace不能跳转,会报错
+                window.sessionStorage.setItem('token', res.data.token)
                 this.$router.push('/home').catch(err => {
                   console.log('all good')
                 })
                 this.$message.success('登录成功')
-                window.sessionStorage.setItem('token', res.data.token)
                 this.$store.state.username = loginform.username
                 break
               default:

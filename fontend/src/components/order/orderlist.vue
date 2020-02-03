@@ -43,7 +43,6 @@
       :data="handlePage(page, pagesize)"
       @selection-change="handleSelectionChange"
       border
-      stripe
       show-summary
       style="width=99.9%"
       v-loading="loading"
@@ -70,7 +69,7 @@
       <el-table-column label="订单交期" prop="deliver_date" width="100" align="center"></el-table-column>
       <el-table-column label="汇率" width="70" align="center">
         <template slot-scope="scope">
-          <span>{{scope.row.ex_rate}}</span>
+          <span>{{ scope.row.ex_rate }}</span>
         </template>
       </el-table-column>
       <el-table-column label="订单金额($)" prop="order_amount" width="100" align="center"></el-table-column>
@@ -100,7 +99,7 @@
       <!-- 快捷搜索 -->
       <el-table-column label="操作" fixed="right" width="60" align="center">
         <template slot-scope="scope">
-          <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+          <el-button @click="handleClick(scope.row)" type="text" size="mini">查看</el-button>
         </template>
       </el-table-column>
     </el-table>

@@ -208,7 +208,7 @@
 </template>
 
 <script>
-import { getSubToken } from '@/network/rquest'
+import { getSubToken } from '@/api/token'
 import qs from 'qs'
 import {
   getOrderList,
@@ -374,7 +374,7 @@ export default {
     },
     delSubOrderRow(index, row) {
       this.subOrderData.splice(index, 1)
-      console.log(this.subOrderData)
+      // console.log(this.subOrderData)
     },
     //开始新增订单明细
     addSubOrder() {

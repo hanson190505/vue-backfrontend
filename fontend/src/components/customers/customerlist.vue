@@ -20,7 +20,6 @@
     <el-table
       :data="handlePage(page, pagesize)"
       border
-      stripe
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"

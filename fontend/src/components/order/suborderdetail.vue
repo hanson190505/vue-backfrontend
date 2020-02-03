@@ -1,74 +1,46 @@
 <template>
   <div>
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item :to="{ path: '/orders' }"
-        >订单管理</el-breadcrumb-item
-      >
-      <el-breadcrumb-item>明细列表</el-breadcrumb-item>
-    </el-breadcrumb>
     <el-row>
-      <el-col :span="6">
-        <backend-search
-          v-on:getSearchSuborder="getSearchSuborder"
-          @parentMethod="pagination"
-        ></backend-search>
-      </el-col>
+      <el-breadcrumb separator-class="el-icon-arrow-right">
+        <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/orders' }">订单管理</el-breadcrumb-item>
+        <el-breadcrumb-item>明细列表</el-breadcrumb-item>
+        <backend-search v-on:getSearchSuborder="getSearchSuborder" @parentMethod="pagination"></backend-search>
+      </el-breadcrumb>
     </el-row>
     <el-table
       :data="subOrderData"
       border
-      stripe
       show-summary
       style="width=99.9%"
       v-loading="loading"
       :summary-method="getSummaries"
+      @select="handleSelect"
+      @select-all="handleSelect"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
       element-loading-background="rgba(0, 0, 0, 0.8)"
       :default-sort="{ prop: 'order_date', order: 'descending' }"
     >
-      <el-table-column
-        type="selection"
-        width="60"
-        align="center"
-      ></el-table-column>
+      <el-table-column type="selection" width="60" align="center"></el-table-column>
       <el-table-column label="客户" align="center" width="100">
         <template slot-scope="scope">
-          <span
-            class="col-cont"
-            v-html="showDate(scope.row.order_number.customer)"
-          ></span>
+          <span class="col-cont" v-html="showDate(scope.row.order_number.customer)"></span>
         </template>
       </el-table-column>
       <el-table-column label="订单编号" align="center" width="140">
         <template slot-scope="scope">
-          <span
-            class="col-cont"
-            v-html="showDate(scope.row.order_number.order_number)"
-          ></span>
+          <span class="col-cont" v-html="showDate(scope.row.order_number.order_number)"></span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="下单日期"
-        align="center"
-        width="100"
-        sortable
-        prop="order_date"
-      >
+      <el-table-column label="下单日期" align="center" width="100" sortable prop="order_date">
         <template slot-scope="scope">
-          <span
-            class="col-cont"
-            v-html="showDate(scope.row.order_number.order_date)"
-          ></span>
+          <span class="col-cont" v-html="showDate(scope.row.order_number.order_date)"></span>
         </template>
       </el-table-column>
       <el-table-column label="订单交期" align="center" width="100">
         <template slot-scope="scope">
-          <span
-            class="col-cont"
-            v-html="showDate(scope.row.order_number.deliver_date)"
-          ></span>
+          <span class="col-cont" v-html="showDate(scope.row.order_number.deliver_date)"></span>
         </template>
       </el-table-column>
       <el-table-column label="产品名称" align="center" width="100">
@@ -81,12 +53,7 @@
           <span>{{ proType[scope.row.pro_item - 1] }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="产品描述"
-        align="center"
-        width="140"
-        :show-overflow-tooltip="true"
-      >
+      <el-table-column label="产品描述" align="center" width="140" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <span class="col-cont" v-html="showDate(scope.row.pro_desc)"></span>
         </template>
@@ -108,28 +75,15 @@
       </el-table-column>
       <el-table-column label="汇率" align="center" width="70">
         <template slot-scope="scope">
-          <span
-            class="col-cont"
-            v-html="showDate(scope.row.order_number.ex_rate)"
-          ></span>
+          <span class="col-cont" v-html="showDate(scope.row.order_number.ex_rate)"></span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="金额($)"
-        align="center"
-        width="100"
-        prop="sub_amount"
-      >
+      <el-table-column label="金额($)" align="center" width="100" prop="sub_amount">
         <template slot-scope="scope">
           <span class="col-cont" v-html="showDate(scope.row.sub_amount)"></span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="金额(¥)"
-        align="center"
-        width="100"
-        prop="rmb_amount"
-      >
+      <el-table-column label="金额(¥)" align="center" width="100" prop="rmb_amount">
         <template slot-scope="scope">
           <span
             class="col-cont"
@@ -140,26 +94,18 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      @prev-click="handleprevious"
-      @next-click="handlenext"
-      :current-page="currentPage"
-      :page-sizes="[10, 50, 100, 200]"
-      :page-size="page_size"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="dataTotal"
-    ></el-pagination>
+    <pagi-nation @pagination="pagination" :getDataTotal="dataTotal"></pagi-nation>
   </div>
 </template>
 
 <script>
 import { getSubOrderList } from '@/api/order'
-import backendSearch from './backendSearch'
+import backendSearch from '../common/backendSearch'
+import pagiNation from '../common/pagiNation'
 export default {
   components: {
-    backendSearch
+    backendSearch,
+    pagiNation
   },
   data() {
     return {
@@ -168,14 +114,19 @@ export default {
       proType: ['硅胶', '五金', 'USB', '移动电源', '其他'],
       subOrderData: [],
       //分页相关配置
-      dataTotal: 0,
-      page_size: 10,
-      currentPage: 0,
-      previous: null,
-      next: null
+      dataTotal: 0
     }
   },
   methods: {
+    //处理选中行事件
+    handleSelect(selection, row) {
+      //selection是所有选中行的数据,格式是array
+      //row点击选框当前行的数据
+      // 第一个参数是在父组件on监听的方法
+      // 第二个参数是需要传的值
+      // console.log(selection)
+      this.$emit('getSelectSuborder', selection)
+    },
     // 关键字高亮
     showDate(val) {
       val = val + ''
@@ -188,42 +139,18 @@ export default {
         return val
       }
     },
-    //分页设置
-    handleSizeChange(val) {
-      getSubOrderList({ page_size: val }).then(res => {
+    //分页函数
+    pagination(params) {
+      //子组件backendSearch清空搜索条件时调用,设定page默认值为1
+      if (!params) {
+        params = { page: 1, page_size: 10 }
+      }
+      return getSubOrderList(params).then(res => {
         let resData = res.data
-        this.page_size = val
         this.loading = false
         this.subOrderData = resData.results
         this.dataTotal = resData.count
       })
-    },
-    //选择页码
-    handleCurrentChange(val) {
-      this.pagination(val)
-    },
-    //上一页
-    handleprevious(val) {
-      this.pagination(val)
-    },
-    //下一页
-    handlenext(val) {
-      this.pagination(val)
-    },
-    //分页函数
-    pagination(val) {
-      //子组件backendSearch清空搜索条件时调用,设定page默认值为1
-      if (!val) {
-        val = 1
-      }
-      return getSubOrderList({ page: val, page_size: this.page_size }).then(
-        res => {
-          let resData = res.data
-          this.loading = false
-          this.subOrderData = resData.results
-          this.dataTotal = resData.count
-        }
-      )
     },
     //表尾合计
     getSummaries(param) {
@@ -264,17 +191,14 @@ export default {
 
       return sums
     },
+    //接收子组件传递的数据
     getSearchSuborder(serchSuborderData) {
-      this.subOrderData = serchSuborderData
+      this.subOrderData = serchSuborderData.results
+      this.dataTotal = serchSuborderData.count
     }
   },
   created() {
-    getSubOrderList().then(res => {
-      let resData = res.data
-      this.loading = false
-      this.subOrderData = resData.results
-      this.dataTotal = resData.count
-    })
+    this.pagination()
   }
 }
 </script>

@@ -32,13 +32,18 @@
                 <el-menu-item index="/orders">订单列表</el-menu-item>
                 <el-menu-item index="/suborders">订单明细</el-menu-item>
               </el-submenu>
+              <el-submenu index="3">
+                <template slot="title">采购管理</template>
+                <el-menu-item index="/purchases">采购列表</el-menu-item>
+                <el-menu-item index="/purchasedetails">采购明细</el-menu-item>
+              </el-submenu>
             </el-menu>
           </el-col>
           <!-- 个人信息区 -->
           <el-col :span="6">
             <div class="userinfo">
               <a href="http://" target="_blank" rel="noopener noreferrer">官网</a>
-              <span>{{username}}</span>
+              <span>{{ username }}</span>
               <el-button type="info" @click="logout" size="medium">退出</el-button>
             </div>
           </el-col>

@@ -2,17 +2,17 @@ import uuid
 
 import qiniu
 from django.core.cache import cache
-from rest_framework import generics, status
+from django.db.models import Q
+from rest_framework import generics, status, exceptions
 from rest_framework.response import Response
 
-from api.serializer import OrdersSerializer, CustomersSerializer, SubOrderSerializer
-from api.models import OrderCatalog, Customers, SubOrder
+from api.serializer import OrdersSerializer, CustomersSerializer, SubOrderSerializer, PurchaseOrderSerializer, \
+    PurchaseDetailSerializer, PostPurchaseOrderSerializer, PostSubOrderSerializer, PostOrdersSerializer, \
+    PostPurchaseDetailSerializer
+from api.models import OrderCatalog, Customers, SubOrder, PurchaseOrder, PurchaseDetail
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from rest_framework import mixins
-
 from middleware.pagenation import SubOrderPagination
 from user.authentications import GetTokenAuthentication
-from vuebackend import settings
 
 
 # 获取两个日期之间的查询参数
@@ -66,9 +66,7 @@ class OrdersViewSet(ModelViewSet):
             }
             return Response(data)
         else:
-            print(request.data)
-            print(type(request.data))
-            serializer = self.get_serializer(data=request.data)
+            serializer = PostOrdersSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
@@ -113,7 +111,9 @@ class SubOrderViewSet(ModelViewSet):
         param = self.request.query_params.get('param')
         print(param)
         if param:
-            return self.queryset.filter(order_number__order_number__contains=param)
+            # return self.queryset.filter(order_number__order_number__iexact=param).all()
+            return self.queryset.filter(Q(order_number__order_number__icontains=param) |
+                                        Q(order_number__customer__lite_name__icontains=param))
         else:
             return self.queryset
 
@@ -126,7 +126,7 @@ class SubOrderViewSet(ModelViewSet):
             }
             return Response(data)
         else:
-            serializer = self.get_serializer(data=request.data)
+            serializer = PostSubOrderSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
@@ -137,7 +137,7 @@ class SubOrderViewSet(ModelViewSet):
         order_number = self.request.query_params.get('order_number')
         page = self.paginate_queryset(queryset)
         if order_number:
-            sub_order_list = self.queryset.filter(order_number=order_number).all()
+            sub_order_list = self.queryset.filter(order_number_id=order_number)
             serializer = self.get_serializer(sub_order_list, many=True)
             return Response(serializer.data)
         elif page is not None:
@@ -146,3 +146,58 @@ class SubOrderViewSet(ModelViewSet):
         else:
             serializer = self.get_serializer(queryset, many=True)
             return Response(serializer.data)
+
+
+class PurchaseOrderViewSet(ModelViewSet):
+    """采购单视图"""
+    queryset = PurchaseOrder.objects.filter(is_delete=1).order_by('-input_date')
+    serializer_class = PurchaseOrderSerializer
+    authentication_classes = GetTokenAuthentication,
+    pagination_class = SubOrderPagination
+
+    def perform_create(self, serializer):
+        serializer.save(sales=self.request.user)
+
+    def create(self, request, *args, **kwargs):
+        subtoken = self.request.query_params.get('subtoken')
+        if not subtoken:
+            raise exceptions.ValidationError
+        else:
+            serializer = PostPurchaseOrderSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class PurchaseDetailViewSet(ModelViewSet):
+    """明细视图"""
+    queryset = PurchaseDetail.objects.filter(is_delete=1)
+    serializer_class = PurchaseDetailSerializer
+    authentication_classes = GetTokenAuthentication,
+    pagination_class = SubOrderPagination
+
+    def get_queryset(self):
+        param = self.request.query_params.get('param')
+        if param:
+            return self.queryset.filter(Q(sub_order__order_number__order_number__icontains=param) |
+                                        Q(sub_order__pro_name__icontains=param) |
+                                        Q(sub_order__pro_desc__icontains=param))
+        else:
+            return self.queryset
+
+    def create(self, request, *args, **kwargs):
+        subtoken = self.request.query_params.get('subtoken')
+        if not subtoken:
+            data = {
+                'msg': '无效的提交,请刷新重试',
+                'status': 440
+            }
+            return
+        else:
+            print(request.data)
+            serializer = PostPurchaseDetailSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

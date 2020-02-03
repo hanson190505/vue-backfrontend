@@ -6,9 +6,6 @@ export function request(config) {
   const instance = axios.create({
     baseURL: 'http://192.168.3.45:8000/',
     timeout: 5000,
-    params: {
-      token: window.sessionStorage.getItem('token')
-    }
   })
   //axios拦截器(请求局部拦截)
   instance.interceptors.request.use(config => {
@@ -61,14 +58,3 @@ export function getRangeDateRequest(config) {
   return instance(config)
 }
 // // 然后在外面这样使用
-export function getSubToken() {
-  request({
-    baseURL: 'http://192.168.3.45:8000/orders/',
-    params: {
-      token: window.sessionStorage.getItem('token'),
-      st: 'addorder'
-    }
-  }).then(res => {
-    window.sessionStorage.setItem('subtoken', res.data.subtoken)
-  })
-}
