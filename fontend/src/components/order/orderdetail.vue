@@ -129,7 +129,7 @@
       <el-button type="primary" @click="editOrderDetail" v-show="editOrder">修改订单</el-button>
       <el-button type="warning" @click="saveOrderDetail" v-show="saveOrder">保存订单</el-button>
       <el-button type="primary" @click="addSubOrderRow">新增明细</el-button>
-      <el-table :data="suborderdetail" style="width: 99.9%" show-summary>
+      <el-table :data="suborderdetail" style="width: 99.9%" show-summary highlight-current-row>
         <!-- <el-table-column type="selection" width="40"></el-table-column> -->
         <el-table-column label="产品名称" width="150">
           <template slot-scope="scope">
@@ -232,10 +232,10 @@
 </template>
 
 <script>
+import { getCustomer } from '@/api/customer'
 import { getSubToken } from '@/api/token'
 import {
   getSubOrder,
-  getCustomer,
   patchSubOrder,
   postSubOrder,
   getOrder,

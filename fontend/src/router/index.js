@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import store from '../store';
 
 Vue.use(VueRouter)
 
@@ -17,6 +18,11 @@ const routes = [{
     name: 'home',
     component: () => import('../views/home.vue'),
     children: [{
+        path: '/dash',
+        name: 'dash',
+        component: () => import('../views/dashboard/'),
+      },
+      {
         path: '/orders',
         name: 'orders',
         component: () => import('../components/order/orderlist.vue'),
@@ -46,6 +52,16 @@ const routes = [{
         name: 'purchasedetails',
         component: () => import('../components/purchase/purchaseDetail.vue'),
       },
+      {
+        path: '/shiporders',
+        name: 'shiporders',
+        component: () => import('../views/ship/ship.vue'),
+      },
+      {
+        path: '/shipdetails',
+        name: 'shipdetails',
+        component: () => import('../views/ship/shipdetail.vue'),
+      },
     ]
   },
 ]
@@ -63,7 +79,7 @@ router.beforeEach((to, from, next) => {
   if (to.path === '/login') {
     return next()
   }
-  let tokenStr = window.sessionStorage.getItem('token')
+  let tokenStr = store.getters.token
   if (!tokenStr) {
     return next('/login')
   }

@@ -44,6 +44,7 @@
       @selection-change="handleSelectionChange"
       border
       show-summary
+      highlight-current-row
       style="width=99.9%"
       v-loading="loading"
       element-loading-text="拼命加载中"
@@ -58,7 +59,7 @@
       </el-table-column>
       <el-table-column label="客户名称" width="120" align="center">
         <template slot-scope="scope">
-          <span class="col-cont" v-html="showDate(scope.row.customer)"></span>
+          <span class="col-cont" v-html="showDate(scope.row.customer.lite_name)"></span>
         </template>
       </el-table-column>
       <el-table-column label="下单日期" width="100" align="center">

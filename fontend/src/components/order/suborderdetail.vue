@@ -12,6 +12,7 @@
       :data="subOrderData"
       border
       show-summary
+      highlight-current-row
       style="width=99.9%"
       v-loading="loading"
       :summary-method="getSummaries"

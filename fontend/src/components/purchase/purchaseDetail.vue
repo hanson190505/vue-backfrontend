@@ -7,7 +7,7 @@
       <!-- 搜索组件 -->
       <backend-searchVue @parentMethod="pagination"></backend-searchVue>
     </el-breadcrumb>
-    <el-table :data="subPurchaseOrderData" style="width: 99.9%" show-summary>
+    <el-table :data="subPurchaseOrderData" style="width: 99.9%" show-summary highlight-current-row>
       <el-table-column label="订单编号" width="140">
         <template slot-scope="scope">
           <span>{{ scope.row.sub_order.order_number }}</span>

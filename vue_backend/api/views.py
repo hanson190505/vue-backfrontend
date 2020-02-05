@@ -8,8 +8,8 @@ from rest_framework.response import Response
 
 from api.serializer import OrdersSerializer, CustomersSerializer, SubOrderSerializer, PurchaseOrderSerializer, \
     PurchaseDetailSerializer, PostPurchaseOrderSerializer, PostSubOrderSerializer, PostOrdersSerializer, \
-    PostPurchaseDetailSerializer
-from api.models import OrderCatalog, Customers, SubOrder, PurchaseOrder, PurchaseDetail
+    PostPurchaseDetailSerializer, ShipOrderSerializer, ShipDetailSerializer, PostShipDetailSerializer
+from api.models import OrderCatalog, Customers, SubOrder, PurchaseOrder, PurchaseDetail, ShipOrder, ShipDetail
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from middleware.pagenation import SubOrderPagination
 from user.authentications import GetTokenAuthentication
@@ -193,7 +193,7 @@ class PurchaseDetailViewSet(ModelViewSet):
                 'msg': '无效的提交,请刷新重试',
                 'status': 440
             }
-            return
+            return Response(data)
         else:
             print(request.data)
             serializer = PostPurchaseDetailSerializer(data=request.data)
@@ -201,3 +201,54 @@ class PurchaseDetailViewSet(ModelViewSet):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class ShipOrderViewSet(ModelViewSet):
+    queryset = ShipOrder.objects.filter(is_delete=1)
+    serializer_class = ShipOrderSerializer
+    authentication_classes = GetTokenAuthentication,
+    pagination_class = SubOrderPagination
+
+    def perform_create(self, serializer):
+        serializer.save(sales=self.request.user)
+
+
+class ShipDetailViewSet(ModelViewSet):
+    queryset = ShipDetail.objects.filter(is_delete=1)
+    serializer_class = ShipDetailSerializer
+    authentication_classes = GetTokenAuthentication,
+    pagination_class = SubOrderPagination
+
+    def create(self, request, *args, **kwargs):
+        subtoken = self.request.query_params.get('subtoken')
+        if not subtoken:
+            raise exceptions.ValidationError
+        else:
+            serializer = PostShipDetailSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def get_queryset(self):
+        param = self.request.query_params.get('param')
+        if param:
+            return self.queryset.filter(Q(ship_number__ship_number__icontains=param) |
+                                        Q(sub_order__order_number__order_number__icontains=param))
+        else:
+            return self.queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        ship_number = self.request.query_params.get('ship_number')
+        page = self.paginate_queryset(queryset)
+        if ship_number:
+            sub_order_list = self.queryset.filter(ship_number=ship_number)
+            serializer = self.get_serializer(sub_order_list, many=True)
+            return Response(serializer.data)
+        elif page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)

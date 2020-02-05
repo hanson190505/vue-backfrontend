@@ -5,6 +5,8 @@ import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import './assets/css/base.css'
 import store from './store';
+import './views/icons' // icon
+
 Vue.use(Element, {
   size: 'mini',
   zIndex: 3000

@@ -62,7 +62,12 @@
         </el-row>
       </el-form>
       <el-button type="primary" @click="addPurchaseDetail">新增明细</el-button>
-      <el-table :data="subPurchaseOrderData" style="width: 99.9%" show-summary>
+      <el-table
+        :data="subPurchaseOrderData"
+        style="width: 99.9%"
+        show-summary
+        highlight-current-row
+      >
         <el-table-column label="订单编号" width="140">
           <template slot-scope="scope">
             <span>{{ scope.row.order_number.order_number }}</span>
@@ -133,7 +138,8 @@
 </template>
 
 <script>
-import { getCustomer, patchSubOrder } from '@/api/order'
+import { patchSubOrder } from '@/api/order'
+import { getCustomer } from '@/api/customer'
 import { postPurchase } from '@/api/purchase'
 import { getSubToken, delSubtoken } from '@/api/token'
 import { makeOrderNumber } from '../../utils/makeOrderNumber'
@@ -163,19 +169,6 @@ export default {
       getSubToken()
       this.addPurchaseData.purchase_number = makeOrderNumber('PC')
     },
-    //控制下拉供应商菜单显示数量
-    // customerFilter(query = '') {
-    //   let arr = this.customerData.filter(item => {
-    //     return (
-    //       item.lite_name.includes(query) || item.contact_name.includes(query)
-    //     )
-    //   })
-    //   if (arr.length > 50) {
-    //     this.customerList = arr.slice(0, 50)
-    //   } else {
-    //     this.customerList = arr
-    //   }
-    // },
     //供应商名称选择时,调用后台客户数据
     selectTest(v) {
       if (v === true) {

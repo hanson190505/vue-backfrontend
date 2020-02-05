@@ -14,7 +14,11 @@
         inline-message
       >
         <el-form-item prop="username">
-          <el-input placeholder="请输入用户名" prefix-icon="el-icon-user" v-model="loginform.username"></el-input>
+          <el-input
+            placeholder="请输入用户名"
+            prefix-icon="el-icon-user"
+            v-model="loginform.username"
+          ></el-input>
         </el-form-item>
         <el-form-item prop="password">
           <el-input
@@ -22,12 +26,12 @@
             prefix-icon="el-icon-lock"
             v-model="loginform.password"
             type="password"
+            @keyup.enter.native="login"
           ></el-input>
         </el-form-item>
         <el-form-item class="btns">
           <el-button type="primary" @click="login">登录</el-button>
           <el-button type="info" @click="resetlogin">重置</el-button>
-          <el-button type="primary" @click="tetsrouter">跳转</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -35,9 +39,6 @@
 </template>
 
 <script>
-// import { request } from '../network/rquest'
-// import qs from 'qs'
-import { login } from '../api/user'
 export default {
   data() {
     return {
@@ -59,9 +60,6 @@ export default {
     }
   },
   methods: {
-    tetsrouter() {
-      this.$router.replace('/home')
-    },
     resetlogin() {
       this.$refs.LoginFormRef.resetFields()
     },
@@ -69,39 +67,36 @@ export default {
       this.$refs.LoginFormRef.validate(valid => {
         if (!valid) {
           return
+        } else {
+          this.$store
+            .dispatch('userInfo/loginSet', this.loginform)
+            .then(res => {
+              let status = res.data.status
+              switch (status) {
+                case 410:
+                  this.$message('用户名错误')
+                  break
+                case 411:
+                  this.$message('密码错误')
+                  break
+                case 412:
+                  this.$message('用户审核未通过')
+                  break
+                case 2000:
+                  //要用catch捕获这个错误,不然会报错,用replace不能跳转,会报错
+                  // window.sessionStorage.setItem('token', res.data.token)
+                  this.$router.replace('/dash').catch(err => {
+                    console.log('all good')
+                  })
+                  this.$message.success('登录成功')
+                  // this.$store.state.username = loginform.username
+                  break
+                default:
+                  break
+              }
+            })
+            .catch(res => {})
         }
-        // request({
-        //   url: 'users/',
-        //   method: 'POST',
-        //   data: qs.stringify(this.loginform)
-        // })
-        login(this.loginform)
-          .then(res => {
-            let status = res.data.status
-            switch (status) {
-              case 410:
-                this.$message('用户名错误')
-                break
-              case 411:
-                this.$message('密码错误')
-                break
-              case 412:
-                this.$message('用户审核未通过')
-                break
-              case 2000:
-                //要用catch捕获这个错误,不然会报错,用replace不能跳转,会报错
-                window.sessionStorage.setItem('token', res.data.token)
-                this.$router.push('/home').catch(err => {
-                  console.log('all good')
-                })
-                this.$message.success('登录成功')
-                this.$store.state.username = loginform.username
-                break
-              default:
-                break
-            }
-          })
-          .catch(res => {})
       })
     }
   }

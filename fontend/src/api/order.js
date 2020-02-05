@@ -71,10 +71,3 @@ export function postSubOrder(data) {
         data: qs.stringify(data)
     })
 }
-
-export function getCustomer(params) {
-    return request({
-        url: 'customers/',
-        params: params
-    })
-}

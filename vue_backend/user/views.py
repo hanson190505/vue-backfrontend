@@ -103,7 +103,8 @@ class UserInfoApiView(viewsets.ModelViewSet):
                 data = {
                     'msg': '登录成功',
                     'status': 2000,
-                    'token': token
+                    'token': token,
+                    'name': username
                 }
                 return Response(data)
         elif ac == 'logout':

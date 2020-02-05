@@ -1,4 +1,5 @@
 import axios from 'axios';
+import store from '../store';
 // 封装一个网络基础模块
 let postData = null
 export function request(config) {
@@ -9,7 +10,8 @@ export function request(config) {
   })
   //axios拦截器(请求局部拦截)
   instance.interceptors.request.use(config => {
-    let token = window.sessionStorage.getItem('token')
+    // let token = window.sessionStorage.getItem('token')
+    let token = store.getters.token
     if (token) {
       config.headers.authorization = token
       if (config.method === 'post') {

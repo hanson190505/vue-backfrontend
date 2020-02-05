@@ -113,7 +113,7 @@
           </el-col>
         </el-row>
         <el-button size="mini" type="primary" @click="addSubOrder()">订单明细</el-button>
-        <el-table :data="subOrderData" style="width: 99.9%">
+        <el-table :data="subOrderData" style="width: 99.9%" highlight-current-row>
           <!-- <el-table-column type="selection" width="40"></el-table-column> -->
           <el-table-column label="产品名称" width="150">
             <template slot-scope="scope">
@@ -208,14 +208,14 @@
 </template>
 
 <script>
+import { getCustomer } from '@/api/customer'
 import { getSubToken } from '@/api/token'
 import qs from 'qs'
 import {
   getOrderList,
   getSubOrderList,
   postOrder,
-  postSubOrder,
-  getCustomer
+  postSubOrder
 } from '@/api/order'
 export default {
   name: 'AddOrder',

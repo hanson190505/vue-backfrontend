@@ -18,7 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
-from api.views import OrdersViewSet, CustomerViewSet, SubOrderViewSet, PurchaseOrderViewSet, PurchaseDetailViewSet
+from api.views import OrdersViewSet, CustomerViewSet, SubOrderViewSet, PurchaseOrderViewSet, PurchaseDetailViewSet, \
+    ShipOrderViewSet, ShipDetailViewSet
 from user.views import UserInfoApiView
 from vuebackend import settings
 
@@ -28,6 +29,8 @@ router.register('customers', CustomerViewSet)
 router.register('suborders', SubOrderViewSet)
 router.register('purchases', PurchaseOrderViewSet)
 router.register('purchasedetails', PurchaseDetailViewSet)
+router.register('shiporders', ShipOrderViewSet)
+router.register('shipdetails', ShipDetailViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),

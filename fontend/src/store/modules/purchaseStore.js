@@ -6,7 +6,7 @@ import {
 
 const state = {
     purchaseData: {},
-    purchaseDetailData: []
+    purchaseDetailData: {}
 }
 
 const mutations = {

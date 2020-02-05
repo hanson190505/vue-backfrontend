@@ -5,6 +5,7 @@
       :data="this.$store.getters.purchaseData.results"
       highlight-current-row
       @current-change="handleCurrentChange"
+      :row-class-name="rowClassName"
       border
       style="width=99.9%"
       v-loading="loading"
@@ -77,8 +78,11 @@ export default {
       }
     },
     handleCurrentChange(row) {
-      console.log(row)
       this.$store.state.purchase_number = row.id
+    },
+    rowClassName(a, b) {
+      // console.log(a)
+      // console.log(b)
     },
     //新增采购明细
     addSubPurchase() {},

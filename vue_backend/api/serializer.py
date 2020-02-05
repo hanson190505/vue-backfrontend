@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Customers, OrderCatalog, SubOrder, PurchaseOrder, PurchaseDetail
+from api.models import Customers, OrderCatalog, SubOrder, PurchaseOrder, PurchaseDetail, ShipOrder, ShipDetail
 
 
 class CustomersSerializer(serializers.ModelSerializer):
@@ -82,4 +82,29 @@ class PostPurchaseDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseDetail
         # exclude = ['is_delete']
+        fields = "__all__"
+
+
+class ShipOrderSerializer(serializers.ModelSerializer):
+    sales = serializers.StringRelatedField()
+
+    class Meta:
+        model = ShipOrder
+        fields = "__all__"
+
+
+class ShipDetailSerializer(serializers.ModelSerializer):
+    sales = serializers.StringRelatedField()
+
+    class Meta:
+        model = ShipDetail
+        fields = "__all__"
+        depth = 2
+
+
+class PostShipDetailSerializer(serializers.ModelSerializer):
+    sales = serializers.StringRelatedField()
+
+    class Meta:
+        model = ShipDetail
         fields = "__all__"
