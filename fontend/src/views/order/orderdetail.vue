@@ -160,15 +160,27 @@
             <span v-else>{{ options[scope.row.pro_item - 1].label }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="描述" width="400">
+        <el-table-column label="产品尺寸" width="120">
           <template slot-scope="scope">
-            <el-input
-              v-if="scope.row.status"
-              size="mini"
-              v-model="scope.row.pro_desc"
-              type="textarea"
-              autosize
-            ></el-input>
+            <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_size"></el-input>
+            <span v-else>{{ scope.row.pro_size }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="产品颜色" width="120">
+          <template slot-scope="scope">
+            <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_color"></el-input>
+            <span v-else>{{ scope.row.pro_color }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="产品包装" width="120">
+          <template slot-scope="scope">
+            <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_pack"></el-input>
+            <span v-else>{{ scope.row.pro_pack }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="描述" width="150">
+          <template slot-scope="scope">
+            <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_desc"></el-input>
             <span v-else>{{ scope.row.pro_desc }}</span>
           </template>
         </el-table-column>
@@ -408,6 +420,9 @@ export default {
       let newValue = {
         pro_name: '',
         pro_item: 1,
+        pro_size: '',
+        pro_color: '',
+        pro_pack: '',
         pro_desc: '',
         pro_qt: 0,
         pro_price: 0,

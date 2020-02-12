@@ -126,11 +126,11 @@ class SubOrder(models.Model):
     pro_pack = models.CharField('产品包装', max_length=64, default='无')
     pro_desc = models.CharField("详细描述", max_length=400)
     pro_qt = models.DecimalField(
-        verbose_name='数量(个)', max_digits=20, decimal_places=2)
+        verbose_name='数量(个)', max_digits=20, decimal_places=1)
     pro_price = models.DecimalField(
         verbose_name='单价($)', max_digits=20, decimal_places=4)
     pro_weight = models.DecimalField(
-        verbose_name='单重(g)', max_digits=20, decimal_places=4)
+        verbose_name='单重(g)', max_digits=20, decimal_places=1)
     order_number = models.ForeignKey(OrderCatalog, on_delete=models.CASCADE, verbose_name='订单编号',
                                      related_name='sub_orders')
     sales = models.ForeignKey(UserInfo, verbose_name='业务',
@@ -200,7 +200,7 @@ class PurchaseDetail(models.Model):
     sub_order = models.ForeignKey(
         SubOrder, on_delete=models.CASCADE, verbose_name='订单明细')
     purchase_price = models.DecimalField(
-        '采购单价($)', max_digits=20, decimal_places=4, default=0)
+        '采购单价(¥)', max_digits=20, decimal_places=2, default=0)
     purchase_qt = models.DecimalField(
         '采购数量(个)', max_digits=20, decimal_places=2, default=0)
     purchase_amount = models.DecimalField(

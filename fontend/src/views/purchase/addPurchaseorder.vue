@@ -103,7 +103,7 @@
         </el-table-column>
         <el-table-column label="订单数量" width="120">
           <template slot-scope="scope">
-            <span>{{ scope.row.pro_qt }}</span>
+            <span>{{ scope.row.pro_qt | toThousandFilter}}</span>
           </template>
         </el-table-column>
         <el-table-column label="产品单价($)" width="100">
@@ -118,7 +118,7 @@
         </el-table-column>
         <el-table-column label="订单金额($)" width="120">
           <template slot-scope="scope">
-            <span>{{scope.row.sub_amount}}</span>
+            <span>{{scope.row.sub_amount | toThousandFilter}}</span>
           </template>
         </el-table-column>
         <el-table-column label="采购数量" width="120">
@@ -126,14 +126,24 @@
             <el-input v-model="scope.row.purchase_qt"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="采购单价($)" width="100">
+        <el-table-column label="采购单价(¥)" width="100">
           <template slot-scope="scope">
             <el-input v-model="scope.row.purchase_price" @blur="subAmount(scope.row)"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="采购金额($)" width="120" prop="purchase_amount">
+        <el-table-column label="采购金额(¥)" width="120" prop="purchase_amount">
           <template slot-scope="scope">
             <el-input v-model="scope.row.purchase_amount"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label="采购毛利(¥)" width="100" prop="profit_rmb">
+          <template slot-scope="scope">
+            <span>{{scope.row.profit_rmb | toThousandFilter}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="采购毛利($)" width="100" prop="profit_usd">
+          <template slot-scope="scope">
+            <span>{{scope.row.profit_usd | toThousandFilter}}</span>
           </template>
         </el-table-column>
         <el-table-column label="备注" width="140">
@@ -233,6 +243,14 @@ export default {
             purchase_qt: el.purchase_qt,
             purchase_price: el.purchase_price,
             purchase_amount: el.purchase_amount,
+            profit_rmb: (
+              el.sub_order.sub_amount * el.sub_order.order_number.ex_rate -
+              el.purchase_amount
+            ).toFixed(2),
+            profit_usd: (
+              el.sub_order.sub_amount -
+              el.purchase_amount / el.sub_order.order_number.ex_rate
+            ).toFixed(2),
             text: el.text,
             id: el.id
           })
@@ -277,12 +295,39 @@ export default {
     addNewPurchaseDetail() {
       this.subdialogVisable = false
       this.subOrderData.forEach(el => {
-        this.subPurchaseOrderData.push(el)
+        this.subPurchaseOrderData.push({
+          order_number: el.order_number,
+          pro_name: el.pro_name,
+          pro_size: el.pro_size,
+          pro_color: el.pro_color,
+          pro_pack: el.pro_pack,
+          pro_desc: el.pro_desc,
+          pro_qt: el.pro_qt,
+          pro_price: el.pro_price,
+          pro_weight: el.pro_weight,
+          sub_amount: el.sub_amount,
+          purchase_qt: el.pro_qt,
+          purchase_price: '',
+          purchase_amount: '',
+          profit_rmb: '',
+          profit_usd: '',
+          text: '选填',
+          status: 1,
+          id: el.id
+        })
       })
     },
     //合计采购金额
     subAmount(row) {
-      row.purchase_amount = row.purchase_qt * row.purchase_price
+      row.purchase_amount = row.purchase_qt * row.purchase_price * 1
+      row.profit_rmb = (
+        row.sub_amount * row.order_number.ex_rate -
+        row.purchase_amount
+      ).toFixed(2)
+      row.profit_usd = (
+        row.sub_amount -
+        row.purchase_amount / row.order_number.ex_rate
+      ).toFixed(2)
     },
     submitPurchaseDetail() {
       if (
@@ -377,7 +422,6 @@ export default {
           })
           //TODO:这里不会删除subtoken???
           promise.then(res => {
-            console.log('123456')
             delSubtoken()
           })
         }
@@ -411,8 +455,6 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            console.log(index)
-            console.log(row)
             this.subPurchaseOrderData.splice(index, 1)
             patchPurchaseDetail(row.id, { is_delete: 0 }).then(res => {
               this.$message({

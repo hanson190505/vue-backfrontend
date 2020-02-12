@@ -83,7 +83,8 @@ MIDDLEWARE = [
 # 跨域设置
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:8080",
-    "http://192.168.3.45:8080"
+    "http://192.168.3.45:8080",
+    "http://192.168.3.45:5000"
 ]
 
 CORS_ALLOW_HEADERS = [

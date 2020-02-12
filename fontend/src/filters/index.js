@@ -1,5 +1,9 @@
 // import parseTime, formatTime and set to filter
-export { parseTime, formatTime } from '@/utils'
+export {
+  parseTime,
+  formatTime
+}
+from '@/utils'
 
 /**
  * Show plural label if time is plural number
@@ -35,13 +39,30 @@ export function timeAgo(time) {
  * @param {number} digits
  */
 export function numberFormatter(num, digits) {
-  const si = [
-    { value: 1E18, symbol: 'E' },
-    { value: 1E15, symbol: 'P' },
-    { value: 1E12, symbol: 'T' },
-    { value: 1E9, symbol: 'G' },
-    { value: 1E6, symbol: 'M' },
-    { value: 1E3, symbol: 'k' }
+  const si = [{
+      value: 1E18,
+      symbol: 'E'
+    },
+    {
+      value: 1E15,
+      symbol: 'P'
+    },
+    {
+      value: 1E12,
+      symbol: 'T'
+    },
+    {
+      value: 1E9,
+      symbol: 'G'
+    },
+    {
+      value: 1E6,
+      symbol: 'M'
+    },
+    {
+      value: 1E3,
+      symbol: 'k'
+    }
   ]
   for (let i = 0; i < si.length; i++) {
     if (num >= si[i].value) {
@@ -56,7 +77,7 @@ export function numberFormatter(num, digits) {
  * @param {number} num
  */
 export function toThousandFilter(num) {
-  return (+num || 0).toString().replace(/^-?\d+/g, m => m.replace(/(?=(?!\b)(\d{3})+$)/g, ','))
+  return (+num || 0).toFixed(2).toString().replace(/^-?\d+/g, m => m.replace(/(?=(?!\b)(\d{3})+$)/g, ','))
 }
 
 /**

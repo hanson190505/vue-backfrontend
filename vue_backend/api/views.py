@@ -109,7 +109,7 @@ class SubOrderViewSet(ModelViewSet):
 
     def get_queryset(self):
         param = self.request.query_params.get('param')
-        print(param)
+        # print(param)
         if param:
             # return self.queryset.filter(order_number__order_number__iexact=param).all()
             return self.queryset.filter(Q(order_number__order_number__icontains=param) |
@@ -195,7 +195,7 @@ class PurchaseDetailViewSet(ModelViewSet):
             }
             return Response(data)
         else:
-            print(request.data)
+            # print(request.data)
             serializer = PostPurchaseDetailSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)

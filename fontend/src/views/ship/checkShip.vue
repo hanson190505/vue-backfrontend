@@ -114,7 +114,7 @@
         </el-table-column>
         <el-table-column label="出货重量(kg)" width="120" prop="ship_weight">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.ship_weight" :disabled="rowChange(scope.row)"></el-input>
+            <el-input v-model="scope.row.ship_weight"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="出货费用(¥)" width="100" prop="ship_cost">
@@ -124,7 +124,7 @@
         </el-table-column>
         <el-table-column label="操作" width="120" align="center">
           <template slot-scope="scope">
-            <el-button @click="changeShipDetail(scope.row)" type="text" size="mini">修改</el-button>
+            <!-- <el-button @click="changeShipDetail(scope.row)" type="text" size="mini">修改</el-button> -->
             <el-button @click="handleDelete(scope.$index, scope.row)" type="text" size="mini">删除</el-button>
           </template>
         </el-table-column>
@@ -209,18 +209,18 @@ export default {
       getSubToken()
     },
     //修改出货明细
-    rowChange(row) {
-      //通过动态添加属性来返回布尔值,确定是否能修改
-      if (row.change) {
-        return false
-      } else {
-        return true
-      }
-    },
-    changeShipDetail(row) {
-      //通过动态增加属性
-      row.change = 1
-    },
+    // rowChange(row) {
+    //   //通过动态添加属性来返回布尔值,确定是否能修改
+    //   if (row.change) {
+    //     return false
+    //   } else {
+    //     return true
+    //   }
+    // },
+    // changeShipDetail(row) {
+    //   //通过动态增加属性
+    //   row.change = 1
+    // },
     checkShip(pk) {
       this.checkshipDisplay = true
       getShipOrderPK(pk).then(res => {
