@@ -54,6 +54,21 @@
           <span>{{ proType[scope.row.pro_item - 1] }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="产品尺寸" align="center" width="120">
+        <template slot-scope="scope">
+          <span class="col-cont" v-html="showDate(scope.row.pro_size)"></span>
+        </template>
+      </el-table-column>
+      <el-table-column label="产品颜色" align="center" width="120">
+        <template slot-scope="scope">
+          <span class="col-cont" v-html="showDate(scope.row.pro_color)"></span>
+        </template>
+      </el-table-column>
+      <el-table-column label="产品包装" align="center" width="120">
+        <template slot-scope="scope">
+          <span class="col-cont" v-html="showDate(scope.row.pro_pack)"></span>
+        </template>
+      </el-table-column>
       <el-table-column label="产品描述" align="center" width="140" :show-overflow-tooltip="true">
         <template slot-scope="scope">
           <span class="col-cont" v-html="showDate(scope.row.pro_desc)"></span>

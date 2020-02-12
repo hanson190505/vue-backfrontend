@@ -12,15 +12,15 @@ class FileUploadView(APIView):
     authentication_classes = UploadTokenAuthentication,
 
     def post(self, request, *args, **kwargs):
-        print(request.data)
+        # print(request.data)
         allow_suffix = ['jpg', 'jpeg', 'png']
         file_serializer = ImageSerializer(data=request.data)
         file_name = request.data['file'].name
         file_suffix = file_name.split('.')[-1]
-        print(file_suffix)
+        # print(file_suffix)
         if file_suffix not in allow_suffix:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        print(type(request.data['file']))
+        # print(type(request.data['file']))
         # a = 'hanson.jpg'
         # a.lstrip('.')
         # request.data['file'].name = 'hanson.jpg'

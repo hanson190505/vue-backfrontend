@@ -121,6 +121,9 @@ class SubOrder(models.Model):
     ]
     pro_name = models.CharField("产品名称", max_length=50)
     pro_item = models.IntegerField('产品类别', choices=PRO_ITEM)
+    pro_size = models.CharField('产品尺寸', max_length=64, default=0)
+    pro_color = models.CharField('产品颜色', max_length=64, default='color')
+    pro_pack = models.CharField('产品包装', max_length=64, default='无')
     pro_desc = models.CharField("详细描述", max_length=400)
     pro_qt = models.DecimalField(
         verbose_name='数量(个)', max_digits=20, decimal_places=2)

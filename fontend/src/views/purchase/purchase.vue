@@ -12,7 +12,7 @@
 import purchaseHeader from './purchaseHeader'
 // import addPurchaseorder from './addPurchaseorder'
 import purchaseOrder from './purchaseOrder'
-import purchaseDetail from './purchaseDetail'
+// import purchaseDetail from './purchaseDetail'
 export default {
   data() {
     return {
@@ -23,8 +23,8 @@ export default {
   components: {
     purchaseHeader,
     // addPurchaseorder,
-    purchaseOrder,
-    purchaseDetail
+    purchaseOrder
+    // purchaseDetail
   },
   methods: {},
   computed: {},

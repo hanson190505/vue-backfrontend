@@ -11,7 +11,7 @@ module.exports = {
     assetsDir: 'static',
     devServer: {
         port: 8080,
-        host: "localhost",
+        // host: "localhost",
         https: false,
         // 自动启动浏览器
         open: false,

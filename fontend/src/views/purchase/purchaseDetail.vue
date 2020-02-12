@@ -90,7 +90,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <add-purchaseorder ref="purchasePage"></add-purchaseorder>
+    <add-purchase ref="addpurchase"></add-purchase>
     <!-- 分页 -->
     <pagi-nation @pagination="pagination" :getDataTotal="purchaseDetail.count"></pagi-nation>
   </div>
@@ -106,7 +106,7 @@ export default {
   components: {
     pagiNation,
     backendSearchVue,
-    addPurchaseorder
+    'add-purchase': addPurchaseorder
   },
   data() {
     return {
@@ -133,7 +133,7 @@ export default {
     addRow() {},
     //查看订单明细
     checkPurchaseDetail(row) {
-      this.$refs.purchasePage.purchaseDetaiCheck(row)
+      this.$refs.addpurchase.purchaseDetaiCheck(row)
     },
     //如果采购数量大于订单数量,则标记采购数量数据
     markData(row) {

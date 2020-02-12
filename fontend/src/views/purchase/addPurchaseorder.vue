@@ -81,7 +81,22 @@
             <span>{{ scope.row.pro_name }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="产品描述" width="150">
+        <el-table-column label="产品尺寸" width="120">
+          <template slot-scope="scope">
+            <span>{{ scope.row.pro_size }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="产品颜色" width="120">
+          <template slot-scope="scope">
+            <span>{{ scope.row.pro_color }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="产品包装" width="120">
+          <template slot-scope="scope">
+            <span>{{ scope.row.pro_pack }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="产品描述" width="120">
           <template slot-scope="scope">
             <span>{{ scope.row.pro_desc }}</span>
           </template>
@@ -158,7 +173,7 @@ import {
   patchPurchaseDetail
 } from '@/api/purchase'
 import suborderDetail from '../order/suborderdetail'
-import purchaseDetail from './purchaseDetail'
+// import purchaseDetail from './purchaseDetail'
 export default {
   name: 'addPurchaseorder',
   components: {
@@ -207,6 +222,9 @@ export default {
           this.subPurchaseOrderData.push({
             order_number: el.sub_order.order_number,
             pro_name: el.sub_order.pro_name,
+            pro_size: el.sub_order.pro_size,
+            pro_color: el.sub_order.pro_color,
+            pro_pack: el.sub_order.pro_pack,
             pro_desc: el.sub_order.pro_desc,
             pro_qt: el.sub_order.pro_qt,
             pro_price: el.sub_order.pro_price,
@@ -239,7 +257,10 @@ export default {
     handleClose(done) {
       this.$confirm('确认关闭？')
         .then(_ => {
-          done()
+          ;(this.addPurchaseData = {}),
+            (this.subPurchaseOrderData = []),
+            (this.subOrderData = []),
+            done()
         })
         .catch(_ => {})
     },

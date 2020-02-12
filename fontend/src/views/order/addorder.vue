@@ -23,12 +23,11 @@
                   <el-select
                     v-model="orderData.customer"
                     filterable
-                    :filter-method="customerFilter"
                     placeholder="请选择"
                     @visible-change="selectTest"
                   >
                     <el-option
-                      v-for="item in customerList"
+                      v-for="item in customerData"
                       :key="item.lite_name"
                       :label="item.lite_name"
                       :value="item.lite_name"
@@ -141,7 +140,25 @@
               <span v-else>{{ options[scope.row.pro_item - 1].label }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="描述" width="400">
+          <el-table-column label="产品尺寸" width="120">
+            <template slot-scope="scope">
+              <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_size"></el-input>
+              <span v-else>{{ scope.row.pro_size }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="产品颜色" width="120">
+            <template slot-scope="scope">
+              <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_color"></el-input>
+              <span v-else>{{ scope.row.pro_color }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="产品包装" width="120">
+            <template slot-scope="scope">
+              <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_pack"></el-input>
+              <span v-else>{{ scope.row.pro_pack }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="详细说明" width="150">
             <template slot-scope="scope">
               <el-input
                 v-if="scope.row.status"
@@ -224,7 +241,6 @@ export default {
     return {
       //客户表数据
       customerData: [],
-      customerList: [],
       orderData: {
         order_number: '',
         customer: '',
@@ -273,7 +289,7 @@ export default {
       imgdialogVisible: false,
       //图片上传附加数据
       uploadData: {
-        token: window.sessionStorage.getItem('token')
+        token: window.localStorage.getItem('token')
       }
     }
   },
@@ -283,7 +299,7 @@ export default {
       this.imgdialogVisible = true
     },
     beforeRemove() {},
-    handleRemove() {},
+    handleRemove(file) {},
     //图片上传成功后的返回结果
     uploadSuccess(res) {
       console.log(res.file)
@@ -384,6 +400,9 @@ export default {
         let newValue = {
           pro_name: '',
           pro_item: 1,
+          pro_size: '',
+          pro_color: '',
+          pro_pack: '',
           pro_desc: '',
           pro_qt: 0,
           pro_price: 0,
@@ -402,6 +421,9 @@ export default {
       let newValue = {
         pro_name: '',
         pro_item: 1,
+        pro_size: '',
+        pro_color: '',
+        pro_pack: '',
         pro_desc: '',
         pro_qt: 0,
         pro_price: 0,
@@ -420,19 +442,19 @@ export default {
     subAmount(row) {
       row.sub_amount = row.pro_price * row.pro_qt * 1
     },
-    //控制下拉菜单显示数量
-    customerFilter(query = '') {
-      let arr = this.customerData.filter(item => {
-        return (
-          item.lite_name.includes(query) || item.contact_name.includes(query)
-        )
-      })
-      if (arr.length > 50) {
-        this.customerList = arr.slice(0, 50)
-      } else {
-        this.customerList = arr
-      }
-    },
+    //控制客户名称下拉菜单显示数量
+    // customerFilter(query = '') {
+    //   let arr = this.customerData.filter(item => {
+    //     return (
+    //       item.lite_name.includes(query) || item.contact_name.includes(query)
+    //     )
+    //   })
+    //   if (arr.length > 50) {
+    //     this.customerList = arr.slice(0, 50)
+    //   } else {
+    //     this.customerList = arr
+    //   }
+    // },
     //客户名称选择时,调用后台客户数据
     selectTest(v) {
       if (v === true) {
