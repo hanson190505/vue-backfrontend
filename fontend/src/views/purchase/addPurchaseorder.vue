@@ -7,17 +7,19 @@
       <el-form :model="addPurchaseData" ref="addPurchaseData" label-width="80px">
         <el-row>
           <el-col :span="6">
-            <el-form-item label="采购单号">
-              <el-input v-model="addPurchaseData.purchase_number" placeholder></el-input>
+            <el-form-item label="采购单号:">
+              <el-input v-model="addPurchaseData.purchase_number" v-show="purchaserShow"></el-input>
+              <span v-show="!purchaserShow">{{addPurchaseData.purchase_number}}</span>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="供应商">
+            <el-form-item label="供应商:">
               <el-select
                 v-model="addPurchaseData.purchaser"
                 filterable
                 placeholder="请选择"
                 @visible-change="selectTest"
+                v-show="purchaserShow"
               >
                 <el-option
                   v-for="item in customerData"
@@ -26,10 +28,11 @@
                   :value="item.lite_name"
                 ></el-option>
               </el-select>
+              <span v-show="!purchaserShow">{{purchaser}}</span>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="采购日期">
+            <el-form-item label="采购日期:">
               <el-date-picker
                 v-model="addPurchaseData.purchase_date"
                 type="date"
@@ -39,7 +42,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="采购交期">
+            <el-form-item label="采购交期:">
               <el-date-picker
                 v-model="addPurchaseData.deliver_date"
                 type="date"
@@ -51,7 +54,7 @@
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item label="备注">
+            <el-form-item label="备注:">
               <el-input type="textarea" :rows="2" v-model="addPurchaseData.text" placeholder="选填"></el-input>
             </el-form-item>
             <!-- <el-form-item>
@@ -93,6 +96,11 @@
             <span>{{scope.row.pro_price}}</span>
           </template>
         </el-table-column>
+        <el-table-column label="产品重量(g)" width="100">
+          <template slot-scope="scope">
+            <span>{{scope.row.pro_weight}}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="订单金额($)" width="120">
           <template slot-scope="scope">
             <span>{{scope.row.sub_amount}}</span>
@@ -108,7 +116,7 @@
             <el-input v-model="scope.row.purchase_price" @blur="subAmount(scope.row)"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="采购金额($)" width="120">
+        <el-table-column label="采购金额($)" width="120" prop="purchase_amount">
           <template slot-scope="scope">
             <el-input v-model="scope.row.purchase_amount"></el-input>
           </template>
@@ -130,7 +138,7 @@
         <suborder-detail @getSelectSuborder="getSelectSuborder"></suborder-detail>
         <!-- <suborder-detail></suborder-detail> -->
         <span slot="footer">
-          <el-button @click="subdialogVisable = false">确 定</el-button>
+          <el-button @click="addNewPurchaseDetail">确 定</el-button>
         </span>
       </el-dialog>
     </el-dialog>
@@ -143,7 +151,12 @@ import { getCustomer } from '@/api/customer'
 import { postPurchase } from '@/api/purchase'
 import { getSubToken, delSubtoken } from '@/api/token'
 import { makeOrderNumber } from '../../utils/makeOrderNumber'
-import { postPurchaseDetail, getPurchaseDetail } from '@/api/purchase'
+import {
+  postPurchaseDetail,
+  getPurchaseDetail,
+  patchPurchase,
+  patchPurchaseDetail
+} from '@/api/purchase'
 import suborderDetail from '../order/suborderdetail'
 import purchaseDetail from './purchaseDetail'
 export default {
@@ -159,11 +172,56 @@ export default {
       addPurchaseData: {},
       subdialogVisable: false,
       subPurchaseOrderData: [],
-      subOrderData: []
+      subOrderData: [],
+      purchaserShow: true,
+      purchaser: '',
+      isAdd: true
       //传递给订单明细表,控制显示参数
     }
   },
   methods: {
+    //从采购明细打开
+    purchaseDetaiCheck(row) {
+      this.dialogVisible = true
+      this.purchaserShow = false
+      this.isAdd = false
+      this.addPurchaseData = row.purchase_number
+      this.purchaser = row.purchase_number.purchaser.lite_name
+      this.getPurchaseDetaiData({
+        purchase_number: row.purchase_number.purchase_number
+      })
+    },
+    //获取查看采购时的采购单号
+    getPurchaseNumber(row) {
+      this.dialogVisible = true
+      this.purchaserShow = false
+      this.isAdd = false
+      this.addPurchaseData = row
+      this.purchaser = row.purchaser.lite_name
+      this.getPurchaseDetaiData({ purchase_number: row.purchase_number })
+    },
+    //通过采购单号获取采购明细
+    getPurchaseDetaiData(num) {
+      getPurchaseDetail(num).then(res => {
+        res.data.forEach(el => {
+          this.subPurchaseOrderData.push({
+            order_number: el.sub_order.order_number,
+            pro_name: el.sub_order.pro_name,
+            pro_desc: el.sub_order.pro_desc,
+            pro_qt: el.sub_order.pro_qt,
+            pro_price: el.sub_order.pro_price,
+            pro_weight: el.sub_order.pro_weight,
+            sub_amount: el.sub_order.sub_amount,
+            purchase_qt: el.purchase_qt,
+            purchase_price: el.purchase_price,
+            purchase_amount: el.purchase_amount,
+            text: el.text,
+            id: el.id
+          })
+        })
+      })
+    },
+    //新增采购按钮
     addNewPurchase() {
       this.dialogVisible = true
       getSubToken()
@@ -185,19 +243,24 @@ export default {
         })
         .catch(_ => {})
     },
-    getSelectSuborder(selectSuborder) {
-      console.log(selectSuborder)
-      this.subPurchaseOrderData = selectSuborder
-      // console.log(this.subPurchaseOrderData)
-    },
+    //新增采购明细按钮
     addPurchaseDetail() {
       this.subdialogVisable = true
       getSubToken()
     },
-    addRow() {},
+    //选择订单明细
+    getSelectSuborder(selectSuborder) {
+      this.subOrderData = selectSuborder
+    },
+    //选择订单明细后,确定新增采购明细
+    addNewPurchaseDetail() {
+      this.subdialogVisable = false
+      this.subOrderData.forEach(el => {
+        this.subPurchaseOrderData.push(el)
+      })
+    },
     //合计采购金额
     subAmount(row) {
-      console.log(row)
       row.purchase_amount = row.purchase_qt * row.purchase_price
     },
     submitPurchaseDetail() {
@@ -212,38 +275,84 @@ export default {
           this.$message.error('请勿重复提交,或刷新重试')
         } else {
           let promise = new Promise((resolve, reject) => {
-            this.$store
-              .dispatch('purchaseStore/addPurchaseOrder', this.addPurchaseData)
-              .then(res => {
-                resolve(res)
+            if (!this.isAdd) {
+              patchPurchase(
+                this.addPurchaseData.purchase_number,
+                this.addPurchaseData
+              ).then(res => {
                 for (const i of this.subPurchaseOrderData) {
-                  i.purchase_number = this.addPurchaseData.purchase_number
-                  i.sub_order = i.id
-                  postPurchaseDetail(i)
-                    .then(res => {
-                      patchSubOrder(i.id, '', { is_purchase: 0 }).then(res => {
-                        this.$notify({
-                          title: 'succsess',
-                          message: `${i.order_number.order_number}-${i.pro_name}提交成功`,
-                          type: 'success'
+                  if (!i.status) {
+                    patchPurchaseDetail(i.id, i).then(res => {
+                      this.$notify({
+                        title: 'succsess',
+                        message: `${i.order_number.order_number}-${i.pro_name}修改成功`,
+                        type: 'success'
+                      })
+                    })
+                  } else {
+                    i.purchase_number = this.addPurchaseData.purchase_number
+                    i.sub_order = i.id
+                    postPurchaseDetail(i)
+                      .then(res => {
+                        patchSubOrder(i.id, '', { is_purchase: 0 }).then(
+                          res => {
+                            this.$notify({
+                              title: 'succsess',
+                              message: `${i.order_number.order_number}-${i.pro_name}提交成功`,
+                              type: 'success'
+                            })
+                          }
+                        )
+                      })
+                      .catch(error => {
+                        this.$notify.error({
+                          title: 'error',
+                          message: `${i.order_number.order_number}-${i.pro_name} 提交失败,请刷新重录`,
+                          duration: 0
                         })
                       })
-                    })
-                    .catch(error => {
-                      this.$notify.error({
-                        title: 'error',
-                        message: `${i.order_number.order_number}-${i.pro_name} 提交失败,请刷新重录`,
-                        duration: 0
-                      })
-                    })
+                  }
                 }
               })
-              .catch(error => {
-                this.$notify.error({
-                  title: 'error',
-                  message: '提交失败!请刷新重试'
+            } else {
+              this.$store
+                .dispatch(
+                  'purchaseStore/addPurchaseOrder',
+                  this.addPurchaseData
+                )
+                .then(res => {
+                  resolve(res)
+                  for (const i of this.subPurchaseOrderData) {
+                    i.purchase_number = this.addPurchaseData.purchase_number
+                    i.sub_order = i.id
+                    postPurchaseDetail(i)
+                      .then(res => {
+                        patchSubOrder(i.id, '', { is_purchase: 0 }).then(
+                          res => {
+                            this.$notify({
+                              title: 'succsess',
+                              message: `${i.order_number.order_number}-${i.pro_name}提交成功`,
+                              type: 'success'
+                            })
+                          }
+                        )
+                      })
+                      .catch(error => {
+                        this.$notify.error({
+                          title: 'error',
+                          message: `${i.order_number.order_number}-${i.pro_name} 提交失败,请刷新重录`,
+                          duration: 0
+                        })
+                      })
+                  }
                 })
-              })
+                .catch(error => {
+                  this.$notify.error({
+                    title: 'error',
+                    message: '提交失败!请刷新重试'
+                  })
+                })
+            }
           })
           //TODO:这里不会删除subtoken???
           promise.then(res => {
@@ -255,7 +364,49 @@ export default {
     },
     // 删除明细
     handleDelete(index, row) {
-      this.subPurchaseOrderData.splice(index, 1)
+      if (!row.hasOwnProperty('id')) {
+        this.$confirm('数据未保存,确定删除?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            this.subPurchaseOrderData.splice(index, 1)
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            })
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            })
+          })
+      } else {
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            console.log(index)
+            console.log(row)
+            this.subPurchaseOrderData.splice(index, 1)
+            patchPurchaseDetail(row.id, { is_delete: 0 }).then(res => {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              })
+            })
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            })
+          })
+      }
     }
   },
   watch: {},

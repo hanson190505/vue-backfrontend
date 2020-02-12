@@ -30,7 +30,6 @@ const actions = {
             getPurchaseOrder(params).then(res => {
                 commit('SET_PURCHASE', res.data)
                 resolve(res)
-                // console.log(res);
             }).catch(error => {
                 reject(error)
             })

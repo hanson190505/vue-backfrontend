@@ -28,6 +28,8 @@ const actions = {
             login(loginform).then(res => {
                 commit('SET_NAME', res.data.name)
                 commit('SET_TOKEN', res.data.token)
+                window.localStorage.setItem('name', res.data.name)
+                window.localStorage.setItem('token', res.data.token)
                 resolve(res)
             }).catch(error => {
                 reject(error)
@@ -40,12 +42,27 @@ const actions = {
         try {
             return new Promise((resolve, reject) => {
                 commit('REMOVE_USER');
+                window.localStorage.removeItem('name')
+                window.localStorage.removeItem('token')
                 resolve();
             });
         } catch (error) {
             reject(error);
         }
-    }
+    },
+    // async saveUser({
+    //     commit
+    // }, name, token) {
+    //     try {
+    //         return new Promise((resolve, reject) => {
+    //             commit('SET_NAME', name);
+    //             commit('SET_TOKEN', token);
+    //             resolve();
+    //         });
+    //     } catch (error) {
+    //         reject(error);
+    //     }
+    // }
 }
 
 export default {

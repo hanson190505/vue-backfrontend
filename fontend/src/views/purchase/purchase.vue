@@ -1,7 +1,7 @@
 <template>
   <div>
     <purchase-header></purchase-header>
-    <add-purchaseorder></add-purchaseorder>
+    <!-- <add-purchaseorder></add-purchaseorder> -->
     <purchase-order></purchase-order>
     <!-- <purchase-detail></purchase-detail> -->
   </div>
@@ -10,7 +10,7 @@
 <script>
 // import { getPurchaseOrder } from '../../api/purchase'
 import purchaseHeader from './purchaseHeader'
-import addPurchaseorder from './addPurchaseorder'
+// import addPurchaseorder from './addPurchaseorder'
 import purchaseOrder from './purchaseOrder'
 import purchaseDetail from './purchaseDetail'
 export default {
@@ -22,7 +22,7 @@ export default {
   },
   components: {
     purchaseHeader,
-    addPurchaseorder,
+    // addPurchaseorder,
     purchaseOrder,
     purchaseDetail
   },

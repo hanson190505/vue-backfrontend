@@ -8,7 +8,11 @@
     </el-breadcrumb>
     <el-row>
       <el-col :span="6">
-        <el-input v-model="search" size="mini" placeholder="关键字搜索:/客户/联系人/主营业务" />
+        <el-input
+          v-model="search"
+          size="mini"
+          placeholder="关键字搜索:/客户/联系人/主营业务"
+        />
       </el-col>
       <el-col :span="2">
         <el-button type="primary" @click="clearnSearchText">清除</el-button>
@@ -41,17 +45,26 @@
       </el-table-column>
       <el-table-column label="联系人" align="center" width="120">
         <template slot-scope="scope">
-          <span class="col-cont" v-html="showDate(scope.row.contact_name)"></span>
+          <span
+            class="col-cont"
+            v-html="showDate(scope.row.contact_name)"
+          ></span>
         </template>
       </el-table-column>
       <el-table-column label="联系人电话" align="center" width="120">
         <template slot-scope="scope">
-          <span class="col-cont" v-html="showDate(scope.row.contact_phone)"></span>
+          <span
+            class="col-cont"
+            v-html="showDate(scope.row.contact_phone)"
+          ></span>
         </template>
       </el-table-column>
       <el-table-column label="联系人邮箱" align="center" width="200">
         <template slot-scope="scope">
-          <span class="col-cont" v-html="showDate(scope.row.contact_email)"></span>
+          <span
+            class="col-cont"
+            v-html="showDate(scope.row.contact_email)"
+          ></span>
         </template>
       </el-table-column>
       <el-table-column label="合作状态" prop="status" width="70">
@@ -89,7 +102,7 @@
 </template>
 
 <script>
-import { request } from '../../network/rquest'
+import { request } from '@/network/rquest'
 import addCustomer from '../customers/addcustomer'
 import ReCustomer from './recustomer'
 export default {
@@ -222,5 +235,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

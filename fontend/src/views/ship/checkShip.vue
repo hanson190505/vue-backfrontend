@@ -134,7 +134,7 @@
         <suborder-detail @getSelectSuborder="getSelectSuborder"></suborder-detail>
         <!-- <suborder-detail></suborder-detail> -->
         <span slot="footer">
-          <el-button @click="subdialogVisable = false">确 定</el-button>
+          <el-button @click="handleSelectSuborder">确 定</el-button>
         </span>
       </el-dialog>
     </el-dialog>
@@ -142,7 +142,7 @@
 </template>
 
 <script>
-import suborderDetail from '@/components/order/suborderdetail'
+import suborderDetail from '@/views/order/suborderdetail'
 import { getSubToken, delSubtoken } from '@/api/token'
 import { getCustomer } from '@/api/customer'
 import {
@@ -248,11 +248,19 @@ export default {
         .catch(_ => {})
     },
     //选择订单明细
-    getSelectSuborder(selectSuborder) {
-      selectSuborder.forEach(el => {
+    getSelectSuborder(row) {
+      // row.forEach(el => {
+      //   this.shipDetailData.push({ sub_order: el })
+      // })
+      this.subOrderData = row
+      // console.log(this.shipDetailData)
+    },
+    //处理选中的订单明细
+    handleSelectSuborder() {
+      this.subdialogVisable = false
+      this.subOrderData.forEach(el => {
         this.shipDetailData.push({ sub_order: el })
       })
-      // console.log(this.shipDetailData)
     },
     //新增出货明细
     addShipDetail() {
@@ -338,7 +346,7 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            this.suborderdetail.splice(index, 1)
+            this.shipDetailData.splice(index, 1)
             this.$message({
               type: 'success',
               message: '删除成功!'

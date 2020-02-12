@@ -14,11 +14,7 @@
         inline-message
       >
         <el-form-item prop="username">
-          <el-input
-            placeholder="请输入用户名"
-            prefix-icon="el-icon-user"
-            v-model="loginform.username"
-          ></el-input>
+          <el-input placeholder="请输入用户名" prefix-icon="el-icon-user" v-model="loginform.username"></el-input>
         </el-form-item>
         <el-form-item prop="password">
           <el-input
@@ -85,9 +81,7 @@ export default {
                 case 2000:
                   //要用catch捕获这个错误,不然会报错,用replace不能跳转,会报错
                   // window.sessionStorage.setItem('token', res.data.token)
-                  this.$router.replace('/dash').catch(err => {
-                    console.log('all good')
-                  })
+                  this.$router.replace('/dash').catch(err => {})
                   this.$message.success('登录成功')
                   // this.$store.state.username = loginform.username
                   break

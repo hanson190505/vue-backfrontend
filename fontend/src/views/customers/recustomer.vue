@@ -4,7 +4,7 @@
     <el-dialog
       :visible.sync="reCustomerDia"
       width="40%"
-      :modal-append-to-body="false"
+      :append-to-body="true"
       :before-close="beforeClose"
     >
       <el-form
@@ -190,8 +190,11 @@ export default {
             data: qs.stringify(this.customerData)
           })
             .then(res => {
-              this.formDisabled = false
-              alert('submit!')
+              this.formDisabled = true
+              this.$message({
+                message: '修改成功',
+                type: 'success'
+              })
             })
             .catch(res => {
               this.$message({

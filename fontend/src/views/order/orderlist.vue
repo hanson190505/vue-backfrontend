@@ -119,7 +119,7 @@
 
 <script>
 import AddOrder from './addorder'
-import { getOrderList } from '../../api/order'
+import { getOrderList } from '@/api/order'
 export default {
   components: {
     AddOrder
@@ -272,11 +272,13 @@ export default {
     },
     //请求订单数据
     getOrderList() {
-      getOrderList().then(res => {
-        this.loading = false
-        this.tableData = res.data
-        this.count = res.data.length
-      })
+      getOrderList()
+        .then(res => {
+          this.loading = false
+          this.tableData = res.data
+          this.count = res.data.length
+        })
+        .catch(error => {})
     }
   },
   created() {

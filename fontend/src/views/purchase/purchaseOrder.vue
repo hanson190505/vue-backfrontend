@@ -1,5 +1,6 @@
 <template>
   <div>
+    <add-purchaseorder ref="purchasePage"></add-purchaseorder>
     <el-table
       ref="purchaseOrderTable"
       :data="this.$store.getters.purchaseData.results"
@@ -39,22 +40,24 @@
           <span class="col-cont" v-html="showDate(scope.row.text)"></span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="操作" fixed="right" width="100" align="center">
+      <el-table-column label="操作" fixed="right" width="60" align="center">
         <template slot-scope="scope">
-          <el-button @click="addSubPurchase(scope.row)" type="text" size="mini">新增明细</el-button>
+          <el-button @click="checkPurchaseOrder(scope.row)" type="text" size="mini">查看</el-button>
         </template>
-      </el-table-column>-->
+      </el-table-column>
     </el-table>
     <pagi-nation @pagination="pagination" :getDataTotal="dataTotal"></pagi-nation>
   </div>
 </template>
 
 <script>
-import pagiNation from '../common/pagiNation'
+import pagiNation from '@/components/common/pagiNation'
+import addPurchaseorder from './addPurchaseorder'
 export default {
   name: 'purchaseOrder',
   components: {
-    pagiNation
+    pagiNation,
+    addPurchaseorder
   },
   data() {
     return {
@@ -77,6 +80,7 @@ export default {
         return val
       }
     },
+    //操作子组件方法,查看采购明细(addPurchaseorder)
     handleCurrentChange(row) {
       this.$store.state.purchase_number = row.id
     },
@@ -97,6 +101,10 @@ export default {
           this.loading = false
           this.dataTotal = res.data.count
         })
+    },
+    //查看采购单
+    checkPurchaseOrder(row) {
+      this.$refs.purchasePage.getPurchaseNumber(row)
     }
   },
   created() {
@@ -105,5 +113,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

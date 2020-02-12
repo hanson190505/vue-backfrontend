@@ -1,5 +1,7 @@
 from django.core.cache import cache
+from rest_framework import exceptions
 from rest_framework.authentication import BaseAuthentication
+from rest_framework.response import Response
 
 
 class UserTokenAuthentication(BaseAuthentication):
@@ -22,6 +24,9 @@ class GetTokenAuthentication(BaseAuthentication):
 		user = cache.get(token)
 		if user:
 			return user, token
+		else:
+			msg = 'Invalid basic header. Credentials string should not contain spaces.'
+			raise exceptions.AuthenticationFailed(msg)
 
 
 class UploadTokenAuthentication(BaseAuthentication):

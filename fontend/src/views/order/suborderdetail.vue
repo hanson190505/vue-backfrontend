@@ -101,8 +101,8 @@
 
 <script>
 import { getSubOrderList } from '@/api/order'
-import backendSearch from '../common/backendSearch'
-import pagiNation from '../common/pagiNation'
+import backendSearch from '@/components/common/backendSearch'
+import pagiNation from '@/components/common/pagiNation'
 export default {
   components: {
     backendSearch,
@@ -119,15 +119,15 @@ export default {
     }
   },
   methods: {
-    //处理选中行事件
-    handleSelect(selection, row) {
+    //单选行事件
+    handleSelect(row) {
       //selection是所有选中行的数据,格式是array
       //row点击选框当前行的数据
       // 第一个参数是在父组件on监听的方法
       // 第二个参数是需要传的值
-      // console.log(selection)
-      this.$emit('getSelectSuborder', selection)
+      this.$emit('getSelectSuborder', row)
     },
+    //全选事件
     // 关键字高亮
     showDate(val) {
       val = val + ''

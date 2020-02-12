@@ -171,8 +171,8 @@ class PurchaseOrderViewSet(ModelViewSet):
 
 
 class PurchaseDetailViewSet(ModelViewSet):
-    """明细视图"""
-    queryset = PurchaseDetail.objects.filter(is_delete=1)
+    """采购明细视图"""
+    queryset = PurchaseDetail.objects.filter(is_delete=1).order_by('id')
     serializer_class = PurchaseDetailSerializer
     authentication_classes = GetTokenAuthentication,
     pagination_class = SubOrderPagination
@@ -202,9 +202,24 @@ class PurchaseDetailViewSet(ModelViewSet):
             headers = self.get_success_headers(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        purchase_number = self.request.query_params.get('purchase_number')
+        page = self.paginate_queryset(queryset)
+        if purchase_number:
+            purchase_list = self.queryset.filter(purchase_number=purchase_number)
+            serializer = self.get_serializer(purchase_list, many=True)
+            return Response(serializer.data)
+        elif page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+
 
 class ShipOrderViewSet(ModelViewSet):
-    queryset = ShipOrder.objects.filter(is_delete=1)
+    queryset = ShipOrder.objects.filter(is_delete=1).order_by('ship_date')
     serializer_class = ShipOrderSerializer
     authentication_classes = GetTokenAuthentication,
     pagination_class = SubOrderPagination
@@ -214,7 +229,7 @@ class ShipOrderViewSet(ModelViewSet):
 
 
 class ShipDetailViewSet(ModelViewSet):
-    queryset = ShipDetail.objects.filter(is_delete=1)
+    queryset = ShipDetail.objects.filter(is_delete=1).order_by('id')
     serializer_class = ShipDetailSerializer
     authentication_classes = GetTokenAuthentication,
     pagination_class = SubOrderPagination

@@ -11,56 +11,56 @@ const routes = [{
   {
     path: '/login',
     name: 'login',
-    component: () => import('../views/login.vue')
+    component: () => import('@/views/login.vue')
   },
   {
     path: '/home',
     name: 'home',
-    component: () => import('../views/home.vue'),
+    component: () => import('@/views/home.vue'),
     children: [{
         path: '/dash',
         name: 'dash',
-        component: () => import('../views/dashboard/'),
+        component: () => import('@/views/dashboard/'),
       },
       {
         path: '/orders',
         name: 'orders',
-        component: () => import('../components/order/orderlist.vue'),
+        component: () => import('@/views/order/orderlist.vue'),
       },
       {
         path: '/orders/:pk',
         name: 'ordersDetail',
-        component: () => import('../components/order/orderdetail.vue'),
+        component: () => import('@/views/order/orderdetail.vue'),
       },
       {
         path: '/suborders',
         name: 'suborders',
-        component: () => import('../components/order/suborderdetail.vue'),
+        component: () => import('@/views/order/suborderdetail.vue'),
       },
       {
         path: '/customers',
         name: 'customers',
-        component: () => import('../components/customers/customerlist.vue'),
+        component: () => import('@/views/customers/customerlist.vue'),
       },
       {
         path: '/purchases',
         name: 'purchases',
-        component: () => import('../components/purchase/purchase.vue'),
+        component: () => import('@/views/purchase/purchase.vue'),
       },
       {
         path: '/purchasedetails',
         name: 'purchasedetails',
-        component: () => import('../components/purchase/purchaseDetail.vue'),
+        component: () => import('@/views/purchase/purchaseDetail.vue'),
       },
       {
         path: '/shiporders',
         name: 'shiporders',
-        component: () => import('../views/ship/ship.vue'),
+        component: () => import('@/views/ship/ship.vue'),
       },
       {
         path: '/shipdetails',
         name: 'shipdetails',
-        component: () => import('../views/ship/shipdetail.vue'),
+        component: () => import('@/views/ship/shipdetail.vue'),
       },
     ]
   },
@@ -80,7 +80,8 @@ router.beforeEach((to, from, next) => {
     return next()
   }
   let tokenStr = store.getters.token
-  if (!tokenStr) {
+  let localToken = window.localStorage.getItem('token')
+  if (!tokenStr && !localToken) {
     return next('/login')
   }
   return next()

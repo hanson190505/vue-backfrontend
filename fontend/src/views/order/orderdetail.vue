@@ -129,6 +129,9 @@
       <el-button type="primary" @click="editOrderDetail" v-show="editOrder">修改订单</el-button>
       <el-button type="warning" @click="saveOrderDetail" v-show="saveOrder">保存订单</el-button>
       <el-button type="primary" @click="addSubOrderRow">新增明细</el-button>
+      <el-button type="primary" @click="purchaseDetail">采购详情</el-button>
+      <el-button type="primary" @click="shipDetail">出货详情</el-button>
+
       <el-table :data="suborderdetail" style="width: 99.9%" show-summary highlight-current-row>
         <!-- <el-table-column type="selection" width="40"></el-table-column> -->
         <el-table-column label="产品名称" width="150">
@@ -211,11 +214,6 @@
               @click="editSubOrderRow(scope.$index,scope.row)"
               v-show="editOrder"
             >修改</el-button>
-            <!-- <el-button
-              type="text"
-              @click="saveSubOrderRow(scope.$index,scope.row)"
-              v-show="saveOrder"
-            >保存</el-button>-->
             <el-button size="mini" type="text" @click="delSubOrderRow(scope.$index, scope.row)">删除</el-button>
             <!-- <el-button type="text" @click="addSubOrderRow(scope.row)">新增</el-button> -->
           </template>
@@ -344,7 +342,6 @@ export default {
       this.formdisabl = true
       this.editOrder = true
       this.saveOrder = false
-      console.log('保存订单')
       patchOrder(this.orderdetail.order_number, '', this.orderdetail)
         .then(res => {
           this.$message('订单修改成功')
@@ -377,7 +374,6 @@ export default {
         this.suborderdetail.forEach(el => {
           if (el.hasOwnProperty('id')) {
             if (el.status === 1) {
-              console.log(el.id)
               patchSubOrder(el.id, '', el).then(() => {
                 el.status = 0
                 this.saveOrderDetail()
@@ -472,7 +468,11 @@ export default {
             })
           })
       }
-    }
+    },
+    //TODO:采购详情
+    purchaseDetail() {},
+    //TODO:出货详情
+    shipDetail() {}
   },
   beforeCreate() {
     let number = window.sessionStorage.getItem('order_number')
@@ -480,8 +480,6 @@ export default {
       this.orderdetail = res.data
       getSubOrderList({ order_number: number }).then(res => {
         this.suborderdetail = res.data
-        console.log(res)
-
         res.data.forEach(el => {
           el.status = 0
         })

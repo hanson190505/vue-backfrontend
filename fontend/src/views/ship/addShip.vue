@@ -125,7 +125,7 @@
 </template>
 
 <script>
-import suborderDetail from '@/components/order/suborderdetail'
+import suborderDetail from '@/views/order/suborderdetail'
 import { getSubToken, delSubtoken } from '@/api/token'
 import { getCustomer } from '@/api/customer'
 import { postShipOrder, postShipDetail } from '@/api/ship'
@@ -257,7 +257,6 @@ export default {
             })
         })
         promise.then(res => {
-          console.log('123456')
           delSubtoken()
         })
       }

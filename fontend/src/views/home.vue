@@ -17,13 +17,9 @@
           <!-- 个人信息区 -->
           <el-col :span="6">
             <div class="userinfo">
-              <a href="http://" target="_blank" rel="noopener noreferrer"
-                >官网</a
-              >
+              <a href="http://" target="_blank" rel="noopener noreferrer">官网</a>
               <span>{{ username }}</span>
-              <el-button type="info" @click="logout" size="medium"
-                >退出</el-button
-              >
+              <el-button type="info" @click="logout" size="medium">退出</el-button>
             </div>
           </el-col>
         </el-row>

@@ -73,7 +73,7 @@ class PurchaseDetailSerializer(serializers.ModelSerializer):
         model = PurchaseDetail
         # exclude = ['is_delete']
         fields = "__all__"
-        depth = 1
+        depth = 2
 
 
 class PostPurchaseDetailSerializer(serializers.ModelSerializer):
