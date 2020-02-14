@@ -16,10 +16,7 @@ class UserTokenAuthentication(BaseAuthentication):
 class GetTokenAuthentication(BaseAuthentication):
 
 	def authenticate(self, request):
-		# print(request.headers)
-		# for i in request.headers:
-		# 	print(i, request.headers[i])
-		# token = request.query_params.get('token')
+		# 这个request是drf封装之后的request
 		token = request.headers['authorization']
 		user = cache.get(token)
 		if user:

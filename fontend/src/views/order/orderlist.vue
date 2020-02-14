@@ -10,7 +10,11 @@
     <!-- 搜索框 -->
     <el-row :gutter="20">
       <el-col :span="6">
-        <el-input v-model="search" size="mini" placeholder="关键字搜索:订单/日期/客户/地址/备注" />
+        <el-input
+          v-model="search"
+          size="mini"
+          placeholder="关键字搜索:订单/日期/客户/地址/备注"
+        />
       </el-col>
       <el-col :span="2">
         <el-button type="primary" @click="clearnSearchText">清除</el-button>
@@ -45,6 +49,7 @@
       border
       show-summary
       highlight-current-row
+      :row-class-name="tableRowClassName"
       style="width=99.9%"
       v-loading="loading"
       element-loading-text="拼命加载中"
@@ -54,12 +59,18 @@
       <el-table-column type="selection" width="40"></el-table-column>
       <el-table-column label="订单编号" align="center" width="120">
         <template slot-scope="scope">
-          <span class="col-cont" v-html="showDate(scope.row.order_number)"></span>
+          <span
+            class="col-cont"
+            v-html="showDate(scope.row.order_number)"
+          ></span>
         </template>
       </el-table-column>
       <el-table-column label="客户名称" width="120" align="center">
         <template slot-scope="scope">
-          <span class="col-cont" v-html="showDate(scope.row.customer.lite_name)"></span>
+          <span
+            class="col-cont"
+            v-html="showDate(scope.row.customer.lite_name)"
+          ></span>
         </template>
       </el-table-column>
       <el-table-column label="下单日期" width="100" align="center">
@@ -67,24 +78,49 @@
           <span class="col-cont" v-html="showDate(scope.row.order_date)"></span>
         </template>
       </el-table-column>
-      <el-table-column label="订单交期" prop="deliver_date" width="100" align="center"></el-table-column>
+      <el-table-column
+        label="订单交期"
+        prop="deliver_date"
+        width="100"
+        align="center"
+      ></el-table-column>
       <el-table-column label="汇率" width="70" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.ex_rate }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="订单金额($)" prop="order_amount" width="100" align="center"></el-table-column>
-      <el-table-column label="出货地址" width="300" :show-overflow-tooltip="true" align="center">
+      <el-table-column
+        label="订单金额($)"
+        prop="order_amount"
+        width="100"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        label="出货地址"
+        width="300"
+        :show-overflow-tooltip="true"
+        align="center"
+      >
         <template slot-scope="scope">
           <span class="col-cont" v-html="showDate(scope.row.ship_addr)"></span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" width="150" :show-overflow-tooltip="true" align="center">
+      <el-table-column
+        label="备注"
+        width="150"
+        :show-overflow-tooltip="true"
+        align="center"
+      >
         <template slot-scope="scope">
           <span class="col-cont" v-html="showDate(scope.row.text)"></span>
         </template>
       </el-table-column>
-      <el-table-column label="业务" prop="sales" width="80" align="center"></el-table-column>
+      <el-table-column
+        label="业务"
+        prop="sales"
+        width="80"
+        align="center"
+      ></el-table-column>
       <el-table-column label="完成状态" align="center">
         <template slot-scope="scope">
           <el-select size="mini" v-model="scope.row.is_done" clearable disabled>
@@ -100,7 +136,9 @@
       <!-- 快捷搜索 -->
       <el-table-column label="操作" fixed="right" width="60" align="center">
         <template slot-scope="scope">
-          <el-button @click="handleClick(scope.row)" type="text" size="mini">查看</el-button>
+          <el-button @click="handleClick(scope.row)" type="text" size="mini"
+            >查看</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -167,14 +205,9 @@ export default {
       },
       Options: [
         { value: 1, label: '未完成' },
-        {
-          value: 2,
-          label: '已完成'
-        },
-        {
-          value: 3,
-          label: '已超期'
-        }
+        { value: 2, label: '已完成' },
+        { value: 3, label: '已超期' },
+        { value: 4, label: '紧急' }
       ],
       // 日期选择器变量
       value2: '',
@@ -279,6 +312,13 @@ export default {
           this.count = res.data.length
         })
         .catch(error => {})
+    },
+    //标记紧急订单
+    tableRowClassName({ row, rowIndex }) {
+      if (row.is_done === 4) {
+        return 'urgency-row'
+      }
+      return ''
     }
   },
   created() {

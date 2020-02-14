@@ -1,18 +1,29 @@
 <template>
   <div>
-    <el-dialog :visible.sync="addshipDisplay" width="90%" :before-close="handleClose">
+    <el-dialog
+      :visible.sync="addshipDisplay"
+      width="90%"
+      :before-close="handleClose"
+    >
       <h3 class="purchase-title">出 货 单</h3>
       <hr />
       <el-form :model="addShipData" ref="addShipData" label-width="80px">
         <el-row>
           <el-col :span="6">
             <el-form-item label="出货单号">
-              <el-input v-model="addShipData.ship_number" placeholder="请输入单号"></el-input>
+              <el-input
+                v-model="addShipData.ship_number"
+                placeholder="请输入单号"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="出货方式">
-              <el-select v-model="addShipData.ship_plan" filterable placeholder="请选择">
+              <el-select
+                v-model="addShipData.ship_plan"
+                filterable
+                placeholder="请选择"
+              >
                 <el-option
                   v-for="item in shipType"
                   :key="item.value"
@@ -63,13 +74,22 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="备注">
-              <el-input type="textarea" v-model="addShipData.text" placeholder="选填"></el-input>
+              <el-input
+                type="textarea"
+                v-model="addShipData.text"
+                placeholder="选填"
+              ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <el-button type="primary" @click="addShipDetail">新增明细</el-button>
-      <el-table :data="shipDetailData" style="width: 99.9%" show-summary highlight-current-row>
+      <el-table
+        :data="shipDetailData"
+        style="width: 99.9%"
+        show-summary
+        highlight-current-row
+      >
         <el-table-column label="订单编号" width="140">
           <template slot-scope="scope">
             <span>{{ scope.row.order_number.order_number }}</span>
@@ -92,7 +112,9 @@
         </el-table-column>
         <el-table-column label="产品重量(kg)" width="100">
           <template slot-scope="scope">
-            <span>{{scope.row.pro_weight*1*scope.row.pro_qt/1000}}</span>
+            <span>{{
+              (scope.row.pro_weight * 1 * scope.row.pro_qt) / 1000
+            }}</span>
           </template>
         </el-table-column>
         <el-table-column label="出货重量(kg)" width="120">
@@ -102,19 +124,30 @@
         </el-table-column>
         <el-table-column label="出货费用(¥)" width="100" prop="ship_cost">
           <template slot-scope="scope">
-            <span>{{scope.row.ship_cost}}</span>
+            <span>{{ scope.row.ship_cost }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="60" align="center">
           <template slot-scope="scope">
-            <el-button @click="handleDelete(scope.$index, scope.row)" type="text" size="mini">删除</el-button>
+            <el-button
+              @click="handleDelete(scope.$index, scope.row)"
+              type="text"
+              size="mini"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
       <el-button type="primary" @click="submitShipData">保 存</el-button>
 
-      <el-dialog :visible.sync="subdialogVisable" width="99%" :append-to-body="true">
-        <suborder-detail @getSelectSuborder="getSelectSuborder"></suborder-detail>
+      <el-dialog
+        :visible.sync="subdialogVisable"
+        width="99%"
+        :append-to-body="true"
+      >
+        <suborder-detail
+          @getSelectSuborder="getSelectSuborder"
+        ></suborder-detail>
         <!-- <suborder-detail></suborder-detail> -->
         <span slot="footer">
           <el-button @click="subdialogVisable = false">确 定</el-button>
@@ -129,7 +162,7 @@ import suborderDetail from '@/views/order/suborderdetail'
 import { getSubToken, delSubtoken } from '@/api/token'
 import { getCustomer } from '@/api/customer'
 import { postShipOrder, postShipDetail } from '@/api/ship'
-import { patchSubOrder } from '@/api/order'
+import { patchSubOrder, patchOrder } from '@/api/order'
 export default {
   name: 'addShip',
   components: {
@@ -149,31 +182,13 @@ export default {
       pre_ship: 0.0,
       shipType: [
         { value: 1, label: 'UPS' },
-        {
-          value: 2,
-          label: 'FedEx'
-        },
-        {
-          value: 3,
-          label: 'DHL'
-        },
+        { value: 2, label: 'FedEx' },
+        { value: 3, label: 'DHL' },
         { value: 4, label: '国内快递' },
-        {
-          value: 5,
-          label: '船运'
-        },
-        {
-          value: 6,
-          label: '自提'
-        },
-        {
-          value: 7,
-          label: '第三方'
-        },
-        {
-          value: 8,
-          label: '其他'
-        }
+        { value: 5, label: '船运' },
+        { value: 6, label: '自提' },
+        { value: 7, label: '第三方' },
+        { value: 8, label: '其他' }
       ]
     }
   },
@@ -232,6 +247,7 @@ export default {
                 postShipDetail(i).then(res => {
                   patchSubOrder(i.id, '', { is_ship: 0 })
                     .then(res => {
+                      // patchOrder(i.order_number, '', { is_done: 1 })
                       this.$notify({
                         title: 'succsess',
                         message: `${i.order_number.order_number} 提交成功`,
@@ -271,5 +287,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

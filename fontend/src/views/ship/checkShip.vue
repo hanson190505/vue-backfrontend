@@ -1,6 +1,10 @@
 <template>
   <div>
-    <el-dialog :visible.sync="checkshipDisplay" width="90%" :before-close="handleClose">
+    <el-dialog
+      :visible.sync="checkshipDisplay"
+      width="90%"
+      :before-close="handleClose"
+    >
       <h3 class="purchase-title">出 货 单</h3>
       <hr />
       <el-form :model="shipOrderData" ref="shipOrderData" label-width="80px">
@@ -64,12 +68,18 @@
         <el-row>
           <el-col :span="6">
             <el-form-item label="重量(kg)">
-              <el-input v-model="shipOrderData.ship_weight" :disabled="shipOrderChange"></el-input>
+              <el-input
+                v-model="shipOrderData.ship_weight"
+                :disabled="shipOrderChange"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="费用(¥)">
-              <el-input v-model="shipOrderData.ship_cost" :disabled="shipOrderChange"></el-input>
+              <el-input
+                v-model="shipOrderData.ship_cost"
+                :disabled="shipOrderChange"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -86,15 +96,35 @@
       </el-form>
       <el-button type="primary" @click="changeShipOrder">修改出货</el-button>
       <el-button type="primary" @click="addShipDetail">新增明细</el-button>
-      <el-table :data="shipDetailData" style="width: 99.9%" show-summary highlight-current-row>
-        <el-table-column label="订单编号" width="140">
+      <el-table
+        :data="shipDetailData"
+        style="width: 99.9%"
+        show-summary
+        highlight-current-row
+      >
+        <el-table-column label="订单编号" width="140" fixed>
           <template slot-scope="scope">
             <span>{{ scope.row.sub_order.order_number.order_number }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="产品名称" width="100">
+        <el-table-column label="产品名称" width="120" fixed>
           <template slot-scope="scope">
             <span>{{ scope.row.sub_order.pro_name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="产品尺寸" width="120" fixed>
+          <template slot-scope="scope">
+            <span>{{ scope.row.sub_order.pro_size }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="产品颜色" width="120" fixed>
+          <template slot-scope="scope">
+            <span>{{ scope.row.sub_order.pro_color }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="产品包装" width="100" fixed>
+          <template slot-scope="scope">
+            <span>{{ scope.row.sub_order.pro_pack }}</span>
           </template>
         </el-table-column>
         <el-table-column label="产品描述" width="150">
@@ -109,7 +139,12 @@
         </el-table-column>
         <el-table-column label="产品重量(kg)" width="100">
           <template slot-scope="scope">
-            <span>{{scope.row.sub_order.pro_weight*1*scope.row.sub_order.pro_qt/1000}}</span>
+            <span>{{
+              (scope.row.sub_order.pro_weight *
+                1 *
+                scope.row.sub_order.pro_qt) /
+                1000
+            }}</span>
           </template>
         </el-table-column>
         <el-table-column label="出货重量(kg)" width="120" prop="ship_weight">
@@ -119,19 +154,30 @@
         </el-table-column>
         <el-table-column label="出货费用(¥)" width="100" prop="ship_cost">
           <template slot-scope="scope">
-            <span>{{(scope.row.ship_weight*pre_ship).toFixed(2)}}</span>
+            <span>{{ (scope.row.ship_weight * pre_ship).toFixed(2) }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="120" align="center">
           <template slot-scope="scope">
             <!-- <el-button @click="changeShipDetail(scope.row)" type="text" size="mini">修改</el-button> -->
-            <el-button @click="handleDelete(scope.$index, scope.row)" type="text" size="mini">删除</el-button>
+            <el-button
+              @click="handleDelete(scope.$index, scope.row)"
+              type="text"
+              size="mini"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
       <el-button type="primary" @click="submitShipData">提 交</el-button>
-      <el-dialog :visible.sync="subdialogVisable" width="99%" :append-to-body="true">
-        <suborder-detail @getSelectSuborder="getSelectSuborder"></suborder-detail>
+      <el-dialog
+        :visible.sync="subdialogVisable"
+        width="99%"
+        :append-to-body="true"
+      >
+        <suborder-detail
+          @getSelectSuborder="getSelectSuborder"
+        ></suborder-detail>
         <!-- <suborder-detail></suborder-detail> -->
         <span slot="footer">
           <el-button @click="handleSelectSuborder">确 定</el-button>
@@ -174,31 +220,13 @@ export default {
       pre_ship: 0.0,
       shipType: [
         { value: 1, label: 'UPS' },
-        {
-          value: 2,
-          label: 'FedEx'
-        },
-        {
-          value: 3,
-          label: 'DHL'
-        },
+        { value: 2, label: 'FedEx' },
+        { value: 3, label: 'DHL' },
         { value: 4, label: '国内快递' },
-        {
-          value: 5,
-          label: '船运'
-        },
-        {
-          value: 6,
-          label: '自提'
-        },
-        {
-          value: 7,
-          label: '第三方'
-        },
-        {
-          value: 8,
-          label: '其他'
-        }
+        { value: 5, label: '船运' },
+        { value: 6, label: '自提' },
+        { value: 7, label: '第三方' },
+        { value: 8, label: '其他' }
       ]
     }
   },
@@ -387,5 +415,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

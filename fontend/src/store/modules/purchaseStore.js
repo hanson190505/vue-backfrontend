@@ -43,7 +43,10 @@ const actions = {
         return new Promise((resolve, reject) => {
             postPurchase(purchaseorder).then(res => {
                 //新增采购单之后,重新获取采购单
-                dispatch('setPurchaseData')
+                dispatch('setPurchaseData', {
+                    page: 1,
+                    page_size: 10
+                })
                 resolve()
             }).catch(error => {
                 reject(error)

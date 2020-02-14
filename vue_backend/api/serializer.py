@@ -27,16 +27,6 @@ class PostOrdersSerializer(serializers.ModelSerializer):
         exclude = ['is_delete']
 
 
-class SubOrderSerializer(serializers.ModelSerializer):
-    sales = serializers.StringRelatedField()
-
-    class Meta:
-        model = SubOrder
-        # exclude = ['is_delete']
-        fields = "__all__"
-        depth = 1
-
-
 class PostSubOrderSerializer(serializers.ModelSerializer):
     sales = serializers.StringRelatedField()
 
@@ -108,3 +98,15 @@ class PostShipDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShipDetail
         fields = "__all__"
+
+
+class SubOrderSerializer(serializers.ModelSerializer):
+    sales = serializers.StringRelatedField()
+    purchases = PostPurchaseDetailSerializer(many=True, read_only=True)
+    ships = PostShipDetailSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = SubOrder
+        # exclude = ['is_delete']
+        fields = "__all__"
+        depth = 1

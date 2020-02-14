@@ -1,6 +1,5 @@
 from django.db import models
 from datetime import datetime
-from django.utils.html import format_html
 from user.models import UserInfo
 
 
@@ -60,6 +59,7 @@ class OrderCatalog(models.Model):
         (1, '未完成'),
         (2, '已完成'),
         (3, '已超期'),
+        (4, '紧急'),
     )
     customer = models.ForeignKey(
         Customers, verbose_name='客户', on_delete=models.CASCADE)
@@ -87,27 +87,6 @@ class OrderCatalog(models.Model):
 
     def __str__(self):
         return self.order_number
-
-    # def image_data(self):
-    #     return format_html(
-    #         '<img src="{}" width="100px"/>',
-    #         self.order_picture.url,
-    #     )
-    #
-    # image_data.short_description = '图片'
-
-# def save(self, *args, **kwargs):
-# 	# 批量更新订单明细的汇率值
-# 	SubOrder.objects.filter(order_num=self.order_number).update(sub_ex_rate=self.ex_rate)
-# 	super(OrderCatalog, self).save(*args, **kwargs)
-# 	print('----------')
-# 	# 执行完订单目录保存才会执行订单明细保存，这个时候订单明细还没有存入数据库，合计返回None
-# 	# 要再次打开表单，点击保存可以，此时订单明细已经创建。
-# 	abc = SubOrder.objects.filter(order_num=self.order_number).aggregate(nums=Sum('sub_amount'))
-# 	print(abc['nums'])
-# 	self.order_amount = abc['nums']
-# 	print(self.order_amount)
-# 	super(OrderCatalog, self).save(*args, **kwargs)
 
 
 class SubOrder(models.Model):
@@ -152,20 +131,6 @@ class SubOrder(models.Model):
         verbose_name = '订单明细'
         verbose_name_plural = '订单明细'
 
-    # def save(self, *args, **kwargs):
-    #     # 给订单明细合计列赋值
-    #     self.sub_amount = self.pro_qt * self.pro_price
-    #
-    #     # 新增数据的时候执行这里，自动填充sales和汇率,下单日期，订单交期
-    #     self.sales = OrderCatalog.objects.get(
-    #         order_number=self.order_number).sales
-    #     self.sub_ex_rate = OrderCatalog.objects.get(
-    #         order_number=self.order_number).ex_rate
-    #     # self.sub_order_date = OrderCatalog.objects.get(order_number=self.order_num).order_date
-    #     # self.sub_deliver_date = OrderCatalog.objects.get(order_number=self.order_num).deliver_date
-    #     super(SubOrder, self).save(*args, **kwargs)
-    # # 先保存订单明细的数据到数据库，再执行下面的方法合计订单总额
-
 
 class PurchaseOrder(models.Model):
     """采购订单"""
@@ -198,7 +163,7 @@ class PurchaseDetail(models.Model):
     purchase_number = models.ForeignKey(
         PurchaseOrder, on_delete=models.CASCADE, verbose_name='采购单号')
     sub_order = models.ForeignKey(
-        SubOrder, on_delete=models.CASCADE, verbose_name='订单明细')
+        SubOrder, on_delete=models.CASCADE, related_name='purchases', verbose_name='订单明细')
     purchase_price = models.DecimalField(
         '采购单价(¥)', max_digits=20, decimal_places=2, default=0)
     purchase_qt = models.DecimalField(
@@ -215,12 +180,6 @@ class PurchaseDetail(models.Model):
 
     def __str__(self):
         return '%s-%s' % (self.purchase_number, self.id)
-
-    # def save(self, *args, **kwargs):
-    #     print(self.purchase_amount)
-    #     self.purchase_amount = self.purchase_price * self.purchase_qt
-    #     print(self.purchase_amount)
-    #     super(PurchaseDetail, self).save(*args, **kwargs)
 
 
 class ShipOrder(models.Model):
@@ -250,6 +209,7 @@ class ShipOrder(models.Model):
                               on_delete=models.CASCADE, null=True, blank=True)
     text = models.CharField('备注', max_length=480, default='选填')
     is_delete = models.IntegerField(default=1)
+    input_date = models.DateTimeField(auto_now_add=True)
     objects = models.Manager()
 
     class Meta:
@@ -265,7 +225,7 @@ class ShipDetail(models.Model):
     ship_number = models.ForeignKey(
         ShipOrder, on_delete=models.CASCADE, verbose_name='出货单号')
     sub_order = models.ForeignKey(
-        SubOrder, on_delete=models.CASCADE, verbose_name='订单明细')
+        SubOrder, on_delete=models.CASCADE, related_name='ships', verbose_name='订单明细')
     ship_cost = models.DecimalField(
         '出货费用(¥)', max_digits=10, decimal_places=2, default=0)
     ship_weight = models.DecimalField(

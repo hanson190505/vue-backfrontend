@@ -1,6 +1,5 @@
 <template>
   <div>
-    <el-button type="text" @click="addNewPurchase">新增采购</el-button>
     <el-dialog :visible.sync="dialogVisible" width="90%" :before-close="handleClose">
       <h3 class="purchase-title">采 购 单</h3>
       <hr />
@@ -71,12 +70,12 @@
         show-summary
         highlight-current-row
       >
-        <el-table-column label="订单编号" width="140">
+        <el-table-column label="订单编号" width="140" fixed>
           <template slot-scope="scope">
             <span>{{ scope.row.order_number.order_number }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="产品名称" width="100">
+        <el-table-column label="产品名称" width="100" fixed>
           <template slot-scope="scope">
             <span>{{ scope.row.pro_name }}</span>
           </template>
@@ -329,6 +328,7 @@ export default {
         row.purchase_amount / row.order_number.ex_rate
       ).toFixed(2)
     },
+    //保存
     submitPurchaseDetail() {
       if (
         !this.addPurchaseData.purchaser ||
@@ -381,6 +381,7 @@ export default {
                 }
               })
             } else {
+              //TODO:新增采购之后调用这个方法不能更新采购单分页的合计数量
               this.$store
                 .dispatch(
                   'purchaseStore/addPurchaseOrder',

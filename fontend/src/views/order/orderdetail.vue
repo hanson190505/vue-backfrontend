@@ -134,7 +134,7 @@
 
       <el-table :data="suborderdetail" style="width: 99.9%" show-summary highlight-current-row>
         <!-- <el-table-column type="selection" width="40"></el-table-column> -->
-        <el-table-column label="产品名称" width="150">
+        <el-table-column label="产品名称" width="150" fixed>
           <template slot-scope="scope">
             <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_name"></el-input>
             <span v-else>{{ scope.row.pro_name }}</span>
@@ -160,13 +160,13 @@
             <span v-else>{{ options[scope.row.pro_item - 1].label }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="产品尺寸" width="120">
+        <el-table-column label="产品尺寸" width="120" fixed>
           <template slot-scope="scope">
             <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_size"></el-input>
             <span v-else>{{ scope.row.pro_size }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="产品颜色" width="120">
+        <el-table-column label="产品颜色" width="120" fixed>
           <template slot-scope="scope">
             <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_color"></el-input>
             <span v-else>{{ scope.row.pro_color }}</span>
@@ -216,7 +216,7 @@
         <el-table-column label="金额($)" prop="sub_amount" width="120">
           <template slot-scope="scope">
             <el-input v-if="scope.row.status" size="mini" v-model="scope.row.sub_amount"></el-input>
-            <span v-else>{{ scope.row.sub_amount }}</span>
+            <span v-else>{{ scope.row.sub_amount | toThousandFilter}}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="120" fixed="right">

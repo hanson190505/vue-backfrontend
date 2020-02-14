@@ -17,8 +17,7 @@
           <!-- 个人信息区 -->
           <el-col :span="6">
             <div class="userinfo">
-              <a href="http://" target="_blank" rel="noopener noreferrer">官网</a>
-              <span>{{ username }}</span>
+              <span class="username">{{ username }}</span>
               <el-button type="info" @click="logout" size="medium">退出</el-button>
             </div>
           </el-col>
@@ -40,7 +39,7 @@ export default {
   },
   data() {
     return {
-      username: this.$store.state.username
+      username: window.localStorage.getItem('name')
     }
   },
   methods: {
@@ -62,7 +61,11 @@ export default {
   height: 60px;
 }
 .userinfo {
+  line-height: 60px;
   height: 60px;
   float: right;
+  .username {
+    margin-right: 10px;
+  }
 }
 </style>

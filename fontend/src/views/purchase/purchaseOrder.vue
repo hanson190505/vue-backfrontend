@@ -1,5 +1,6 @@
 <template>
   <div>
+    <el-button type="text" @click="addNewPurchase">新增采购</el-button>
     <add-purchaseorder ref="purchasePage"></add-purchaseorder>
     <el-table
       ref="purchaseOrderTable"
@@ -8,19 +9,19 @@
       @current-change="handleCurrentChange"
       :row-class-name="rowClassName"
       border
-      style="width=99.9%"
+      style="width:99.9%"
       v-loading="loading"
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
       element-loading-background="rgba(0, 0, 0, 0.8)"
     >
       <el-table-column type="index" width="40"></el-table-column>
-      <el-table-column label="供应商" align="center" width="120">
+      <el-table-column label="供应商" align="center" width="120" fixed>
         <template slot-scope="scope">
           <span class="col-cont" v-html="showDate(scope.row.purchaser.lite_name)"></span>
         </template>
       </el-table-column>
-      <el-table-column label="采购单号" align="center" width="150">
+      <el-table-column label="采购单号" align="center" width="150" fixed>
         <template slot-scope="scope">
           <span class="col-cont" v-html="showDate(scope.row.purchase_number)"></span>
         </template>
@@ -68,6 +69,10 @@ export default {
     }
   },
   methods: {
+    //新增采购单
+    addNewPurchase() {
+      this.$refs.purchasePage.addNewPurchase()
+    },
     // 关键字高亮
     showDate(val) {
       val = val + ''

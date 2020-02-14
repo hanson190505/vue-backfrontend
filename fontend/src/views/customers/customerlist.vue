@@ -8,11 +8,7 @@
     </el-breadcrumb>
     <el-row>
       <el-col :span="6">
-        <el-input
-          v-model="search"
-          size="mini"
-          placeholder="关键字搜索:/客户/联系人/主营业务"
-        />
+        <el-input v-model="search" size="mini" placeholder="关键字搜索:/客户/联系人/主营业务" />
       </el-col>
       <el-col :span="2">
         <el-button type="primary" @click="clearnSearchText">清除</el-button>
@@ -30,12 +26,12 @@
       element-loading-spinner="el-icon-loading"
       element-loading-background="rgba(0, 0, 0, 0.8)"
     >
-      <el-table-column label="客户" align="center" width="120">
+      <el-table-column label="客户" align="center" width="120" fixed>
         <template slot-scope="scope">
           <span class="col-cont" v-html="showDate(scope.row.lite_name)"></span>
         </template>
       </el-table-column>
-      <el-table-column label="类别" width="80">
+      <el-table-column label="类别" width="80" fixed>
         <template slot-scope="scope">{{ csType[scope.row.type - 1] }}</template>
       </el-table-column>
       <el-table-column label="主营业务" align="center" width="200">
@@ -45,26 +41,17 @@
       </el-table-column>
       <el-table-column label="联系人" align="center" width="120">
         <template slot-scope="scope">
-          <span
-            class="col-cont"
-            v-html="showDate(scope.row.contact_name)"
-          ></span>
+          <span class="col-cont" v-html="showDate(scope.row.contact_name)"></span>
         </template>
       </el-table-column>
       <el-table-column label="联系人电话" align="center" width="120">
         <template slot-scope="scope">
-          <span
-            class="col-cont"
-            v-html="showDate(scope.row.contact_phone)"
-          ></span>
+          <span class="col-cont" v-html="showDate(scope.row.contact_phone)"></span>
         </template>
       </el-table-column>
       <el-table-column label="联系人邮箱" align="center" width="200">
         <template slot-scope="scope">
-          <span
-            class="col-cont"
-            v-html="showDate(scope.row.contact_email)"
-          ></span>
+          <span class="col-cont" v-html="showDate(scope.row.contact_email)"></span>
         </template>
       </el-table-column>
       <el-table-column label="合作状态" prop="status" width="70">

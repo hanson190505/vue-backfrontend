@@ -5,14 +5,15 @@
       :data="this.$store.getters.shipDetailData.results"
       style="width: 99.9%"
       show-summary
+      border
       highlight-current-row
     >
-      <el-table-column label="出货单号" width="140">
+      <el-table-column label="出货单号" width="140" fixed>
         <template slot-scope="scope">
           <span>{{ scope.row.ship_number.ship_number }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="出货日期" width="140">
+      <el-table-column label="出货日期" width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.ship_number.ship_date }}</span>
         </template>
@@ -25,6 +26,21 @@
       <el-table-column label="产品名称" width="100">
         <template slot-scope="scope">
           <span>{{ scope.row.sub_order.pro_name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="产品尺寸" width="120">
+        <template slot-scope="scope">
+          <span>{{ scope.row.sub_order.pro_size }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="产品颜色" width="120">
+        <template slot-scope="scope">
+          <span>{{ scope.row.sub_order.pro_color }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="产品包装" width="120">
+        <template slot-scope="scope">
+          <span>{{ scope.row.sub_order.pro_pack }}</span>
         </template>
       </el-table-column>
       <el-table-column label="产品描述" width="150">

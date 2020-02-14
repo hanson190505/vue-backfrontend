@@ -11,25 +11,26 @@
       :data="subPurchaseOrderData"
       style="width: 99.9%"
       show-summary
+      border
+      size="mini"
       highlight-current-row
-      :span-method="objectSpanMethod"
     >
-      <el-table-column label="采购单号" width="100">
+      <el-table-column label="采购单号" width="100" fixed>
         <template slot-scope="scope">
           <span>{{ scope.row.purchase_number.purchase_number }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="供应商" width="100">
+      <el-table-column label="供应商" width="100" fixed>
         <template slot-scope="scope">
           <span>{{ scope.row.purchase_number.purchaser.lite_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购日期" width="100">
+      <el-table-column label="采购日期" width="90">
         <template slot-scope="scope">
           <span>{{ scope.row.purchase_number.purchase_date }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购交期" width="100">
+      <el-table-column label="采购交期" width="90">
         <template slot-scope="scope">
           <span>{{ scope.row.purchase_number.deliver_date }}</span>
         </template>
@@ -44,7 +45,22 @@
           <span>{{ scope.row.sub_order.pro_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="产品描述" width="150">
+      <el-table-column label="产品尺寸" width="120">
+        <template slot-scope="scope">
+          <span>{{ scope.row.sub_order.pro_size }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="产品颜色" width="120">
+        <template slot-scope="scope">
+          <span>{{ scope.row.sub_order.pro_color }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="产品包装" width="120">
+        <template slot-scope="scope">
+          <span>{{ scope.row.sub_order.pro_pack }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="产品描述" width="120">
         <template slot-scope="scope">
           <span>{{ scope.row.sub_order.pro_desc }}</span>
         </template>
@@ -69,14 +85,24 @@
           <span :style="markData(scope.row)">{{scope.row.purchase_qt}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购单价($)" width="90">
+      <el-table-column label="采购单价(¥)" width="90">
         <template slot-scope="scope">
           <span>{{scope.row.purchase_price}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购金额($)" width="100" prop="purchase_amount">
+      <el-table-column label="采购金额(¥)" width="100" prop="purchase_amount">
         <template slot-scope="scope">
-          <span>{{scope.row.purchase_amount}}</span>
+          <span>{{scope.row.purchase_amount | toThousandFilter }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="采购毛利(¥)" width="100" prop="profit_rmb">
+        <template slot-scope="scope">
+          <span>{{scope.row.profit_rmb | toThousandFilter}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="采购毛利($)" width="100" prop="profit_usd">
+        <template slot-scope="scope">
+          <span>{{scope.row.profit_usd | toThousandFilter}}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注" width="140">
@@ -121,13 +147,28 @@ export default {
   },
   methods: {
     pagination(params) {
+      this.subPurchaseOrderData = []
       if (!params) {
         params = { page: 1, page_size: 10 }
       }
       this.$store
         .dispatch('purchaseStore/setPurchaseDetailData', params)
         .then(res => {
-          this.subPurchaseOrderData = this.$store.getters.purchaseDetail.results
+          let data = this.$store.getters.purchaseDetail.results
+          data.forEach(el => {
+            let profit = {
+              profit_rmb: (
+                el.sub_order.sub_amount * el.sub_order.order_number.ex_rate -
+                el.purchase_amount
+              ).toFixed(2),
+              profit_usd: (
+                el.sub_order.sub_amount -
+                el.purchase_amount / el.sub_order.order_number.ex_rate
+              ).toFixed(2)
+            }
+            this.subPurchaseOrderData.push(Object.assign(el, profit))
+          })
+          // this.subPurchaseOrderData = this.$store.getters.purchaseDetail.results
         })
     },
     addRow() {},
@@ -137,26 +178,26 @@ export default {
     },
     //如果采购数量大于订单数量,则标记采购数量数据
     markData(row) {
-      if (row.purchase_qt > row.sub_order.pro_qt) {
+      if (row.purchase_qt > row.pro_qt) {
         return { color: '#c21010' }
       }
-    },
-    //和并列
-    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex === 0) {
-        if (rowIndex % 2 === 0) {
-          return {
-            rowspan: 2,
-            colspan: 1
-          }
-        } else {
-          return {
-            rowspan: 0,
-            colspan: 0
-          }
-        }
-      }
     }
+    //和并列,有问题
+    // objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+    //   if (columnIndex === 0) {
+    //     if (rowIndex % 2 === 0) {
+    //       return {
+    //         rowspan: 2,
+    //         colspan: 1
+    //       }
+    //     } else {
+    //       return {
+    //         rowspan: 0,
+    //         colspan: 0
+    //       }
+    //     }
+    //   }
+    // }
   },
   created() {
     this.pagination({ page: 1, page_size: 10 })
