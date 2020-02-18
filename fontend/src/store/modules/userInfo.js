@@ -1,18 +1,27 @@
 import {
-    login
+    login,
+    getUser
 } from "@/api/user";
 
 const state = {
     name: '',
-    token: ''
+    token: '',
+    permissions: 0,
+    id: 0
 }
 
 const mutations = {
+    SET_ID: (state, id) => {
+        state.id = id
+    },
     SET_NAME: (state, name) => {
         state.name = name
     },
     SET_TOKEN: (state, token) => {
         state.token = token
+    },
+    SET_PERMISSIONS: (state, permissions) => {
+        state.permissions = permissions
     },
     REMOVE_USER: (state) => {
         state.name = ''
@@ -26,10 +35,29 @@ const actions = {
     }, loginform) {
         return new Promise((resolve, reject) => {
             login(loginform).then(res => {
-                commit('SET_NAME', res.data.name)
+                if (res.data.status === 2000) {
+                    commit('SET_NAME', res.data.name)
+                    commit('SET_TOKEN', res.data.token)
+                    commit('SET_PERMISSIONS', res.data.permissions)
+                    commit('SET_ID', res.data.id)
+                    // window.localStorage.setItem('name', res.data.name)
+                    window.localStorage.setItem('token', res.data.token)
+                }
+                resolve(res)
+            }).catch(error => {
+                reject(error)
+            })
+        })
+    },
+    userSet({
+        commit
+    }, pk) {
+        return new Promise((resolve, reject) => {
+            getUser(pk).then(res => {
+                commit('SET_NAME', res.data.u_name)
                 commit('SET_TOKEN', res.data.token)
-                window.localStorage.setItem('name', res.data.name)
-                window.localStorage.setItem('token', res.data.token)
+                commit('SET_PERMISSIONS', res.data.permissions)
+                commit('SET_ID', res.data.id)
                 resolve(res)
             }).catch(error => {
                 reject(error)

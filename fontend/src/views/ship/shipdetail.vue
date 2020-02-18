@@ -1,6 +1,18 @@
 <template>
   <div>
-    <backend-searchVue @parentMethod="pagination"></backend-searchVue>
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/ships' }">出货管理</el-breadcrumb-item>
+      <el-breadcrumb-item>出货列表</el-breadcrumb-item>
+    </el-breadcrumb>
+    <el-row>
+      <el-col :span="4">
+        <backend-searchVue @parentMethod="pagination"></backend-searchVue>
+      </el-col>
+      <el-col :span="6">
+        <date-search @dateSearchDate="dateSearchDate"></date-search>
+      </el-col>
+    </el-row>
     <el-table
       :data="this.$store.getters.shipDetailData.results"
       style="width: 99.9%"
@@ -55,17 +67,20 @@
       </el-table-column>
       <el-table-column label="产品重量(kg)" width="100">
         <template slot-scope="scope">
-          <span>{{scope.row.sub_order.pro_weight*1*scope.row.sub_order.pro_qt/1000}}</span>
+          <span>{{
+            (scope.row.sub_order.pro_weight * 1 * scope.row.sub_order.pro_qt) /
+              1000
+          }}</span>
         </template>
       </el-table-column>
       <el-table-column label="出货重量(kg)" width="120" prop="ship_weight">
         <template slot-scope="scope">
-          <span>{{scope.row.ship_weight}}</span>
+          <span>{{ scope.row.ship_weight }}</span>
         </template>
       </el-table-column>
       <el-table-column label="出货费用(¥)" width="100" prop="ship_cost">
         <template slot-scope="scope">
-          <span>{{scope.row.ship_cost}}</span>
+          <span>{{ scope.row.ship_cost }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column label="操作" width="120" align="center">
@@ -75,12 +90,16 @@
         </template>
       </el-table-column>-->
     </el-table>
-    <pagi-nation @pagination="pagination" :getDataTotal="dataTotal"></pagi-nation>
+    <pagi-nation
+      @pagination="pagination"
+      :getDataTotal="dataTotal"
+    ></pagi-nation>
   </div>
 </template>
 
 <script>
 import pagiNation from '@/components/common/pagiNation'
+import dateSearch from '@/components/common/dateSearch'
 import backendSearchVue from '@/components/common/backendSearch.vue'
 export default {
   name: 'shipDetail',
@@ -92,9 +111,22 @@ export default {
   },
   components: {
     pagiNation,
-    backendSearchVue
+    backendSearchVue,
+    dateSearch
   },
   methods: {
+    //日期搜索
+    dateSearchDate(value) {
+      if (!value) {
+        this.pagination()
+      } else {
+        this.pagination({
+          start_date: value[0],
+          end_date: value[1],
+          argument: 'date_search'
+        })
+      }
+    },
     pagination(params) {
       //子组件backendSearch清空搜索条件时调用,设定page默认值为1
       if (!params) {
@@ -108,10 +140,9 @@ export default {
     handleCurrentChange() {}
   },
   created() {
-    this.pagination({ page: 1, page_size: 10 })
+    this.pagination()
   }
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

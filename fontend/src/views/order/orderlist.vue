@@ -25,19 +25,8 @@
         <add-order></add-order>
       </el-col>
       <el-col :span="6">
-        <!-- 日期范围选择器 -->
-        <el-date-picker
-          v-model="value2"
-          type="daterange"
-          align="right"
-          unlink-panels
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :picker-options="pickerOptions"
-          value-format="yyyy-MM-dd"
-          @change="val => dateRangeChange(value2)"
-        ></el-date-picker>
+        <!-- 日期范围搜索 -->
+        <date-search @dateSearchDate="dateSearchDate"></date-search>
       </el-col>
     </el-row>
     <!-- 订单列表 -->
@@ -49,7 +38,6 @@
       border
       show-summary
       highlight-current-row
-      :row-class-name="tableRowClassName"
       style="width=99.9%"
       v-loading="loading"
       element-loading-text="拼命加载中"
@@ -158,9 +146,11 @@
 <script>
 import AddOrder from './addorder'
 import { getOrderList } from '@/api/order'
+import dateSearch from '@/components/common/dateSearch'
 export default {
   components: {
-    AddOrder
+    AddOrder,
+    dateSearch
   },
   data() {
     return {
@@ -171,46 +161,12 @@ export default {
       page: 1,
       input1: '',
       select: '',
-      // 日期范围选择器
-      pickerOptions: {
-        shortcuts: [
-          {
-            text: '最近一周',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近一个月',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-              picker.$emit('pick', [start, end])
-            }
-          },
-          {
-            text: '最近三个月',
-            onClick(picker) {
-              const end = new Date()
-              const start = new Date()
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-              picker.$emit('pick', [start, end])
-            }
-          }
-        ]
-      },
       Options: [
         { value: 1, label: '未完成' },
         { value: 2, label: '已完成' },
         { value: 3, label: '已超期' },
         { value: 4, label: '紧急' }
       ],
-      // 日期选择器变量
-      value2: '',
       // 表格多选参数
       multipleSelection: [],
       // 表头关键字搜索参数
@@ -232,16 +188,16 @@ export default {
       this.multipleSelection = val
     },
     // 日期选择器选择日期之后的执行查询函数, 通过@change拿到日期
-    dateRangeChange(value2) {
-      if (!value2) {
+    dateSearchDate(value) {
+      if (!value) {
         getOrderList().then(res => {
           this.tableData = res.data
           this.count = res.data.length
         })
       } else {
         getOrderList({
-          start_date: value2[0],
-          end_date: value2[1],
+          start_date: value[0],
+          end_date: value[1],
           argument: 'order_date'
         }).then(res => {
           this.tableData = res.data
@@ -312,23 +268,17 @@ export default {
           this.count = res.data.length
         })
         .catch(error => {})
-    },
-    //标记紧急订单
-    tableRowClassName({ row, rowIndex }) {
-      if (row.is_done === 4) {
-        return 'urgency-row'
-      }
-      return ''
     }
+    // //标记紧急订单
+    // tableRowClassName({ row, rowIndex }) {
+    //   if (row.is_done === 4) {
+    //     return 'urgency-row'
+    //   }
+    //   return ''
+    // }
   },
   created() {
     this.getOrderList()
-  },
-  beforeMount() {
-    // this.getOrderList()
-  },
-  mounted() {
-    // this.getOrderList()
   }
 }
 </script>

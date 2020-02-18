@@ -44,7 +44,3 @@ body,
 .current-row>td {
     background: #77eb98 !important;
 }
-
-.el-table .urgency-row {
-    background: rgb(252, 0, 0);
-}

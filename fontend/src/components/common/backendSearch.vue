@@ -1,12 +1,20 @@
 <template>
   <div>
-    <el-autocomplete
-      v-model="state"
-      :fetch-suggestions="queryAsync"
-      placeholder="请输入关键字..."
+    <el-input
+      v-model="search"
+      size="mini"
       clearable
+      placeholder="请输入关键字..."
       @clear="handleSearchClear"
-    ></el-autocomplete>
+      @keyup.enter.native="sendSearch"
+      @input="handleInput"
+    >
+      <el-button
+        slot="append"
+        icon="el-icon-search"
+        @click="sendSearch"
+      ></el-button>
+    </el-input>
   </div>
 </template>
 
@@ -15,23 +23,21 @@ export default {
   name: 'backendSearch',
   data() {
     return {
-      state: '',
-      timeout: null
+      search: ''
     }
   },
   methods: {
-    queryAsync(queryString, callback) {
-      //方法接收两个参数，
-      //一个是queryString接收用户输入的值，也就是用户输入的内容，callback是回调函数，处理请求回来的参数
-      let params = {
-        param: queryString
-      }
-      // let params 定义向后台传的参数，text是和后台商量好的字段，/接口地址/？text=queryString
-      if (queryString === '') {
+    handleInput() {
+      if (this.search === '') {
         this.$emit('parentMethod')
-      } else {
-        // setTimeout(() => {
-        //   }, 500)
+      }
+    },
+    sendSearch() {
+      const search = this.search
+      if (search) {
+        let params = {
+          param: search
+        }
         this.$emit('parentMethod', params)
       }
     },
@@ -43,5 +49,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

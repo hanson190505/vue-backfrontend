@@ -1,29 +1,18 @@
 <template>
   <div>
-    <el-dialog
-      :visible.sync="addshipDisplay"
-      width="90%"
-      :before-close="handleClose"
-    >
+    <el-dialog :visible.sync="addshipDisplay" width="90%" :before-close="handleClose">
       <h3 class="purchase-title">出 货 单</h3>
       <hr />
       <el-form :model="addShipData" ref="addShipData" label-width="80px">
         <el-row>
           <el-col :span="6">
             <el-form-item label="出货单号">
-              <el-input
-                v-model="addShipData.ship_number"
-                placeholder="请输入单号"
-              ></el-input>
+              <el-input v-model="addShipData.ship_number" placeholder="请输入单号"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="出货方式">
-              <el-select
-                v-model="addShipData.ship_plan"
-                filterable
-                placeholder="请选择"
-              >
+              <el-select v-model="addShipData.ship_plan" filterable placeholder="请选择">
                 <el-option
                   v-for="item in shipType"
                   :key="item.value"
@@ -72,24 +61,20 @@
               <el-input v-model="addShipData.ship_cost"></el-input>
             </el-form-item>
           </el-col>
+          <el-col :span="6">
+            <el-form-item label="目的地"></el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
             <el-form-item label="备注">
-              <el-input
-                type="textarea"
-                v-model="addShipData.text"
-                placeholder="选填"
-              ></el-input>
+              <el-input v-model="addShipData.text" placeholder="选填"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <el-button type="primary" @click="addShipDetail">新增明细</el-button>
-      <el-table
-        :data="shipDetailData"
-        style="width: 99.9%"
-        show-summary
-        highlight-current-row
-      >
+      <el-table :data="shipDetailData" style="width: 99.9%" show-summary highlight-current-row>
         <el-table-column label="订单编号" width="140">
           <template slot-scope="scope">
             <span>{{ scope.row.order_number.order_number }}</span>
@@ -98,6 +83,21 @@
         <el-table-column label="产品名称" width="100">
           <template slot-scope="scope">
             <span>{{ scope.row.pro_name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="产品尺寸" width="120">
+          <template slot-scope="scope">
+            <span>{{ scope.row.pro_size }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="产品颜色" width="100">
+          <template slot-scope="scope">
+            <span>{{ scope.row.pro_color }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="产品包装" width="100">
+          <template slot-scope="scope">
+            <span>{{ scope.row.pro_pack }}</span>
           </template>
         </el-table-column>
         <el-table-column label="产品描述" width="150">
@@ -112,9 +112,11 @@
         </el-table-column>
         <el-table-column label="产品重量(kg)" width="100">
           <template slot-scope="scope">
-            <span>{{
+            <span>
+              {{
               (scope.row.pro_weight * 1 * scope.row.pro_qt) / 1000
-            }}</span>
+              }}
+            </span>
           </template>
         </el-table-column>
         <el-table-column label="出货重量(kg)" width="120">
@@ -129,25 +131,14 @@
         </el-table-column>
         <el-table-column label="操作" width="60" align="center">
           <template slot-scope="scope">
-            <el-button
-              @click="handleDelete(scope.$index, scope.row)"
-              type="text"
-              size="mini"
-              >删除</el-button
-            >
+            <el-button @click="handleDelete(scope.$index, scope.row)" type="text" size="mini">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <el-button type="primary" @click="submitShipData">保 存</el-button>
 
-      <el-dialog
-        :visible.sync="subdialogVisable"
-        width="99%"
-        :append-to-body="true"
-      >
-        <suborder-detail
-          @getSelectSuborder="getSelectSuborder"
-        ></suborder-detail>
+      <el-dialog :visible.sync="subdialogVisable" width="99%" :append-to-body="true">
+        <suborder-detail @getSelectSuborder="getSelectSuborder"></suborder-detail>
         <!-- <suborder-detail></suborder-detail> -->
         <span slot="footer">
           <el-button @click="subdialogVisable = false">确 定</el-button>

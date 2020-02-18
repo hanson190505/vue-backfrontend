@@ -15,12 +15,20 @@ module.exports = {
         https: false,
         // 自动启动浏览器
         open: false,
-        proxy: "http://192.168.3.45:8000"
+        // proxy: "http://192.168.3.45:8000",
         // proxy: {
         //     target: "http://192.168.3.45:8000", //设置调用的接口域名和端口
         //     changeOrigin: true, //是否跨域
         //     ws: true,
         // },
+        // proxy: {
+        //     '/apis': {
+        //         // 测试环境
+        //         target: 'http://web.juhe.cn:8080/', // 接口域名
+        //         changeOrigin: true, //是否跨域
+        //         ws: true,
+        //     }
+        // }
     },
     configureWebpack: {
         resolve: {

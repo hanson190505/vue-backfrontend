@@ -6,7 +6,9 @@ let postData = null
 export function request(config) {
   // 创建一个axios实例
   const instance = axios.create({
-    baseURL: 'http://192.168.3.45:8000/',
+    baseURL: 'http://0.0.0.0:8000/',
+    // baseURL: 'http://192.168.3.45:8000/',
+    // baseURL: 'http://3.135.197.102:8000/',
     timeout: 5000,
   })
   //axios拦截器(请求局部拦截)
@@ -50,7 +52,9 @@ export function request(config) {
 
 export function getRangeDateRequest(config) {
   const instance = axios.create({
-    baseURL: 'http://192.168.3.45:8000/orders/',
+    baseURL: 'http://0.0.0.0:8000/',
+    // baseURL: 'http://192.168.3.45:8000/orders/',
+    // baseURL: 'http://3.135.197.102:8000/orders/',
     timeout: 5000,
   })
   return instance(config)

@@ -1,12 +1,7 @@
 <template>
   <div class="add-order">
     <el-button type="primary" @click="dialogStatus">新增订单</el-button>
-    <el-dialog
-      title="新增订单"
-      :visible.sync="dialogVisible"
-      width="96%"
-      :before-close="handleClose"
-    >
+    <el-dialog title="新增订单" :visible.sync="dialogVisible" width="96%" :before-close="handleClose">
       <el-form
         ref="form"
         :model="orderData"
@@ -53,8 +48,7 @@
                       :key="item.value"
                       :label="item.label"
                       :value="item.value"
-                    >
-                    </el-option>
+                    ></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -109,7 +103,7 @@
           <el-col :span="8">
             <el-upload
               class="upload-demo"
-              action="http://0.0.0.0:8000/upload/"
+              action="http://192.168.3.45:8000/upload/"
               :on-remove="handleRemove"
               :before-remove="beforeRemove"
               :on-success="uploadSuccess"
@@ -120,37 +114,21 @@
               accept="image/jpg, image/jpeg, image/png"
             >
               <el-button size="mini" type="primary">点击上传</el-button>
-              <div slot="tip" class="el-upload__tip">
-                只能上传jpg/png文件，且不超过500kb
-              </div>
+              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
             </el-upload>
           </el-col>
           <el-col :span="16">
             <div class="order-img">
-              <img
-                :src="this.orderData.order_pic"
-                @click="imgLook"
-                class="orderImg"
-              />
+              <img :src="this.orderData.order_pic" @click="imgLook" class="orderImg" />
             </div>
           </el-col>
         </el-row>
-        <el-button size="mini" type="primary" @click="addSubOrder()"
-          >订单明细</el-button
-        >
-        <el-table
-          :data="subOrderData"
-          style="width: 99.9%"
-          highlight-current-row
-        >
+        <el-button size="mini" type="primary" @click="addSubOrder()">订单明细</el-button>
+        <el-table :data="subOrderData" style="width: 99.9%" highlight-current-row>
           <!-- <el-table-column type="selection" width="40"></el-table-column> -->
           <el-table-column label="产品名称" width="150" fixed>
             <template slot-scope="scope">
-              <el-input
-                v-if="scope.row.status"
-                size="mini"
-                v-model="scope.row.pro_name"
-              ></el-input>
+              <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_name"></el-input>
               <span v-else>{{ scope.row.pro_name }}</span>
             </template>
           </el-table-column>
@@ -176,31 +154,19 @@
           </el-table-column>
           <el-table-column label="产品尺寸" width="120" fixed>
             <template slot-scope="scope">
-              <el-input
-                v-if="scope.row.status"
-                size="mini"
-                v-model="scope.row.pro_size"
-              ></el-input>
+              <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_size"></el-input>
               <span v-else>{{ scope.row.pro_size }}</span>
             </template>
           </el-table-column>
           <el-table-column label="产品颜色" width="120" fixed>
             <template slot-scope="scope">
-              <el-input
-                v-if="scope.row.status"
-                size="mini"
-                v-model="scope.row.pro_color"
-              ></el-input>
+              <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_color"></el-input>
               <span v-else>{{ scope.row.pro_color }}</span>
             </template>
           </el-table-column>
           <el-table-column label="产品包装" width="120">
             <template slot-scope="scope">
-              <el-input
-                v-if="scope.row.status"
-                size="mini"
-                v-model="scope.row.pro_pack"
-              ></el-input>
+              <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_pack"></el-input>
               <span v-else>{{ scope.row.pro_pack }}</span>
             </template>
           </el-table-column>
@@ -218,11 +184,7 @@
           </el-table-column>
           <el-table-column label="数量" prop="pro_qt" width="100">
             <template slot-scope="scope">
-              <el-input
-                v-if="scope.row.status"
-                size="mini"
-                v-model="scope.row.pro_qt"
-              ></el-input>
+              <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_qt"></el-input>
               <span v-else>{{ scope.row.pro_qt }}</span>
             </template>
           </el-table-column>
@@ -239,48 +201,27 @@
           </el-table-column>
           <el-table-column label="重量(g)" width="80">
             <template slot-scope="scope">
-              <el-input
-                v-if="scope.row.status"
-                size="mini"
-                v-model="scope.row.pro_weight"
-              ></el-input>
+              <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_weight"></el-input>
               <span v-else>{{ scope.row.pro_weight }}</span>
             </template>
           </el-table-column>
           <el-table-column label="汇率" width="80">
             <template slot-scope="scope">
-              <el-input
-                v-if="scope.row.status"
-                size="mini"
-                v-model="scope.row.sub_ex_rate"
-              ></el-input>
+              <el-input v-if="scope.row.status" size="mini" v-model="scope.row.sub_ex_rate"></el-input>
               <span v-else>{{ scope.row.sub_ex_rate }}</span>
             </template>
           </el-table-column>
           <el-table-column label="金额($)" prop="sub_amount" width="100">
             <template slot-scope="scope">
-              <el-input
-                v-if="scope.row.status"
-                size="mini"
-                v-model="scope.row.sub_amount"
-              ></el-input>
+              <el-input v-if="scope.row.status" size="mini" v-model="scope.row.sub_amount"></el-input>
               <span v-else>{{ scope.row.sub_amount }}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="150" fixed="right">
             <template slot-scope="scope">
-              <el-button type="text" @click="addSubOrderRow(scope.row)"
-                >新增</el-button
-              >
-              <el-button type="text" @click="editSubOrderRow(scope.row)"
-                >修改</el-button
-              >
-              <el-button
-                size="mini"
-                type="text"
-                @click="delSubOrderRow(scope.$index, scope.row)"
-                >删除</el-button
-              >
+              <el-button type="text" @click="addSubOrderRow(scope.row)">新增</el-button>
+              <el-button type="text" @click="editSubOrderRow(scope.row)">修改</el-button>
+              <el-button size="mini" type="text" @click="delSubOrderRow(scope.$index, scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>

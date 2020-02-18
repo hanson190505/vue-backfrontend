@@ -23,7 +23,7 @@ class Customers(models.Model):
         '公司简称', max_length=32, primary_key=True, help_text='如无公司则填联系人或CEO名称')
     address = models.CharField('公司地址', max_length=200, default='选填')
     phone = models.CharField('公司电话', max_length=40, default='选填')
-    website = models.URLField('网址', max_length=200, default='example.com')
+    website = models.URLField('网址', max_length=200, default='https://example.com')
     business = models.CharField('主营业务', max_length=64)
     ceo = models.CharField('CEO', max_length=50, default='选填')
     email = models.EmailField('CEO邮箱', max_length=100,
@@ -208,6 +208,7 @@ class ShipOrder(models.Model):
     sales = models.ForeignKey(UserInfo, verbose_name='业务',
                               on_delete=models.CASCADE, null=True, blank=True)
     text = models.CharField('备注', max_length=480, default='选填')
+    destination = models.CharField(max_length=32, default='American')
     is_delete = models.IntegerField(default=1)
     input_date = models.DateTimeField(auto_now_add=True)
     objects = models.Manager()

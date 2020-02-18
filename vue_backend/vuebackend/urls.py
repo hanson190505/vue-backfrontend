@@ -20,7 +20,7 @@ from rest_framework import routers
 
 from api.views import OrdersViewSet, CustomerViewSet, SubOrderViewSet, PurchaseOrderViewSet, PurchaseDetailViewSet, \
     ShipOrderViewSet, ShipDetailViewSet
-from user.views import UserInfoApiView
+from user.views import UserInfoApiView, UserApiViewSet, getStoreStateViewSet
 from vuebackend import settings
 
 router = routers.DefaultRouter()
@@ -31,11 +31,14 @@ router.register('purchases', PurchaseOrderViewSet)
 router.register('purchasedetails', PurchaseDetailViewSet)
 router.register('shiporders', ShipOrderViewSet)
 router.register('shipdetails', ShipDetailViewSet)
+router.register('staffs', UserApiViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-    path('users/', UserInfoApiView.as_view({'post': 'log', 'get': 'list'})),
+    path('users/', UserInfoApiView.as_view({'post': 'log'})),
+    path('user/<int:pk>/', getStoreStateViewSet.as_view()),
+    path('user/', getStoreStateViewSet.as_view()),
     path('upload/', include('upload.urls'))
 ]
 if settings.DEBUG:

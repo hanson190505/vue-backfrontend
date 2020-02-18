@@ -7,10 +7,13 @@ from rest_framework.response import Response
 class UserTokenAuthentication(BaseAuthentication):
 
 	def authenticate(self, request):
-		token = request.data.get('token')
+		token = request.headers['authorization']
 		user = cache.get(token)
-		if user:
+		if user.u_name == 'admin':
 			return user, token
+		else:
+			msg = 'Invalid basic header. Credentials string should not contain spaces.'
+			raise exceptions.AuthenticationFailed(msg)
 
 
 class GetTokenAuthentication(BaseAuthentication):

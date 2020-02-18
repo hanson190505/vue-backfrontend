@@ -1,0 +1,55 @@
+version: '3.7'
+
+services:
+  api:
+    build: ./vue_backend
+#    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn vuebackend.wsgi:application -w 2 -k gthread -b :8000
+    volumes:
+      - ./vue_backend/:/usr/src/api/
+    ports:
+      - 8000:8000
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
+      - redis
+    networks:
+      - django-nginx
+  redis:
+    restart: always
+    ports:
+      - 6379:6379
+    image: redis
+    networks:
+      - django-nginx
+#    command: redis-server --requirepass ${pwd} --notify-keyspace-events Eglx
+  db:
+    image: postgres:12.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=hello_django
+      - POSTGRES_PASSWORD=hello_django
+      - POSTGRES_DB=hello_django_dev
+    networks:
+      - django-nginx
+  nginx:
+    build:
+      ./fontend
+    restart: always
+    depends_on:
+      - api
+    ports:
+      - 8080:80
+    networks:
+      - django-nginx
+
+networks:
+  django-nginx:
+    driver: bridge
+
+volumes:
+  postgres_data:

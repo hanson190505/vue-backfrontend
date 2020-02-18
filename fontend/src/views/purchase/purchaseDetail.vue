@@ -2,11 +2,20 @@
   <div>
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item :to="{ path: '/purchases' }">采购列表</el-breadcrumb-item>
+      <el-breadcrumb-item :to="{ path: '/purchases' }"
+        >采购列表</el-breadcrumb-item
+      >
       <el-breadcrumb-item>采购明细</el-breadcrumb-item>
-      <!-- 搜索组件 -->
-      <backend-searchVue @parentMethod="pagination"></backend-searchVue>
     </el-breadcrumb>
+    <el-row>
+      <el-col :span="4">
+        <!-- 搜索组件 -->
+        <backend-searchVue @parentMethod="pagination"></backend-searchVue>
+      </el-col>
+      <el-col :span="6">
+        <date-search @dateSearchDate="dateSearchDate"></date-search>
+      </el-col>
+    </el-row>
     <el-table
       :data="subPurchaseOrderData"
       style="width: 99.9%"
@@ -82,43 +91,51 @@
       </el-table-column>
       <el-table-column label="采购数量" width="90">
         <template slot-scope="scope">
-          <span :style="markData(scope.row)">{{scope.row.purchase_qt}}</span>
+          <span :style="markData(scope.row)">{{ scope.row.purchase_qt }}</span>
         </template>
       </el-table-column>
       <el-table-column label="采购单价(¥)" width="90">
         <template slot-scope="scope">
-          <span>{{scope.row.purchase_price}}</span>
+          <span>{{ scope.row.purchase_price }}</span>
         </template>
       </el-table-column>
       <el-table-column label="采购金额(¥)" width="100" prop="purchase_amount">
         <template slot-scope="scope">
-          <span>{{scope.row.purchase_amount | toThousandFilter }}</span>
+          <span>{{ scope.row.purchase_amount | toThousandFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column label="采购毛利(¥)" width="100" prop="profit_rmb">
         <template slot-scope="scope">
-          <span>{{scope.row.profit_rmb | toThousandFilter}}</span>
+          <span>{{ scope.row.profit_rmb | toThousandFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column label="采购毛利($)" width="100" prop="profit_usd">
         <template slot-scope="scope">
-          <span>{{scope.row.profit_usd | toThousandFilter}}</span>
+          <span>{{ scope.row.profit_usd | toThousandFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注" width="140">
         <template slot-scope="scope">
-          <span>{{scope.row.text}}</span>
+          <span>{{ scope.row.text }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" fixed="right" width="60" align="center">
         <template slot-scope="scope">
-          <el-button @click="checkPurchaseDetail(scope.row)" type="text" size="mini">查看</el-button>
+          <el-button
+            @click="checkPurchaseDetail(scope.row)"
+            type="text"
+            size="mini"
+            >查看</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
     <add-purchase ref="addpurchase"></add-purchase>
     <!-- 分页 -->
-    <pagi-nation @pagination="pagination" :getDataTotal="purchaseDetail.count"></pagi-nation>
+    <pagi-nation
+      @pagination="pagination"
+      :getDataTotal="purchaseDetail.count"
+    ></pagi-nation>
   </div>
 </template>
 
@@ -126,13 +143,15 @@
 import { mapGetters } from 'vuex'
 import pagiNation from '@/components/common/pagiNation'
 import backendSearchVue from '@/components/common/backendSearch.vue'
+import dateSearch from '@/components/common/dateSearch'
 import addPurchaseorder from './addPurchaseorder'
 export default {
   name: 'purchaseDetail',
   components: {
     pagiNation,
     backendSearchVue,
-    'add-purchase': addPurchaseorder
+    'add-purchase': addPurchaseorder,
+    dateSearch
   },
   data() {
     return {
@@ -146,6 +165,18 @@ export default {
     ...mapGetters(['purchaseDetail'])
   },
   methods: {
+    //日期搜索
+    dateSearchDate(value) {
+      if (!value) {
+        this.pagination()
+      } else {
+        this.pagination({
+          start_date: value[0],
+          end_date: value[1],
+          argument: 'date_search'
+        })
+      }
+    },
     pagination(params) {
       this.subPurchaseOrderData = []
       if (!params) {
@@ -205,5 +236,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

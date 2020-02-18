@@ -30,6 +30,10 @@
         <el-menu-item index="/shiporders">出货列表</el-menu-item>
         <el-menu-item index="/shipdetails">出货明细</el-menu-item>
       </el-submenu>
+      <el-submenu index="5" v-if="checkpermission()">
+        <template slot="title">系统管理</template>
+        <el-menu-item index="/staffs">用户列表</el-menu-item>
+      </el-submenu>
     </el-menu>
   </div>
 </template>
@@ -37,14 +41,21 @@
 <script>
 export default {
   name: 'navBar',
+  // v-if="window.localStorage.getItem('permissions')===1"
   data() {
     return {
       activeIndex: '1'
     }
   },
   methods: {
-    handleSelect(key, keypath) {}
-  }
+    handleSelect(key, keypath) {},
+    //TODO:权限控制????
+    checkpermission() {
+      return this.$store.getters.permissions === 1
+      // return window.localStorage.getItem('permissions') === '1'
+    }
+  },
+  created() {}
 }
 </script>
 

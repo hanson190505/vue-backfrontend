@@ -11,11 +11,52 @@
             </div>
           </el-col>
           <!-- 导航区 -->
-          <el-col :span="15">
+          <el-col :span="14">
             <nav-bar></nav-bar>
           </el-col>
+          <!-- 汇率实时显示 -->
+          <el-col :span="4">
+            <div class="ex-rate">
+              <div class="ex-rate-item">
+                <span class="fBuyPri">
+                  {{ exData.data1.name }}:现汇买入价:{{
+                  (exData.data1.fBuyPri / 100).toFixed(3)
+                  }}
+                </span>
+                <span class="bankConversionPri">
+                  中间价:{{
+                  (exData.data1.bankConversionPri / 100).toFixed(3)
+                  }}
+                </span>
+              </div>
+              <div class="ex-rate-item">
+                <span class="fBuyPri">
+                  {{ exData.data2.name }}:现汇买入价:{{
+                  (exData.data2.fBuyPri / 100).toFixed(3)
+                  }}
+                </span>
+                <span class="bankConversionPri">
+                  中间价:{{
+                  (exData.data2.bankConversionPri / 100).toFixed(3)
+                  }}
+                </span>
+              </div>
+              <div class="ex-rate-item">
+                <span class="fBuyPri">
+                  {{ exData.data3.name }}:现汇买入价:{{
+                  (exData.data3.fBuyPri / 100).toFixed(3)
+                  }}
+                </span>
+                <span class="bankConversionPri">
+                  中间价:{{
+                  (exData.data3.bankConversionPri / 100).toFixed(3)
+                  }}
+                </span>
+              </div>
+            </div>
+          </el-col>
           <!-- 个人信息区 -->
-          <el-col :span="6">
+          <el-col :span="3">
             <div class="userinfo">
               <span class="username">{{ username }}</span>
               <el-button type="info" @click="logout" size="medium">退出</el-button>
@@ -31,7 +72,8 @@
   </div>
 </template>
 <script>
-import navBar from '../components/navbar'
+import navBar from '@/components/navbar'
+import { getExRate } from '@/api/utilsApi'
 export default {
   name: 'home',
   components: {
@@ -39,15 +81,29 @@ export default {
   },
   data() {
     return {
-      username: window.localStorage.getItem('name')
+      // username: window.localStorage.getItem('name'),
+      username: this.$store.getters.name,
+      exData: { data1: { name: '' }, data2: { name: '' }, data3: { name: '' } }
     }
   },
   methods: {
+    // beforeunloadFn(e) {
+    //   console.log('刷新或关闭')
+    // },
     logout() {
       this.$store.dispatch('userInfo/logout')
       this.$router.push('/login')
     }
+  },
+  created() {
+    getExRate().then(res => {
+      this.exData = res.data
+    })
+    // window.addEventListener('beforeunload', e => this.beforeunloadFn(e))
   }
+  // destroyed() {
+  //   window.removeEventListener('beforeunload', e => this.beforeunloadFn(e))
+  // }
 }
 </script>
 
@@ -66,6 +122,17 @@ export default {
   float: right;
   .username {
     margin-right: 10px;
+    color: aliceblue;
   }
+}
+.ex-rate {
+  font-size: 10px;
+  color: aliceblue;
+}
+.fBuyPri {
+  margin-right: 10px;
+}
+.ex-rate-item {
+  margin-top: 3px;
 }
 </style>

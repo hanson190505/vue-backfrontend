@@ -1,16 +1,13 @@
 import uuid
-
-import qiniu
 from django.core.cache import cache
 from django.db.models import Q
-from rest_framework import generics, status, exceptions
+from rest_framework import status, exceptions
 from rest_framework.response import Response
-
 from api.serializer import OrdersSerializer, CustomersSerializer, SubOrderSerializer, PurchaseOrderSerializer, \
     PurchaseDetailSerializer, PostPurchaseOrderSerializer, PostSubOrderSerializer, PostOrdersSerializer, \
     PostPurchaseDetailSerializer, ShipOrderSerializer, ShipDetailSerializer, PostShipDetailSerializer
 from api.models import OrderCatalog, Customers, SubOrder, PurchaseOrder, PurchaseDetail, ShipOrder, ShipDetail
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet
 from middleware.pagenation import SubOrderPagination
 from user.authentications import GetTokenAuthentication
 
@@ -108,12 +105,26 @@ class SubOrderViewSet(ModelViewSet):
         serializer.save(sales=self.request.user)
 
     def get_queryset(self):
+        argument = self.request.query_params.get('argument')
         param = self.request.query_params.get('param')
-        # print(param)
+        val = self.request.query_params.get('val')
         if param:
             # return self.queryset.filter(order_number__order_number__iexact=param).all()
             return self.queryset.filter(Q(order_number__order_number__icontains=param) |
                                         Q(order_number__customer__lite_name__icontains=param))
+        elif argument:
+            start, end, argument = get_search_date(self)
+            return self.queryset.filter(Q(order_number__order_date__gte=start) &
+                                        Q(order_number__order_date__lte=end))
+        elif val:
+            if val == 'purchase':
+                return self.queryset.filter(is_purchase=1)
+            elif val == 'ship':
+                return self.queryset.filter(is_purchase=0).filter(is_ship=1)
+            elif val == 'acount':
+                return self.queryset.filter(is_purchase=0).filter(is_ship=0).filter(is_account=1)
+            elif val == 'done':
+                return self.queryset.filter(is_purchase=0).filter(is_ship=0).filter(is_account=0)
         else:
             return self.queryset
 
@@ -179,10 +190,15 @@ class PurchaseDetailViewSet(ModelViewSet):
 
     def get_queryset(self):
         param = self.request.query_params.get('param')
+        argument = self.request.query_params.get('argument')
         if param:
             return self.queryset.filter(Q(sub_order__order_number__order_number__icontains=param) |
                                         Q(sub_order__pro_name__icontains=param) |
                                         Q(sub_order__pro_desc__icontains=param))
+        elif argument:
+            start, end, argument = get_search_date(self)
+            return self.queryset.filter(Q(purchase_number__purchase_date__gte=start) &
+                                        Q(purchase_number__purchase_date__lte=end))
         else:
             return self.queryset
 
@@ -247,9 +263,14 @@ class ShipDetailViewSet(ModelViewSet):
 
     def get_queryset(self):
         param = self.request.query_params.get('param')
+        argument = self.request.query_params.get('argument')
         if param:
             return self.queryset.filter(Q(ship_number__ship_number__icontains=param) |
                                         Q(sub_order__order_number__order_number__icontains=param))
+        elif argument:
+            start, end, argument = get_search_date(self)
+            return self.queryset.filter(Q(ship_number__ship_date__gte=start) &
+                                        Q(ship_number__ship_date__lte=end))
         else:
             return self.queryset
 

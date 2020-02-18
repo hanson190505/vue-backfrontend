@@ -33,9 +33,9 @@
           <el-input v-model="customerData.phone" placeholder="选填"></el-input>
         </el-form-item>
         <el-form-item label="公司网站">
-          <el-input v-model="customerData.website" placeholder="选填"></el-input>
+          <el-input v-model="customerData.website" placeholder="https://example.com"></el-input>
         </el-form-item>
-        <el-form-item label="主营业务">
+        <el-form-item label="主营业务" prop="business">
           <el-input v-model="customerData.business" placeholder="请输入内容"></el-input>
         </el-form-item>
         <el-form-item label="CEO">
@@ -109,6 +109,9 @@ export default {
         ],
         contact_email: [
           { required: true, message: '请输入联系人邮箱', trigger: 'blur' }
+        ],
+        business: [
+          { required: true, message: '请输入主营业务', trigger: 'blur' }
         ]
       },
       customerData: {
@@ -179,17 +182,6 @@ export default {
           if (!window.sessionStorage.getItem('subtoken')) {
             this.$message.error('请勿重复提交,或刷新重试')
           } else {
-            // request({
-            //   url: 'customers/',
-            //   method: 'POST',
-            //   params: {
-            //     subtoken: window.sessionStorage.getItem('subtoken')
-            //   },
-            //   headers: {
-            //     'content-type': 'application/x-www-form-urlencoded'
-            //   },
-            //   data: qs.stringify(this.customerData)
-            // })
             postCustomer(this.customerData)
               .then(res => {
                 let newCustomerdata = res.data
@@ -199,8 +191,8 @@ export default {
               })
               .catch(err => {
                 // 请求失败的返回信息不能直接在err中拿,要像下面这样拿到xsz
-                console.log(err.response.request)
-                console.log(typeof err.response.request.response)
+                // console.log(err.response.request)
+                // console.log(typeof err.response.request.response)
                 let errmsg = qs.parse(err.response.request.response, {
                   delimiter: ','
                 })

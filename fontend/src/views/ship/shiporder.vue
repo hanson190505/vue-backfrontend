@@ -26,32 +26,37 @@
       <el-table-column type="index" width="60" align="center"></el-table-column>
       <el-table-column label="出货单号" align="center" width="140">
         <template slot-scope="scope">
-          <span>{{scope.row.ship_number}}</span>
+          <span>{{ scope.row.ship_number }}</span>
         </template>
       </el-table-column>
       <el-table-column label="出货方式" align="center" width="100">
         <template slot-scope="scope">
-          <span>{{shipType[scope.row.ship_plan-1]}}</span>
+          <span>{{ shipType[scope.row.ship_plan - 1] }}</span>
         </template>
       </el-table-column>
       <el-table-column label="货运公司" align="center" width="100">
         <template slot-scope="scope">
-          <span>{{scope.row.ship_customer}}</span>
+          <span>{{ scope.row.ship_customer }}</span>
         </template>
       </el-table-column>
       <el-table-column label="出货日期" align="center" width="100">
         <template slot-scope="scope">
-          <span>{{scope.row.ship_date}}</span>
+          <span>{{ scope.row.ship_date }}</span>
         </template>
       </el-table-column>
       <el-table-column label="出货重量(kg)" align="center" width="120" prop="ship_weight">
         <template slot-scope="scope">
-          <span>{{scope.row.ship_weight}}</span>
+          <span>{{ scope.row.ship_weight }}</span>
         </template>
       </el-table-column>
       <el-table-column label="出货费用(¥)" align="center" width="100" prop="ship_cost">
         <template slot-scope="scope">
-          <span>{{scope.row.ship_cost}}</span>
+          <span>{{ scope.row.ship_cost }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="目的地" align="center" width="100">
+        <template slot-scope="scope">
+          <span>{{ scope.row.destination }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" fixed="right" width="100" align="center">
@@ -70,7 +75,7 @@ import pagiNation from '@/components/common/pagiNation'
 import backendSearchVue from '@/components/common/backendSearch.vue'
 import addShip from './addShip'
 import checkShip from './checkShip'
-import { getSubToken } from '../../api/token'
+import { getSubToken } from '@/api/token'
 export default {
   name: 'shipOrder',
   components: {
@@ -123,5 +128,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

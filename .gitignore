@@ -3,9 +3,11 @@ node_modules
 /dist
 env
 db.sqlite3
+/media
 # local env files
 .env.local
 .env.*.local
+.env.*
 
 # Log files
 npm-debug.log*

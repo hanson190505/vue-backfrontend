@@ -16,19 +16,21 @@ import sys
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # sys.path.insert(0, BASE_DIR)
-# sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
-
+# sys.path.insert(0, os.path.join(BASE_DIR, 'user'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
+DEBUG = int(os.environ.get("DEBUG", default=0))
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '!dikmomho)6o=q8c@ipbddxlxark$=vt!+s&ch3irsye__3fgy'
+# SECRET_KEY = '!dikmomho)6o=q8c@ipbddxlxark$=vt!+s&ch3irsye__3fgy'
+#
+# # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = True
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
 APPEND_SLASH = False
 # Application definition
@@ -84,7 +86,8 @@ MIDDLEWARE = [
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:8080",
     "http://192.168.3.45:8080",
-    "http://192.168.3.45:5000"
+    "http://172.26.15.58:80",
+    "http://172.26.15.58:443"
 ]
 
 CORS_ALLOW_HEADERS = [
@@ -124,25 +127,31 @@ WSGI_APPLICATION = 'vuebackend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'djangovue',
+#         'USER': 'root',
+#         'PASSWORD': '123456',
+#         'HOST': 'localhost',
+#         'PORT': '3306'
+#     }
+# }
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'djangovue',
-        'USER': 'root',
-        'PASSWORD': '123456',
-        'HOST': 'localhost',
-        'PORT': '3306'
+    "default": {
+        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
+        "USER": os.environ.get("SQL_USER", "user"),
+        "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
+        "HOST": os.environ.get("SQL_HOST", "localhost"),
+        "PORT": os.environ.get("SQL_PORT", "5432"),
     }
 }
-# 七牛云
-QI_NIU_ACCESS_KEY = 'mLTdlxcvJQk3Eec9WSMJbysaXjmN6wV9FBUEcr6q'   #AK
-QI_NIU_SECRET_KEY = 'yKywwAD_x_VkHvM0RuNy5N7UwKnFGh8CvucT1Jdd' #SK
-QI_NIU_BUCKET_NAME = 'coteam'  #存储空间的名字
 # 缓存配置
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'LOCATION': 'redis://172.26.15.58:6379/1',
         'TIMEOUT': 60,
     }
 }
@@ -171,7 +180,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -184,6 +193,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
