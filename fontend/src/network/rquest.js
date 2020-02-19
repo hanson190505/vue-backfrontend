@@ -9,7 +9,7 @@ export function request(config) {
     // baseURL: 'http://0.0.0.0:8000/',
     // baseURL: 'http://192.168.3.45:8000/',
     // baseURL: 'http://3.135.197.102:8000/',
-    baseURL: 'http: //cms.chinagoodgifts.com',
+    baseURL: 'http://cms.chinagoodgifts.com/api/',
     timeout: 5000,
   })
   //axios拦截器(请求局部拦截)
@@ -53,7 +53,7 @@ export function request(config) {
 
 export function getRangeDateRequest(config) {
   const instance = axios.create({
-    baseURL: 'http: //cms.chinagoodgifts.com',
+    baseURL: 'http://cms.chinagoodgifts.com/api/',
     // baseURL: 'http://0.0.0.0:8000/',
     // baseURL: 'http://192.168.3.45:8000/orders/',
     // baseURL: 'http://3.135.197.102:8000/orders/',
