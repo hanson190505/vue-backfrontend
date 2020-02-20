@@ -15,7 +15,7 @@
             <nav-bar></nav-bar>
           </el-col>
           <!-- 汇率实时显示 -->
-          <el-col :span="4">
+          <!-- <el-col :span="4">
             <div class="ex-rate">
               <div class="ex-rate-item">
                 <span class="fBuyPri">
@@ -48,7 +48,7 @@
                 </span>
               </div>
             </div>
-          </el-col>
+          </el-col> -->
           <!-- 个人信息区 -->
           <el-col :span="3">
             <div class="userinfo">
@@ -69,7 +69,7 @@
 </template>
 <script>
 import navBar from '@/components/navbar'
-import { getExRate } from '@/api/utilsApi'
+// import { getExRate } from '@/api/utilsApi'
 export default {
   name: 'home',
   components: {
@@ -77,27 +77,19 @@ export default {
   },
   data() {
     return {
-      // username: window.localStorage.getItem('name'),
-      username: '',
-      exData: { data1: { name: '' }, data2: { name: '' }, data3: { name: '' } }
+      // exData: { data1: { name: '' }, data2: { name: '' }, data3: { name: '' } }
     }
   },
   methods: {
-    // beforeunloadFn(e) {
-    //   console.log('刷新或关闭')
-    // },
     logout() {
       this.$store.dispatch('userInfo/logout')
       this.$router.push('/login')
     }
   },
   created() {
-    getExRate().then(res => {
-      this.exData = res.data
-    })
-
-    this.username = this.$store.getters.name
-    // window.addEventListener('beforeunload', e => this.beforeunloadFn(e))
+    // getExRate().then(res => {
+    //   this.exData = res.data
+    // })
   }
   // destroyed() {
   //   window.removeEventListener('beforeunload', e => this.beforeunloadFn(e))
