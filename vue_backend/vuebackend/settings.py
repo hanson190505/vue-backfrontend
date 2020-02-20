@@ -155,8 +155,7 @@ DATABASES = {
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        # 'LOCATION': 'redis://172.26.15.58:6379/1',
-        'LOCATION': 'redis://192.168.3.45:6379/1',
+        'LOCATION': os.environ.get("REDISHOST", 'redis://192.168.3.45:6379/1'),
         'TIMEOUT': 60,
     }
 }
