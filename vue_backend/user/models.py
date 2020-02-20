@@ -20,4 +20,11 @@ class UserInfo(models.Model):
     def verify_password(self, password):
         return check_password(password, self.u_password)
 
+    @property
+    def is_authenticated(self):
+        """
+        Always return True. This is a way to tell if the user has been
+        authenticated in templates.
+        """
+        return True
 
