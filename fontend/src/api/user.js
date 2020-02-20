@@ -3,17 +3,39 @@ import {
 } from "../network/rquest";
 import qs from 'qs'
 
-export function login(data) {
+export function getPubKey() {
     return request({
-        url: 'users/',
+        url: 'staffs/',
+        params: {
+            pub_key: 'pub_key'
+        },
+    })
+}
+
+export function getLogin(params) {
+    return request({
+        url: 'staffs/',
+        params: params
+    })
+}
+
+export function register(data) {
+    return request({
+        url: 'staffs/',
         method: 'post',
+        params: {
+            register: 'register'
+        },
         data: qs.stringify(data)
     })
 }
 
 export function getUser(pk) {
     return request({
-        url: `user/${pk}/`,
+        url: `staffs/${pk}/`,
+        params: {
+            getStore: 'getStore'
+        }
     })
 }
 

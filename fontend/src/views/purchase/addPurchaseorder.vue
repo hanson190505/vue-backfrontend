@@ -1,14 +1,27 @@
 <template>
   <div>
-    <el-dialog :visible.sync="dialogVisible" width="90%" :before-close="handleClose">
+    <el-dialog
+      :visible.sync="dialogVisible"
+      width="90%"
+      :before-close="handleClose"
+    >
       <h3 class="purchase-title">采 购 单</h3>
       <hr />
-      <el-form :model="addPurchaseData" ref="addPurchaseData" label-width="80px">
+      <el-form
+        :model="addPurchaseData"
+        ref="addPurchaseData"
+        label-width="80px"
+      >
         <el-row>
           <el-col :span="6">
             <el-form-item label="采购单号:">
-              <el-input v-model="addPurchaseData.purchase_number" v-show="purchaserShow"></el-input>
-              <span v-show="!purchaserShow">{{addPurchaseData.purchase_number}}</span>
+              <el-input
+                v-model="addPurchaseData.purchase_number"
+                v-show="purchaserShow"
+              ></el-input>
+              <span v-show="!purchaserShow">{{
+                addPurchaseData.purchase_number
+              }}</span>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -27,7 +40,7 @@
                   :value="item.lite_name"
                 ></el-option>
               </el-select>
-              <span v-show="!purchaserShow">{{purchaser}}</span>
+              <span v-show="!purchaserShow">{{ purchaser }}</span>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -54,7 +67,12 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="备注:">
-              <el-input type="textarea" :rows="2" v-model="addPurchaseData.text" placeholder="选填"></el-input>
+              <el-input
+                type="textarea"
+                :rows="2"
+                v-model="addPurchaseData.text"
+                placeholder="选填"
+              ></el-input>
             </el-form-item>
             <!-- <el-form-item>
               <el-button type="primary" @click="onSubmit">立即创建</el-button>
@@ -102,22 +120,22 @@
         </el-table-column>
         <el-table-column label="订单数量" width="120">
           <template slot-scope="scope">
-            <span>{{ scope.row.pro_qt | toThousandFilter}}</span>
+            <span>{{ scope.row.pro_qt | toThousandFilter }}</span>
           </template>
         </el-table-column>
         <el-table-column label="产品单价($)" width="100">
           <template slot-scope="scope">
-            <span>{{scope.row.pro_price}}</span>
+            <span>{{ scope.row.pro_price }}</span>
           </template>
         </el-table-column>
         <el-table-column label="产品重量(g)" width="100">
           <template slot-scope="scope">
-            <span>{{scope.row.pro_weight}}</span>
+            <span>{{ scope.row.pro_weight }}</span>
           </template>
         </el-table-column>
         <el-table-column label="订单金额($)" width="120">
           <template slot-scope="scope">
-            <span>{{scope.row.sub_amount | toThousandFilter}}</span>
+            <span>{{ scope.row.sub_amount | toThousandFilter }}</span>
           </template>
         </el-table-column>
         <el-table-column label="采购数量" width="120">
@@ -127,7 +145,10 @@
         </el-table-column>
         <el-table-column label="采购单价(¥)" width="100">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.purchase_price" @blur="subAmount(scope.row)"></el-input>
+            <el-input
+              v-model="scope.row.purchase_price"
+              @blur="subAmount(scope.row)"
+            ></el-input>
           </template>
         </el-table-column>
         <el-table-column label="采购金额(¥)" width="120" prop="purchase_amount">
@@ -137,12 +158,12 @@
         </el-table-column>
         <el-table-column label="采购毛利(¥)" width="100" prop="profit_rmb">
           <template slot-scope="scope">
-            <span>{{scope.row.profit_rmb | toThousandFilter}}</span>
+            <span>{{ scope.row.profit_rmb | toThousandFilter }}</span>
           </template>
         </el-table-column>
         <el-table-column label="采购毛利($)" width="100" prop="profit_usd">
           <template slot-scope="scope">
-            <span>{{scope.row.profit_usd | toThousandFilter}}</span>
+            <span>{{ scope.row.profit_usd | toThousandFilter }}</span>
           </template>
         </el-table-column>
         <el-table-column label="备注" width="140">
@@ -152,14 +173,25 @@
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="60" align="center">
           <template slot-scope="scope">
-            <el-button @click="handleDelete(scope.$index, scope.row)" type="text" size="mini">删除</el-button>
+            <el-button
+              @click="handleDelete(scope.$index, scope.row)"
+              type="text"
+              size="mini"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
       <el-button type="primary" @click="submitPurchaseDetail">保 存</el-button>
 
-      <el-dialog :visible.sync="subdialogVisable" width="99%" :append-to-body="true">
-        <suborder-detail @getSelectSuborder="getSelectSuborder"></suborder-detail>
+      <el-dialog
+        :visible.sync="subdialogVisable"
+        width="99%"
+        :append-to-body="true"
+      >
+        <suborder-detail
+          @getSelectSuborder="getSelectSuborder"
+        ></suborder-detail>
         <!-- <suborder-detail></suborder-detail> -->
         <span slot="footer">
           <el-button @click="addNewPurchaseDetail">确 定</el-button>
@@ -394,7 +426,7 @@ export default {
                     i.sub_order = i.id
                     postPurchaseDetail(i)
                       .then(res => {
-                        patchSubOrder(i.id, '', { is_purchase: 0 }).then(
+                        patchSubOrder(i.id, '', { is_purchase: 1 }).then(
                           res => {
                             this.$notify({
                               title: 'succsess',
@@ -457,7 +489,7 @@ export default {
         })
           .then(() => {
             this.subPurchaseOrderData.splice(index, 1)
-            patchPurchaseDetail(row.id, { is_delete: 0 }).then(res => {
+            patchPurchaseDetail(row.id, { is_delete: 1 }).then(res => {
               this.$message({
                 type: 'success',
                 message: '删除成功!'

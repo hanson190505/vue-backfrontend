@@ -22,7 +22,7 @@ class GetTokenAuthentication(BaseAuthentication):
 		# 这个request是drf封装之后的request
 		token = request.headers['authorization']
 		user = cache.get(token)
-		if user:
+		if user.is_use == 1:
 			return user, token
 		else:
 			msg = 'Invalid basic header. Credentials string should not contain spaces.'

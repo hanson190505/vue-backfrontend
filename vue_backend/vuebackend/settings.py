@@ -21,16 +21,16 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 SECRET_KEY = os.environ.get("SECRET_KEY")
-
 DEBUG = int(os.environ.get("DEBUG", default=0))
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = '!dikmomho)6o=q8c@ipbddxlxark$=vt!+s&ch3irsye__3fgy'
 #
 # # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
-
+#
 # ALLOWED_HOSTS = ['*']
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+
 
 APPEND_SLASH = False
 # Application definition
@@ -63,6 +63,12 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',),
+    # 'DEFAULT_THROTTLE_CLASSES': [
+    #     'rest_framework.throttling.AnonRateThrottle',
+    # ],
+    # 'DEFAULT_THROTTLE_RATES': {
+    #     'anon': '1000/day',
+    # }
 }
 
 # OAUTH2_PROVIDER = {
@@ -132,6 +138,7 @@ WSGI_APPLICATION = 'vuebackend.wsgi.application'
 #         'PORT': '3306'
 #     }
 # }
+# 部署时还要配置__init__.py文件
 DATABASES = {
     "default": {
         "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
@@ -146,7 +153,8 @@ DATABASES = {
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://172.26.15.58:6379/1',
+        # 'LOCATION': 'redis://172.26.15.58:6379/1',
+        'LOCATION': 'redis://192.168.3.45:6379/1',
         'TIMEOUT': 60,
     }
 }

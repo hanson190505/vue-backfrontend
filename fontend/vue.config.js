@@ -6,6 +6,7 @@ function resolve(dir) {
 }
 
 module.exports = {
+    outputDir: process.env.outputDir,
     publicPath: '/',
     outputDir: 'dist',
     assetsDir: 'static',

@@ -39,7 +39,7 @@ class Customers(models.Model):
         '信用额度', default=0, max_digits=10, decimal_places=2)
     input_time = models.DateField('添加日期', auto_now_add=True)
     text = models.CharField('备注', max_length=480, default='选填')
-    is_delete = models.IntegerField(default=1)
+    is_delete = models.IntegerField(default=0)
     # 让模型代码用objects能自动补全
     objects = models.Manager()
 
@@ -75,10 +75,10 @@ class OrderCatalog(models.Model):
     # order_picture = models.ImageField(
     #     upload_to='images/%Y/%m/%d', default='上传图片', verbose_name='图片')
     order_pic = models.CharField(max_length=128, null=True, blank=True)
-    is_done = models.IntegerField('完成状态', choices=ORDER_STATUS, default=1)
+    is_done = models.IntegerField('完成状态', choices=ORDER_STATUS, default=0)
     text = models.CharField('备注', max_length=480, default='选填')
-    ship_addr = models.CharField('出货地点', max_length=200, default=1)
-    is_delete = models.IntegerField(default=1)
+    ship_addr = models.CharField('出货地点', max_length=200, default='暂无')
+    is_delete = models.IntegerField(default=0)
     objects = models.Manager()
 
     class Meta:
@@ -117,10 +117,11 @@ class SubOrder(models.Model):
     sub_amount = models.DecimalField(
         '订单金额($)', default=0, max_digits=10, decimal_places=2)
     sub_input_date = models.DateField("录入日期", auto_now=datetime.now)
-    is_delete = models.IntegerField(default=1)
-    is_purchase = models.IntegerField(default=1)
-    is_ship = models.IntegerField(default=1)
-    is_account = models.IntegerField(default=1)
+    is_delete = models.IntegerField(default=0)
+    is_purchase = models.IntegerField(default=0)
+    is_ship = models.IntegerField(default=0)
+    is_account = models.IntegerField(default=0)
+    is_reconciliation = models.IntegerField(default=0)
     status = models.IntegerField(default=1)
     objects = models.Manager()
 
@@ -147,7 +148,7 @@ class PurchaseOrder(models.Model):
     input_date = models.DateTimeField(auto_now_add=True)
     text = models.CharField('备注', max_length=400, default='选填')
     # purchase_amount = models.DecimalField('采购金额', max_digits=10, decimal_places=2, default=0)
-    is_delete = models.IntegerField(default=1)
+    is_delete = models.IntegerField(default=0)
     objects = models.Manager()
 
     class Meta:
@@ -171,7 +172,7 @@ class PurchaseDetail(models.Model):
     purchase_amount = models.DecimalField(
         '采购金额($)', max_digits=20, decimal_places=4, default=0)
     text = models.CharField('备注', max_length=400, default='选填')
-    is_delete = models.IntegerField(default=1)
+    is_delete = models.IntegerField(default=0)
     objects = models.Manager()
 
     class Meta:
@@ -209,7 +210,7 @@ class ShipOrder(models.Model):
                               on_delete=models.CASCADE, null=True, blank=True)
     text = models.CharField('备注', max_length=480, default='选填')
     destination = models.CharField(max_length=32, default='American')
-    is_delete = models.IntegerField(default=1)
+    is_delete = models.IntegerField(default=0)
     input_date = models.DateTimeField(auto_now_add=True)
     objects = models.Manager()
 
@@ -231,7 +232,7 @@ class ShipDetail(models.Model):
         '出货费用(¥)', max_digits=10, decimal_places=2, default=0)
     ship_weight = models.DecimalField(
         '出货重量(kg)', max_digits=8, decimal_places=2, default=0)
-    is_delete = models.IntegerField(default=1)
+    is_delete = models.IntegerField(default=0)
     objects = models.Manager()
 
     class Meta:
@@ -255,7 +256,7 @@ class ProductsType(models.Model):
     sub_type = models.CharField(
         '产品子类', unique=True, help_text='用英文填写产品子类', max_length=20)
     pub_date = models.DateField('添加日期', auto_now=datetime.now)
-    is_delete = models.IntegerField(default=1)
+    is_delete = models.IntegerField(default=0)
 
     class Meta:
         verbose_name = '产品类别'
@@ -282,7 +283,7 @@ class Products(models.Model):
     pro_desc = models.TextField('详情')
     # pro_desc = RichTextField()
     is_font = models.BooleanField('首页展示', default=False)
-    is_delete = models.IntegerField(default=1)
+    is_delete = models.IntegerField(default=0)
 
     class Meta:
         verbose_name = '产品目录'

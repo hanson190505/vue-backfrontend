@@ -20,37 +20,31 @@
               <div class="ex-rate-item">
                 <span class="fBuyPri">
                   {{ exData.data1.name }}:现汇买入价:{{
-                  (exData.data1.fBuyPri / 100).toFixed(3)
+                    (exData.data1.fBuyPri / 100).toFixed(3)
                   }}
                 </span>
                 <span class="bankConversionPri">
-                  中间价:{{
-                  (exData.data1.bankConversionPri / 100).toFixed(3)
-                  }}
+                  中间价:{{ (exData.data1.bankConversionPri / 100).toFixed(3) }}
                 </span>
               </div>
               <div class="ex-rate-item">
                 <span class="fBuyPri">
                   {{ exData.data2.name }}:现汇买入价:{{
-                  (exData.data2.fBuyPri / 100).toFixed(3)
+                    (exData.data2.fBuyPri / 100).toFixed(3)
                   }}
                 </span>
                 <span class="bankConversionPri">
-                  中间价:{{
-                  (exData.data2.bankConversionPri / 100).toFixed(3)
-                  }}
+                  中间价:{{ (exData.data2.bankConversionPri / 100).toFixed(3) }}
                 </span>
               </div>
               <div class="ex-rate-item">
                 <span class="fBuyPri">
                   {{ exData.data3.name }}:现汇买入价:{{
-                  (exData.data3.fBuyPri / 100).toFixed(3)
+                    (exData.data3.fBuyPri / 100).toFixed(3)
                   }}
                 </span>
                 <span class="bankConversionPri">
-                  中间价:{{
-                  (exData.data3.bankConversionPri / 100).toFixed(3)
-                  }}
+                  中间价:{{ (exData.data3.bankConversionPri / 100).toFixed(3) }}
                 </span>
               </div>
             </div>
@@ -58,8 +52,10 @@
           <!-- 个人信息区 -->
           <el-col :span="3">
             <div class="userinfo">
-              <span class="username">{{ username }}</span>
-              <el-button type="info" @click="logout" size="medium">退出</el-button>
+              <span class="username">{{ this.$store.getters.name }}</span>
+              <el-button type="info" @click="logout" size="medium"
+                >退出</el-button
+              >
             </div>
           </el-col>
         </el-row>
@@ -82,7 +78,7 @@ export default {
   data() {
     return {
       // username: window.localStorage.getItem('name'),
-      username: this.$store.getters.name,
+      username: '',
       exData: { data1: { name: '' }, data2: { name: '' }, data3: { name: '' } }
     }
   },
@@ -99,6 +95,8 @@ export default {
     getExRate().then(res => {
       this.exData = res.data
     })
+
+    this.username = this.$store.getters.name
     // window.addEventListener('beforeunload', e => this.beforeunloadFn(e))
   }
   // destroyed() {

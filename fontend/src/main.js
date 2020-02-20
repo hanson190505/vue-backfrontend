@@ -7,6 +7,7 @@ import './assets/css/base.css'
 import store from './store';
 import './icons' // icon
 import * as filters from './filters' // global filters
+import JSEncrypt from 'jsencrypt';
 
 Vue.use(Element, {
   size: 'mini',
@@ -20,6 +21,13 @@ Vue.prototype.$store = store
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
+//JSEncrypt加密方法(参数1:数据，参数2：公钥)
+Vue.prototype.$jsEncrypt = function (data, pub_key) {
+  let encrypt = new JSEncrypt()
+  encrypt.setPublicKey(pub_key)
+  let en_data = encrypt.encrypt(data.toString())
+  return en_data
+}
 
 new Vue({
   router,

@@ -9,6 +9,13 @@ class UserInfoSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 
+class UserLoginSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = UserInfo
+		exclude = ['u_password']
+
+
 class PostUserInfoSerializer(serializers.ModelSerializer):
 
 	class Meta:

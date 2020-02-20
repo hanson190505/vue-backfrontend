@@ -11,34 +11,47 @@
       element-loading-spinner="el-icon-loading"
       element-loading-background="rgba(0, 0, 0, 0.8)"
     >
-      <el-table-column type="selection" width="60" align="center"></el-table-column>
+      <el-table-column
+        type="selection"
+        width="60"
+        align="center"
+      ></el-table-column>
       <el-table-column label="用户名" align="center" width="100" fixed>
         <template slot-scope="scope">
-          <span>{{scope.row.u_name}}</span>
+          <span>{{ scope.row.u_name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建日期" align="center" width="260" fixed>
         <template slot-scope="scope">
-          <span>{{scope.row.creat_time}}</span>
+          <span>{{ scope.row.creat_time }}</span>
         </template>
       </el-table-column>
       <el-table-column label="角色" align="center" width="100" fixed>
         <template slot-scope="scope">
-          <el-tag disable-transitions slot="reference">{{ scope.row.tag }}</el-tag>
+          <el-tag disable-transitions slot="reference">{{
+            scope.row.tag
+          }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="状态" align="center" width="100" fixed>
         <template slot-scope="scope">
-          <el-tag :type="scope.row.type" disable-transitions slot="reference">{{ scope.row.status }}</el-tag>
+          <el-tag :type="scope.row.type" disable-transitions slot="reference">{{
+            scope.row.status
+          }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="120">
         <template slot-scope="scope">
-          <el-button @click="changeRow(scope.row)" type="text" size="mini">修改</el-button>
+          <el-button @click="changeRow(scope.row)" type="text" size="mini"
+            >修改</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
-    <pagi-nation @pagination="pagination" :getDataTotal="dataTotal"></pagi-nation>
+    <pagi-nation
+      @pagination="pagination"
+      :getDataTotal="dataTotal"
+    ></pagi-nation>
     <change-data ref="changeForm"></change-data>
   </div>
 </template>
@@ -98,11 +111,11 @@ export default {
           break
       }
       switch (row.is_use) {
-        case 0:
+        case 1:
           row.status = '可用'
           row.type = 'success'
           break
-        case 1:
+        case 0:
           row.status = '禁用'
           row.type = 'warning'
           break
@@ -132,5 +145,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

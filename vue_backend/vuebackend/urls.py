@@ -20,7 +20,7 @@ from rest_framework import routers
 
 from api.views import OrdersViewSet, CustomerViewSet, SubOrderViewSet, PurchaseOrderViewSet, PurchaseDetailViewSet, \
     ShipOrderViewSet, ShipDetailViewSet
-from user.views import UserInfoApiView, UserApiViewSet, getStoreStateViewSet
+from user.views import UserApiViewSet
 from vuebackend import settings
 
 router = routers.DefaultRouter()
@@ -35,11 +35,8 @@ router.register('staffs', UserApiViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(router.urls)),
-    path('users/', UserInfoApiView.as_view({'post': 'log'})),
-    path('user/<int:pk>/', getStoreStateViewSet.as_view()),
-    path('user/', getStoreStateViewSet.as_view()),
-    path('upload/', include('upload.urls'))
+    path('api/', include(router.urls)),
+    path('api/upload/', include('upload.urls'))
 ]
 if settings.DEBUG:
   urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

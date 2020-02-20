@@ -1,14 +1,18 @@
 <template>
   <div>
-    <el-dialog :visible.sync="displayed" width="40%" :before-close="handleClose">
+    <el-dialog
+      :visible.sync="displayed"
+      width="40%"
+      :before-close="handleClose"
+    >
       <el-form :model="userData" ref="form" label-width="80px">
         <el-form-item label="用户名">
-          <span>{{userData.u_name}}</span>
+          <span>{{ userData.u_name }}</span>
         </el-form-item>
-        <el-form-item label="密 码">
+        <!-- <el-form-item label="密 码">
           <el-input v-model="userData.u_password"></el-input>
           <el-button type="primary" @click="randomPassword">生成密码</el-button>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="角 色">
           <el-select v-model="userData.permissions" placeholder>
             <el-option
@@ -59,15 +63,15 @@ export default {
         { value: 0, label: '未分配' }
       ],
       statusOptions: [
-        { value: 0, label: '可用' },
-        { value: 1, label: '禁用' }
+        { value: 0, label: '禁用' },
+        { value: 1, label: '可用' }
       ]
     }
   },
   methods: {
-    randomPassword() {
-      this.userData.u_password
-    },
+    // randomPassword() {
+    //   this.userData.u_password
+    // },
     handleChange(row) {
       this.displayed = true
       this.userData = row
@@ -92,5 +96,4 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

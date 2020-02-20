@@ -22,7 +22,7 @@ def get_search_date(self):
 
 class OrdersViewSet(ModelViewSet):
     queryset = OrderCatalog.objects.filter(
-        is_delete=1).order_by('-order_date')
+        is_delete=0).order_by('-order_date')
     serializer_class = OrdersSerializer
     filterset_fields = ['order_number', 'order_date', 'is_done',
                         'ship_addr', 'text', 'customer', 'deliver_date', 'ex_rate']
@@ -71,7 +71,7 @@ class OrdersViewSet(ModelViewSet):
 
 
 class CustomerViewSet(ModelViewSet):
-    queryset = Customers.objects.filter(is_delete=1).order_by('status')
+    queryset = Customers.objects.filter(is_delete=0).order_by('status')
     serializer_class = CustomersSerializer
     authentication_classes = GetTokenAuthentication,
 
@@ -96,7 +96,7 @@ class CustomerViewSet(ModelViewSet):
 
 
 class SubOrderViewSet(ModelViewSet):
-    queryset = SubOrder.objects.filter(is_delete=1).order_by('status')
+    queryset = SubOrder.objects.filter(is_delete=0).order_by('status')
     serializer_class = SubOrderSerializer
     authentication_classes = GetTokenAuthentication,
     pagination_class = SubOrderPagination
@@ -161,7 +161,7 @@ class SubOrderViewSet(ModelViewSet):
 
 class PurchaseOrderViewSet(ModelViewSet):
     """采购单视图"""
-    queryset = PurchaseOrder.objects.filter(is_delete=1).order_by('-input_date')
+    queryset = PurchaseOrder.objects.filter(is_delete=0).order_by('-input_date')
     serializer_class = PurchaseOrderSerializer
     authentication_classes = GetTokenAuthentication,
     pagination_class = SubOrderPagination
@@ -183,7 +183,7 @@ class PurchaseOrderViewSet(ModelViewSet):
 
 class PurchaseDetailViewSet(ModelViewSet):
     """采购明细视图"""
-    queryset = PurchaseDetail.objects.filter(is_delete=1).order_by('id')
+    queryset = PurchaseDetail.objects.filter(is_delete=0).order_by('id')
     serializer_class = PurchaseDetailSerializer
     authentication_classes = GetTokenAuthentication,
     pagination_class = SubOrderPagination
@@ -235,7 +235,7 @@ class PurchaseDetailViewSet(ModelViewSet):
 
 
 class ShipOrderViewSet(ModelViewSet):
-    queryset = ShipOrder.objects.filter(is_delete=1).order_by('ship_date')
+    queryset = ShipOrder.objects.filter(is_delete=0).order_by('ship_date')
     serializer_class = ShipOrderSerializer
     authentication_classes = GetTokenAuthentication,
     pagination_class = SubOrderPagination
@@ -245,7 +245,7 @@ class ShipOrderViewSet(ModelViewSet):
 
 
 class ShipDetailViewSet(ModelViewSet):
-    queryset = ShipDetail.objects.filter(is_delete=1).order_by('id')
+    queryset = ShipDetail.objects.filter(is_delete=0).order_by('id')
     serializer_class = ShipDetailSerializer
     authentication_classes = GetTokenAuthentication,
     pagination_class = SubOrderPagination

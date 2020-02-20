@@ -13,19 +13,24 @@
         class="login_form"
         inline-message
       >
-        <el-form-item prop="username">
-          <el-input placeholder="请输入用户名" prefix-icon="el-icon-user" v-model="loginform.username"></el-input>
+        <el-form-item prop="u_name">
+          <el-input
+            placeholder="请输入用户名"
+            prefix-icon="el-icon-user"
+            v-model="loginform.u_name"
+          ></el-input>
         </el-form-item>
-        <el-form-item prop="password">
+        <el-form-item prop="u_password">
           <el-input
             placeholder="请输入密码"
             prefix-icon="el-icon-lock"
-            v-model="loginform.password"
+            v-model="loginform.u_password"
             type="password"
             @keyup.enter.native="login"
           ></el-input>
         </el-form-item>
         <el-form-item class="btns">
+          <el-button type="primary" @click="register">注册</el-button>
           <el-button type="primary" @click="login">登录</el-button>
           <el-button type="info" @click="resetlogin">重置</el-button>
         </el-form-item>
@@ -35,23 +40,28 @@
 </template>
 
 <script>
-import { getUserInfo } from '@/api/user'
+import { getUserInfo, getPubKey, getLogin, register } from '@/api/user'
 export default {
   data() {
     return {
       loginform: {
-        username: '',
-        password: '',
-        ac: 'login'
+        u_name: '',
+        u_password: '',
+        login: 'login'
       },
       LoginFormRoles: {
-        username: [
+        u_name: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
           { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
         ],
-        password: [
+        u_password: [
           { required: true, message: '请输入用密码', trigger: 'blur' },
-          { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
+          {
+            min: 6,
+            max: 256,
+            message: '长度在 6 到 15 个字符',
+            trigger: 'blur'
+          }
         ]
       }
     }
@@ -65,32 +75,62 @@ export default {
         if (!valid) {
           return
         } else {
-          this.$store
-            .dispatch('userInfo/loginSet', this.loginform)
+          getPubKey().then(res => {
+            this.loginform.u_password = this.$jsEncrypt(
+              this.loginform.u_password,
+              res.data.pub_key
+            )
+            this.$store
+              .dispatch('userInfo/loginSet', this.loginform)
+              .then(res => {
+                let status = res.data.status
+                switch (status) {
+                  case 410:
+                    this.$message('用户名错误')
+                    break
+                  case 411:
+                    this.$message('密码错误')
+                    break
+                  case 412:
+                    this.$message('用户审核未通过')
+                    break
+                  case 2000:
+                    //要用catch捕获这个错误,不然会报错,用replace不能跳转,会报错
+                    // window.sessionStorage.setItem('token', res.data.token)
+                    this.$router.replace('/dash').catch(err => {})
+                    this.$message.success('登录成功')
+                    // this.$store.state.username = loginform.username
+                    break
+                  default:
+                    break
+                }
+              })
+          })
+        }
+      })
+    },
+    register() {
+      this.$refs.LoginFormRef.validate(valid => {
+        if (!valid) {
+          return
+        } else {
+          getPubKey()
             .then(res => {
-              let status = res.data.status
-              switch (status) {
-                case 410:
-                  this.$message('用户名错误')
-                  break
-                case 411:
-                  this.$message('密码错误')
-                  break
-                case 412:
-                  this.$message('用户审核未通过')
-                  break
-                case 2000:
-                  //要用catch捕获这个错误,不然会报错,用replace不能跳转,会报错
-                  // window.sessionStorage.setItem('token', res.data.token)
-                  this.$router.replace('/dash').catch(err => {})
-                  this.$message.success('登录成功')
-                  // this.$store.state.username = loginform.username
-                  break
-                default:
-                  break
-              }
+              this.loginform.u_password = this.$jsEncrypt(
+                this.loginform.u_password,
+                res.data.pub_key
+              )
+              register(this.loginform)
+                .then(res => {
+                  this.$message('注册成功')
+                })
+                .catch(error => {
+                  this.$message('注册失败,请更换用户名重试!')
+                })
             })
-            .catch(res => {})
+            .catch(error => {
+              this.$message('访问受限,请联系管理员')
+            })
         }
       })
     }

@@ -10,8 +10,8 @@ class UserInfo(models.Model):
     u_name = models.CharField(max_length=32, unique=True)
     u_password = models.CharField(max_length=256)
     creat_time = models.DateTimeField(auto_now_add=True)
-    is_delete = models.IntegerField(default=1)
-    is_use = models.IntegerField(default=1)
+    is_delete = models.IntegerField(default=0)
+    is_use = models.IntegerField(default=0)
     permissions = models.IntegerField(default=0)
 
     def __str__(self):

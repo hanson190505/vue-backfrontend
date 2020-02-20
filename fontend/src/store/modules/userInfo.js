@@ -1,5 +1,5 @@
 import {
-    login,
+    getLogin,
     getUser
 } from "@/api/user";
 
@@ -23,10 +23,6 @@ const mutations = {
     SET_PERMISSIONS: (state, permissions) => {
         state.permissions = permissions
     },
-    REMOVE_USER: (state) => {
-        state.name = ''
-        state.token = null
-    }
 }
 
 const actions = {
@@ -34,13 +30,12 @@ const actions = {
         commit
     }, loginform) {
         return new Promise((resolve, reject) => {
-            login(loginform).then(res => {
+            getLogin(loginform).then(res => {
                 if (res.data.status === 2000) {
                     commit('SET_NAME', res.data.name)
                     commit('SET_TOKEN', res.data.token)
                     commit('SET_PERMISSIONS', res.data.permissions)
                     commit('SET_ID', res.data.id)
-                    // window.localStorage.setItem('name', res.data.name)
                     window.localStorage.setItem('token', res.data.token)
                 }
                 resolve(res)
@@ -69,8 +64,10 @@ const actions = {
     }) {
         try {
             return new Promise((resolve, reject) => {
-                commit('REMOVE_USER');
-                window.localStorage.removeItem('name')
+                commit('SET_NAME', '')
+                commit('SET_TOKEN', '')
+                commit('SET_PERMISSIONS', 0)
+                commit('SET_ID', 0)
                 window.localStorage.removeItem('token')
                 resolve();
             });
@@ -78,19 +75,6 @@ const actions = {
             reject(error);
         }
     },
-    // async saveUser({
-    //     commit
-    // }, name, token) {
-    //     try {
-    //         return new Promise((resolve, reject) => {
-    //             commit('SET_NAME', name);
-    //             commit('SET_TOKEN', token);
-    //             resolve();
-    //         });
-    //     } catch (error) {
-    //         reject(error);
-    //     }
-    // }
 }
 
 export default {

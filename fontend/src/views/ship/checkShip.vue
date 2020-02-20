@@ -394,7 +394,7 @@ export default {
         })
           .then(() => {
             this.shipDetailData.splice(index, 1)
-            patchShipDetail(row.id, { is_delete: 0 }).then(res => {
+            patchShipDetail(row.id, { is_delete: 1 }).then(res => {
               this.$message({
                 type: 'success',
                 message: '删除成功!'
