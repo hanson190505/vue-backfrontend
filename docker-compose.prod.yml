@@ -16,12 +16,13 @@ services:
     depends_on:
       - db
       - redis
-      - nginx
     networks:
       - django-nginx
   redis:
     container_name: vue_redis
     restart: always
+    volumes:
+      - ./redis.cof:/etc/redis/redis.conf
     ports:
       - 6379:6379
     image: redis

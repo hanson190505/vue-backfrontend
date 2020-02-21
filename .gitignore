@@ -8,6 +8,7 @@ pwd_random.py
 redis.conf
 redis_data
 postgres_data
+redeploy.sh
 # local env files
 .env.local
 .env.*.local
