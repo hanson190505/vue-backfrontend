@@ -6,7 +6,7 @@ function resolve(dir) {
 }
 const JavaScriptObfuscator = require('webpack-obfuscator')
 
-const encryption = false; // 打包后的代码是否加密
+const encryption = true; // 打包后的代码是否加密
 
 module.exports = {
     outputDir: process.env.outputDir,
