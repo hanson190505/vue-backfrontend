@@ -8,6 +8,8 @@ WORKDIR /usr/src/api
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+RUN mkdir /usr/src/api/static
+
 # install psycopg2 dependencies
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 RUN apk update

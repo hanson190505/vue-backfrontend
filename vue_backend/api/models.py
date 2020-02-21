@@ -56,10 +56,8 @@ class OrderCatalog(models.Model):
     订单目录
     """
     ORDER_STATUS = (
-        (1, '未完成'),
-        (2, '已完成'),
-        (3, '已超期'),
-        (4, '紧急'),
+        (0, '正常'),
+        (1, '紧急'),
     )
     customer = models.ForeignKey(
         Customers, verbose_name='客户', on_delete=models.CASCADE)

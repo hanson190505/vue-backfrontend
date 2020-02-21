@@ -13,15 +13,15 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf.urls.static import static
+import os
+
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework import routers
 
 from api.views import OrdersViewSet, CustomerViewSet, SubOrderViewSet, PurchaseOrderViewSet, PurchaseDetailViewSet, \
     ShipOrderViewSet, ShipDetailViewSet
 from user.views import UserApiViewSet
-from vuebackend import settings
 
 router = routers.DefaultRouter()
 router.register('orders', OrdersViewSet)
@@ -36,7 +36,5 @@ router.register('staffs', UserApiViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('api/upload/', include('upload.urls'))
+    path('api/upload/', include('upload.urls')),
 ]
-if settings.DEBUG:
-  urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -44,7 +44,7 @@
       element-loading-spinner="el-icon-loading"
       element-loading-background="rgba(0, 0, 0, 0.8)"
     >
-      <el-table-column type="selection" width="40"></el-table-column>
+      <el-table-column type="selection" width="60"></el-table-column>
       <el-table-column label="订单编号" align="center" width="120">
         <template slot-scope="scope">
           <span
@@ -162,10 +162,8 @@ export default {
       input1: '',
       select: '',
       Options: [
-        { value: 1, label: '未完成' },
-        { value: 2, label: '已完成' },
-        { value: 3, label: '已超期' },
-        { value: 4, label: '紧急' }
+        { value: 0, label: '正常' },
+        { value: 1, label: '紧急' }
       ],
       // 表格多选参数
       multipleSelection: [],

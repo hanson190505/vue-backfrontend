@@ -1,7 +1,12 @@
 <template>
   <div>
     <el-button type="primary" @click="dialogStatus">新增客户</el-button>
-    <el-dialog title="新增客户" :visible.sync="dialogVisible" width="50%" :before-close="handleClose">
+    <el-dialog
+      title="新增客户"
+      :visible.sync="dialogVisible"
+      width="50%"
+      :before-close="handleClose"
+    >
       <el-form
         :model="customerData"
         ref="customerData"
@@ -11,7 +16,12 @@
         inline-message
       >
         <el-form-item label="客户类型">
-          <el-select size="mini" v-model="customerData.type" clearable placeholder="请选择">
+          <el-select
+            size="mini"
+            v-model="customerData.type"
+            clearable
+            placeholder="请选择"
+          >
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -27,16 +37,25 @@
           <el-input v-model="customerData.name" placeholder="选填"></el-input>
         </el-form-item>
         <el-form-item label="详细地址">
-          <el-input v-model="customerData.address" placeholder="选填"></el-input>
+          <el-input
+            v-model="customerData.address"
+            placeholder="选填"
+          ></el-input>
         </el-form-item>
         <el-form-item label="公司电话">
           <el-input v-model="customerData.phone" placeholder="选填"></el-input>
         </el-form-item>
         <el-form-item label="公司网站">
-          <el-input v-model="customerData.website" placeholder="https://example.com"></el-input>
+          <el-input
+            v-model="customerData.website"
+            placeholder="https://example.com"
+          ></el-input>
         </el-form-item>
         <el-form-item label="主营业务" prop="business">
-          <el-input v-model="customerData.business" placeholder="请输入内容"></el-input>
+          <el-input
+            v-model="customerData.business"
+            placeholder="请输入内容"
+          ></el-input>
         </el-form-item>
         <el-form-item label="CEO">
           <el-input v-model="customerData.ceo" placeholder="选填"></el-input>
@@ -45,19 +64,36 @@
           <el-input v-model="customerData.email" placeholder="选填"></el-input>
         </el-form-item>
         <el-form-item label="CEO电话">
-          <el-input v-model="customerData.ceo_phone" placeholder="选填"></el-input>
+          <el-input
+            v-model="customerData.ceo_phone"
+            placeholder="选填"
+          ></el-input>
         </el-form-item>
         <el-form-item label="联系人" prop="contact_name">
-          <el-input v-model="customerData.contact_name" placeholder="请输入内容"></el-input>
+          <el-input
+            v-model="customerData.contact_name"
+            placeholder="请输入内容"
+          ></el-input>
         </el-form-item>
         <el-form-item label="联系人电话" prop="contact_phone">
-          <el-input v-model="customerData.contact_phone" placeholder="请输入内容"></el-input>
+          <el-input
+            v-model="customerData.contact_phone"
+            placeholder="请输入内容"
+          ></el-input>
         </el-form-item>
         <el-form-item label="联系人邮箱" prop="contact_email">
-          <el-input v-model="customerData.contact_email" placeholder="请输入内容"></el-input>
+          <el-input
+            v-model="customerData.contact_email"
+            placeholder="请输入内容"
+          ></el-input>
         </el-form-item>
         <el-form-item label="合作状态">
-          <el-select size="mini" v-model="customerData.status" clearable placeholder="请选择">
+          <el-select
+            size="mini"
+            v-model="customerData.status"
+            clearable
+            placeholder="请选择"
+          >
             <el-option
               v-for="item in csStatusOptions"
               :key="item.value"
@@ -67,13 +103,18 @@
           </el-select>
         </el-form-item>
         <el-form-item label="信用额度">
-          <el-input v-model="customerData.line_credits" placeholder="选填,默认:0"></el-input>
+          <el-input
+            v-model="customerData.line_credits"
+            placeholder="选填,默认:0"
+          ></el-input>
         </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="customerData.text" placeholder="选填"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit('customerData')">立即创建</el-button>
+          <el-button type="primary" @click="onSubmit('customerData')"
+            >立即创建</el-button
+          >
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -188,6 +229,7 @@ export default {
                 this.$emit('addNewCustomer', newCustomerdata)
                 window.sessionStorage.removeItem('subtoken')
                 this.dialogVisible = false
+                this.customerData = {}
               })
               .catch(err => {
                 // 请求失败的返回信息不能直接在err中拿,要像下面这样拿到xsz
@@ -205,6 +247,7 @@ export default {
     handleClose(done) {
       this.$confirm('请确认数据已保存!')
         .then(_ => {
+          this.customerData = {}
           done()
         })
         .catch(_ => {})
@@ -220,5 +263,4 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

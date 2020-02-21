@@ -127,7 +127,7 @@
           <el-col :span="8">
             <el-upload
               class="upload-demo"
-              action="http://0.0.0.0:8000/upload/"
+              :action="actionUrl"
               :on-remove="handleRemove"
               :before-remove="beforeRemove"
               :on-success="uploadSuccess"
@@ -192,13 +192,13 @@
               placeholder="请选择"
             >
               <el-option
-                v-for="item in options"
+                v-for="item in proOptions"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
               ></el-option>
             </el-select>
-            <span v-else>{{ options[scope.row.pro_item - 1].label }}</span>
+            <span v-else>{{ proOptions[scope.row.pro_item - 1].label }}</span>
           </template>
         </el-table-column>
         <el-table-column label="产品尺寸" width="120" fixed>
@@ -346,6 +346,7 @@ export default {
         text: '',
         order_pic: ''
       },
+      actionUrl: process.env.VUE_APP_ACTION_URL,
       //订单表合计金额(人民币)
       rmbOrderAmount: 0,
       suborderdetail: [],
@@ -356,35 +357,16 @@ export default {
       //控制修改,保存订单按钮
       editOrder: true,
       saveOrder: false,
-      options: [
+      proOptions: [
         { value: 1, label: '硅胶' },
-        {
-          value: 2,
-          label: '五金'
-        },
-        {
-          value: 3,
-          label: 'USB'
-        },
-        {
-          value: 4,
-          label: '移动电源'
-        },
-        {
-          value: 5,
-          label: '其他'
-        }
+        { value: 2, label: '五金' },
+        { value: 3, label: 'USB' },
+        { value: 4, label: '移动电源' },
+        { value: 5, label: '其他' }
       ],
       Options: [
-        { value: 1, label: '未完成' },
-        {
-          value: 2,
-          label: '已完成'
-        },
-        {
-          value: 3,
-          label: '已超期'
-        }
+        { value: 0, label: '正常' },
+        { value: 1, label: '紧急' }
       ],
       fileList: [],
       //放大图片弹出框
@@ -417,7 +399,7 @@ export default {
     beforeRemove() {},
     uploadSuccess(res) {
       this.uploadbtnstatus = true
-      this.orderdetail.order_pic = 'http://192.168.3.45:8000' + res.file
+      this.orderdetail.order_pic = process.env.VUE_APP_API_PIC_URL + res.file
     },
     handlebeforeupload() {},
     //查看大图

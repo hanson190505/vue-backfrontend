@@ -4,7 +4,7 @@ import {
 
 export function getSubToken() {
     request({
-        baseURL: 'http://192.168.3.45:8000/orders/',
+        baseURL: 'http://192.168.3.45:8000/api/orders/',
         params: {
             token: window.sessionStorage.getItem('token'),
             st: 'addorder'

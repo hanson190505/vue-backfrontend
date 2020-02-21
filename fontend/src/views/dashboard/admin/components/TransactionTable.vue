@@ -22,6 +22,7 @@
 
 <script>
 import { transactionList } from '@/api/remote-search'
+import { getSubOrderList } from '@/api/order'
 
 export default {
   filters: {
@@ -46,9 +47,7 @@ export default {
   },
   methods: {
     fetchData() {
-      transactionList().then(response => {
-        this.list = response.data.items.slice(0, 8)
-      })
+      getSubOrderList().then(res => {})
     }
   }
 }
