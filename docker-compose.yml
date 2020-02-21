@@ -23,11 +23,10 @@ services:
     image: redis
     networks:
       - django-nginx
-#    command: redis-server --requirepass ${pwd} --notify-keyspace-events Eglx
   db:
     image: postgres:12.0-alpine
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - ./postgres_data:/var/lib/postgresql/data/
     ports:
       - 5432:5432
     environment:
@@ -36,16 +35,16 @@ services:
       - POSTGRES_DB=hello_django_dev
     networks:
       - django-nginx
-  nginx:
-    build:
-      ./fontend
-    restart: always
-    depends_on:
-      - api
-    ports:
-      - 8080:80
-    networks:
-      - django-nginx
+#  nginx:
+#    build:
+#      ./fontend
+#    restart: always
+#    depends_on:
+#      - api
+#    ports:
+#      - 80:80
+#    networks:
+#      - django-nginx
 
 networks:
   django-nginx:

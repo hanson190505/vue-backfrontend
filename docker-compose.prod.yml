@@ -5,7 +5,6 @@ services:
     build:
       context: ./vue_backend
       dockerfile: Dockerfile.prod
-#    command: python manage.py runserver 0.0.0.0:8000
     command: gunicorn vuebackend.wsgi:application -w 2 -k gthread -b :8000
     container_name: vue_api
     volumes:
@@ -25,9 +24,11 @@ services:
     ports:
       - 6379:6379
     image: redis
+    volumes:
+      - ./redis.conf:/etc/redis/redis.conf
     networks:
       - django-nginx
-#    command: redis-server --requirepass ${pwd} --notify-keyspace-events Eglx
+    command: redis-server /etc/redis/redis.conf
   db:
     container_name: vue_db
     image: postgres:12.0-alpine

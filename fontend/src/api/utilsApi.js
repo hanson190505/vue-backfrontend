@@ -3,9 +3,9 @@ import {
 } from "@/network/rquest";
 
 //获取当天汇率
-export function getExRate() {
-    return request({
-        url: 'upload/exrate/',
+// export function getExRate() {
+//     return request({
+//         url: 'upload/exrate/',
 
-    })
-}
+//     })
+// }

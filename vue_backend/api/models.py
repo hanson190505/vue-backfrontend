@@ -72,10 +72,8 @@ class OrderCatalog(models.Model):
     input_date = models.DateField("录入日期", auto_now=datetime.now)
     ex_rate = models.DecimalField("汇率", max_digits=10, decimal_places=2)
     order_amount = models.DecimalField("金额", max_digits=20, decimal_places=4)
-    # order_picture = models.ImageField(
-    #     upload_to='images/%Y/%m/%d', default='上传图片', verbose_name='图片')
     order_pic = models.CharField(max_length=128, null=True, blank=True)
-    is_done = models.IntegerField('完成状态', choices=ORDER_STATUS, default=0)
+    is_done = models.IntegerField('状态', choices=ORDER_STATUS, default=0)
     text = models.CharField('备注', max_length=480, default='选填')
     ship_addr = models.CharField('出货地点', max_length=200, default='暂无')
     is_delete = models.IntegerField(default=0)

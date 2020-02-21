@@ -129,17 +129,6 @@ WSGI_APPLICATION = 'vuebackend.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'djangovue',
-#         'USER': 'root',
-#         'PASSWORD': '123456',
-#         'HOST': 'localhost',
-#         'PORT': '3306'
-#     }
-# }
 # 部署时还要配置__init__.py文件
 DATABASES = {
     "default": {
@@ -157,6 +146,10 @@ CACHES = {
         'BACKEND': 'django_redis.cache.RedisCache',
         'LOCATION': os.environ.get("REDISHOST", 'redis://192.168.3.45:6379/1'),
         'TIMEOUT': 60,
+        "OPTIONS": {
+                    "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                    "PASSWORD": os.environ.get("REDIS_PASSWORD"),
+                }
     }
 }
 
