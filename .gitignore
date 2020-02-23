@@ -9,6 +9,7 @@ redis.conf
 redis_data
 postgres_data
 redeploy.sh
+updatessl.sh
 # local env files
 .env.local
 .env.*.local
