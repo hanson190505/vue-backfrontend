@@ -76,7 +76,6 @@ if (process.env.NODE_ENV == 'production' && encryption == false) {
     console.log('执行生产环境配置无加密----')
     module.exports = {
         publicPath: '/cms/', // //基本路径
-        outputDir: 'dist', //打包的时候生成的一个文件名
         assetsDir: 'assets', //静态资源目录(js,css,img,fonts)这些文件都可以写里面
         productionSourceMap: false, //生产环境是否生成 sourceMap 文件，一般情况不建议打开
         configureWebpack: {
