@@ -5,6 +5,7 @@ COPY dist /app/cms
 #COPY nginx.conf /etc/nginx/conf.d
 COPY nginx.conf /etc/nginx/nginx.conf
 
-RUN chown -R nginx:nginx app/
+RUN chmod 755 app
+chmod u+s app
 
 USER nginx
