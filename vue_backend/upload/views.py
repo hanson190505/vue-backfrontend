@@ -2,10 +2,20 @@ from rest_framework import status
 from rest_framework.parsers import MultiPartParser,FormParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import viewsets
 
 from upload.serializer import ImageSerializer
 from user.authentications import UploadTokenAuthentication, GetTokenAuthentication
 from utils import juhe
+
+
+class ImageUploadVieSet(viewsets.ModelViewSet):
+    parser_class = (MultiPartParser, FormParser)
+    serializer_class = ImageSerializer
+    authentication_classes = UploadTokenAuthentication,
+
+    def create(self, request, *args, **kwargs):
+        pass
 
 
 class FileUploadView(APIView):
@@ -21,12 +31,6 @@ class FileUploadView(APIView):
         # print(file_suffix)
         if file_suffix not in allow_suffix:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        # print(type(request.data['file']))
-        # a = 'hanson.jpg'
-        # a.lstrip('.')
-        # request.data['file'].name = 'hanson.jpg'
-        # print(type(request.data['file'].name))
-
         if file_serializer.is_valid():
             file_serializer.save()
             return Response(file_serializer.data, status=status.HTTP_201_CREATED)

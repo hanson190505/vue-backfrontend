@@ -5,7 +5,6 @@ services:
     container_name: api
     build: ./vue_backend
     command: python manage.py runserver 0.0.0.0:8000
-#    command: gunicorn vuebackend.wsgi:application -w 2 -k gthread -b :8000
     volumes:
       - ./vue_backend/:/usr/src/api/
       - static_volume:/usr/src/api/static
@@ -16,12 +15,13 @@ services:
     depends_on:
       - db
       - redis
-      - nginx
     networks:
       - django-nginx
   redis:
     container_name: redis
     restart: always
+    volumes:
+      - ./redis.cof:/etc/redis/redis.conf
     ports:
       - 6379:6379
     image: redis
@@ -42,15 +42,19 @@ services:
       - django-nginx
   nginx:
     container_name: nginx
-    build: ./fontend
+    build:
+      context: ./fontend
+      dockerfile: Dockerfile.dev
     restart: always
     volumes:
       - static_volume:/usr/src/api/static
-      - ./fontend/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./serverkey:/serverkey
     depends_on:
       - api
     ports:
       - 8088:80
+      - 443:443
     networks:
       - django-nginx
 

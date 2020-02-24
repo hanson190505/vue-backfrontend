@@ -2,7 +2,7 @@ import axios from 'axios';
 import store from '../store';
 import router from '../router';
 // 封装一个网络基础模块
-let postData = null
+
 export function request(config) {
   // 创建一个axios实例
   const instance = axios.create({
@@ -30,7 +30,7 @@ export function request(config) {
     // console.log(config);
     return config
   }), err => {
-    console.log(err.response);
+    return Promise.reject(err)
   }
   //响应拦截
   //TODO:拦截403 TOKEN失效
@@ -42,7 +42,9 @@ export function request(config) {
     }
     return response
   }), error => {
-    // console.log(error.response);
+    console.log('打印响应错误拦截');
+    console.log(error);
+    return Promise.reject(error)
   }
   //axios.create方法返回的就是一个promise,所以可以按下面这样写
   return instance(config)

@@ -10,6 +10,8 @@ redis_data
 postgres_data
 redeploy.sh
 updatessl.sh
+nginx.conf
+serverkey
 # local env files
 .env.local
 .env.*.local
