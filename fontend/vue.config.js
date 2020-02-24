@@ -9,17 +9,8 @@ const JavaScriptObfuscator = require('webpack-obfuscator')
 const encryption = false; // 打包后的代码是否加密
 
 module.exports = {
-    outputDir: process.env.outputDir,
     publicPath: '/cms/',
     outputDir: 'dist',
-    assetsDir: 'static',
-    devServer: {
-        port: 8080,
-        // host: "localhost",
-        https: false,
-        // 自动启动浏览器
-        open: false,
-    },
     configureWebpack: {
         resolve: {
             alias: {
@@ -56,6 +47,58 @@ module.exports = {
             .end()
 
     }
+}
+
+if (process.env.NODE_ENV === 'test') {
+    console.log('执行test环境配置-----');
+    module.exports = {
+        publicPath: '/cms/',
+        outputDir: 'test',
+        devServer: {
+            port: 8080,
+            // host: "localhost",
+            https: false,
+            // 自动启动浏览器
+            open: false,
+        },
+        configureWebpack: {
+            resolve: {
+                alias: {
+                    '@': resolve('src'),
+                }
+            },
+        },
+        chainWebpack(config) {
+            config.module
+                .rule('svg')
+                .exclude.add(resolve('src/icons'))
+                .end()
+            config.module
+                .rule('icons')
+                .test(/\.svg$/)
+                .include.add(resolve('src/icons'))
+                .end()
+                .use('svg-sprite-loader')
+                .loader('svg-sprite-loader')
+                .options({
+                    symbolId: 'icon-[name]'
+                })
+                .end()
+
+            // // set preserveWhitespace
+            config.module
+                .rule('vue')
+                .use('vue-loader')
+                .loader('vue-loader')
+                .tap(options => {
+                    options.compilerOptions.preserveWhitespace = true
+                    return options
+                })
+                .end()
+
+        }
+    }
+
 }
 
 if (process.env.NODE_ENV == 'production' && encryption == false) {
