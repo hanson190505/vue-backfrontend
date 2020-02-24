@@ -5,4 +5,6 @@ COPY dist /app/cms
 #COPY nginx.conf /etc/nginx/conf.d
 COPY nginx.conf /etc/nginx/nginx.conf
 
-chown -R nginx:nginx app/
+RUN chown -R nginx:nginx app/
+
+USER nginx
