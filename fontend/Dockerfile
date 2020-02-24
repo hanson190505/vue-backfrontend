@@ -7,7 +7,5 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 RUN chmod 755 app
 RUN chmod u+s app
-RUN chmod 755 letsencrypt
-RUN chmod u+s letsencrypt
 
 USER nginx
