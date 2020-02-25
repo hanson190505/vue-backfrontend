@@ -197,7 +197,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = '/usr/src/api/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
-# MEDIA_URL = '/static/image/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'static/image')
+MEDIA_URL = '/image/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'image/')
+
+WEB_IMAGE_SERVER_PATH = os.environ.get('WEB_IMAGE_SERVER_PATH')

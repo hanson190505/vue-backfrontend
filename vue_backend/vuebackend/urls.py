@@ -15,13 +15,16 @@ Including another URLconf
 """
 import os
 
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include, re_path
 from rest_framework import routers
 
 from api.views import OrdersViewSet, CustomerViewSet, SubOrderViewSet, PurchaseOrderViewSet, PurchaseDetailViewSet, \
     ShipOrderViewSet, ShipDetailViewSet
+from upload.views import ImageUploadVieSet
 from user.views import UserApiViewSet
+from vuebackend import settings
 
 router = routers.DefaultRouter()
 router.register('orders', OrdersViewSet)
@@ -32,9 +35,11 @@ router.register('purchasedetails', PurchaseDetailViewSet)
 router.register('shiporders', ShipOrderViewSet)
 router.register('shipdetails', ShipDetailViewSet)
 router.register('staffs', UserApiViewSet)
+router.register('upload', ImageUploadVieSet)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('api/upload/', include('upload.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

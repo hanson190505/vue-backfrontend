@@ -108,17 +108,26 @@
           <el-col :span="8">
             <el-upload
               class="upload-demo"
+              ref="upload"
               :action="actionUrl"
-              :on-remove="handleRemove"
-              :before-remove="beforeRemove"
               :on-success="uploadSuccess"
               :file-list="fileList"
               :limit="1"
-              :before-upload="handlebeforeupload"
               :data="uploadData"
               accept="image/jpg, image/jpeg, image/png"
+              :auto-upload="false"
+              :on-exceed="handleExceed"
             >
-              <el-button size="mini" type="primary">点击上传</el-button>
+              <el-button slot="trigger" size="small" type="primary"
+                >选取文件</el-button
+              >
+              <el-button
+                style="margin-left: 10px;"
+                size="small"
+                type="success"
+                @click="uploadBtn"
+                >上传到服务器</el-button
+              >
               <div slot="tip" class="el-upload__tip">
                 只能上传jpg/png文件，且不超过500kb
               </div>
@@ -135,7 +144,7 @@
           </el-col>
         </el-row>
         <el-button size="mini" type="primary" @click="addSubOrder()"
-          >订单明细</el-button
+          >新增明细</el-button
         >
         <el-table
           :data="subOrderData"
@@ -343,7 +352,6 @@ export default {
       dialogVisible: false,
       //保存按钮显示状态
       onSubmitStatus: false,
-      //上传七牛图片的token
       dialogImageUrl: '',
       imagedialogVisible: false,
       disabled: false,
@@ -352,23 +360,53 @@ export default {
       imgdialogVisible: false,
       //图片上传附加数据
       uploadData: {
-        token: window.localStorage.getItem('token')
+        token: window.localStorage.getItem('token'),
+        owner: 'order',
+        order_number: ''
       }
     }
   },
+  // TODO:图片上传要新增两个字段md5  name  type
   methods: {
     //查看原图
     imgLook() {
       this.imgdialogVisible = true
     },
+    //上传图片前控制
+    uploadBtn() {
+      if (!this.orderData.order_number) {
+        this.$message.error('请完整填写订单信息!')
+      } else {
+        this.uploadData.order_number = this.orderData.order_number
+        this.$refs.upload.submit()
+      }
+    },
+    //超出文件数量控制
+    handleExceed() {
+      this.$message.error('单次只能上传一张图片')
+    },
     beforeRemove() {},
     handleRemove(file) {},
     //图片上传成功后的返回结果
     uploadSuccess(res) {
-      this.orderData.order_pic = process.env.VUE_APP_API_PIC_URL + res.file
+      switch (res.status) {
+        case 1000:
+          this.$message('上传成功')
+          this.orderData.order_pic = process.env.VUE_APP_API_PIC_URL + res.file
+          break
+        case 1001:
+          this.$message.error('图片尺寸太大,请选择500kb以下的图片')
+          break
+        case 1002:
+          this.$message.error('非法的文件格式,或图片已损坏')
+          break
+        case 1003:
+          this.$message('找到相同的图片')
+          this.orderData.order_pic = process.env.VUE_APP_API_PIC_URL + res.file
+        default:
+          break
+      }
     },
-    //图片上传前的相关控制
-    handlebeforeupload(file) {},
     //打开新增订单表单
     dialogStatus() {
       this.dialogVisible = true
@@ -504,19 +542,6 @@ export default {
     subAmount(row) {
       row.sub_amount = row.pro_price * row.pro_qt * 1
     },
-    //控制客户名称下拉菜单显示数量
-    // customerFilter(query = '') {
-    //   let arr = this.customerData.filter(item => {
-    //     return (
-    //       item.lite_name.includes(query) || item.contact_name.includes(query)
-    //     )
-    //   })
-    //   if (arr.length > 50) {
-    //     this.customerList = arr.slice(0, 50)
-    //   } else {
-    //     this.customerList = arr
-    //   }
-    // },
     //客户名称选择时,调用后台客户数据
     selectTest(v) {
       if (v === true) {

@@ -12,6 +12,8 @@ redeploy.sh
 updatessl.sh
 nginx.conf
 serverkey
+migrations
+fontend/test
 # local env files
 .env.local
 .env.*.local

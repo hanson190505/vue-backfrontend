@@ -2,11 +2,10 @@ from django.db import models
 
 
 class Image(models.Model):
-    file = models.ImageField(upload_to='static/image/%Y-%m/', blank=False, null=False)
     up_date = models.DateTimeField(auto_now_add=True)
     md5 = models.CharField(max_length=128)
-    type = models.CharField(max_length=32, default='order')
-    name = models.CharField(max_length=32)
+    owner = models.CharField(max_length=32)
+    path = models.CharField(max_length=128)
 
     # 我们还定义了通过文件md5值获取模型对象的类方法
     @classmethod

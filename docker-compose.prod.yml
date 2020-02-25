@@ -8,7 +8,7 @@ services:
     command: gunicorn vuebackend.wsgi:application -w 2 -k gthread -b :8000
     container_name: vue_api
     volumes:
-      - static_volume:/usr/src/api/static
+      - static_volume:/usr/src/api/image
     ports:
       - 8000:8000
     env_file:
@@ -48,7 +48,7 @@ services:
       - ./certbot/etc/letsencrypt/live:/letsencrypt/live        # 当前证书目录
       - ./certbot/etc/letsencrypt/archive:/letsencrypt/archive  # 历史证书目录
       - ./dhparam-2048.pem:/letsencrypt/dhparam-2048.pem
-      - static_volume:/usr/src/api/static
+      - static_volume:/usr/src/api/image
     depends_on:
       - api
     ports:

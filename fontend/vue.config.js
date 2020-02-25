@@ -53,14 +53,8 @@ if (process.env.NODE_ENV === 'test') {
     console.log('执行test环境配置-----');
     module.exports = {
         publicPath: '/cms/',
+        assetsDir: 'assets',
         outputDir: 'test',
-        devServer: {
-            port: 8080,
-            // host: "localhost",
-            https: false,
-            // 自动启动浏览器
-            open: false,
-        },
         configureWebpack: {
             resolve: {
                 alias: {
