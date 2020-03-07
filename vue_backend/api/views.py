@@ -38,7 +38,6 @@ class OrdersViewSet(ModelViewSet):
         return self.queryset
 
     def list(self, request, *args, **kwargs):
-        # 自定义list时,不能取消下面这段代码,否则前端不能及时获取新增数据
         queryset = self.filter_queryset(self.get_queryset())
         st = self.request.query_params.get('st')
         if st == 'addorder':
@@ -71,6 +70,7 @@ class OrdersViewSet(ModelViewSet):
 
 
 class CustomerViewSet(ModelViewSet):
+    # todo:取消order_by会不会对前端获取数据产生影响,不会则取消order_by优化数据库访问速度
     queryset = Customers.objects.filter(is_delete=0).order_by('status')
     serializer_class = CustomersSerializer
     authentication_classes = GetTokenAuthentication,

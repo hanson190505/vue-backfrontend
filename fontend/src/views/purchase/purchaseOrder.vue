@@ -118,4 +118,8 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.agg{
+  background-color: rgb(245,235,0);
+}
+</style>

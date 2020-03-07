@@ -17,10 +17,12 @@
       <el-col :span="2">
         <order-status @handleFilter="pagination"></order-status>
       </el-col>
+      <!-- 搜索 -->
       <el-col :span="6">
         <date-search @dateSearchDate="dateSearchDate"></date-search>
       </el-col>
     </el-row>
+    <!-- 订单明细表 -->
     <el-table
       :data="subOrderData"
       border

@@ -44,6 +44,10 @@ services:
     container_name: vue_nginx
     build: ./fontend
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1g"
     volumes:
       - ./certbot/etc/letsencrypt/live:/letsencrypt/live        # 当前证书目录
       - ./certbot/etc/letsencrypt/archive:/letsencrypt/archive  # 历史证书目录

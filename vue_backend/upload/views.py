@@ -22,11 +22,15 @@ class ImageUploadVieSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         file = request.data['file']
         owner = request.data['owner']
-        order_number = request.data['order_number']
+        file_name = ''
+        if owner == 'order':
+            file_name = request.data['order_number']
+        elif owner == 'product':
+            file_name = request.data['pro_number']
         year = str(datetime.now().year)
         month = str(datetime.now().month)
         ext = get_file_extension(file)
-        file.name = order_number + '.{}'.format(ext)
+        file.name = file_name + '.{}'.format(ext)
         sub_path = owner + '/{}-{}/'.format(year, month)
         path = MEDIA_ROOT + sub_path
         md5 = calculate_md5(file)

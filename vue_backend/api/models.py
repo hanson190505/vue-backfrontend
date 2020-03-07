@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import datetime
 from user.models import UserInfo
+from django.contrib.postgres.fields import HStoreField, ArrayField
 
 
 class Customers(models.Model):
@@ -97,7 +98,9 @@ class SubOrder(models.Model):
     pro_name = models.CharField("产品名称", max_length=50)
     pro_item = models.IntegerField('产品类别', choices=PRO_ITEM)
     pro_size = models.CharField('产品尺寸', max_length=64, default=0)
-    pro_color = models.CharField('产品颜色', max_length=64, default='color')
+    # pro_color = models.CharField('产品颜色', max_length=64, default='color')
+    # 产品颜色重构
+    pro_color = ArrayField(models.CharField(max_length=64, blank=True))
     pro_pack = models.CharField('产品包装', max_length=64, default='无')
     pro_desc = models.CharField("详细描述", max_length=400)
     pro_qt = models.DecimalField(
@@ -239,59 +242,3 @@ class ShipDetail(models.Model):
         return '%s-%s' % (self.ship_number, self.id)
 
 
-class ProductsType(models.Model):
-    TYPE = (
-        (1, '硅胶产品'),
-        (2, '五金产品'),
-        (3, '电子产品'),
-        (4, '塑胶产品'),
-        (5, '木制产品'),
-        (6, '其他产品'),
-    )
-    type = models.IntegerField('产品大类', choices=TYPE)
-    sub_type = models.CharField(
-        '产品子类', unique=True, help_text='用英文填写产品子类', max_length=20)
-    pub_date = models.DateField('添加日期', auto_now=datetime.now)
-    is_delete = models.IntegerField(default=0)
-
-    class Meta:
-        verbose_name = '产品类别'
-        verbose_name_plural = '产品类别'
-
-    def __str__(self):
-        return self.sub_type
-
-
-class Products(models.Model):
-    sub_type = models.ForeignKey(
-        ProductsType, null=False, blank=False, max_length=20, verbose_name='产品子类', on_delete=models.CASCADE)
-    pub_date = models.DateField('添加日期', auto_now=datetime.now)
-    pro_name = models.CharField('产品名称', max_length=30, null=False, blank=False)
-    pro_model = models.CharField(
-        '产品型号', max_length=100, null=False, blank=False)
-    pro_color = models.CharField(
-        '产品颜色', max_length=50, null=False, blank=False)
-    pro_weight = models.DecimalField(
-        verbose_name='单重(g)', max_digits=10, decimal_places=2)
-    pro_pic = models.CharField(max_length=128)
-    # pro_image = models.ImageField(
-    #     upload_to='images/%Y/%m/%d', default='上传图片', verbose_name='图片')
-    pro_desc = models.TextField('详情')
-    # pro_desc = RichTextField()
-    is_font = models.BooleanField('首页展示', default=False)
-    is_delete = models.IntegerField(default=0)
-
-    class Meta:
-        verbose_name = '产品目录'
-        verbose_name_plural = '产品目录'
-
-    def __str__(self):
-        return self.pro_name
-
-    # def image_data(self):
-    #     return format_html(
-    #         '<img src="{}" width="100px"/>',
-    #         self.pro_image.url,
-    #     )
-    #
-    # image_data.short_description = '图片'

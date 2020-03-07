@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     'upload.apps.UploadConfig',
+    'webapi.apps.WebapiConfig'
 ]
 
 REST_FRAMEWORK = {

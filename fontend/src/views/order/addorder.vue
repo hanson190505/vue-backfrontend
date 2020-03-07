@@ -1,14 +1,9 @@
 <template>
   <div class="add-order">
     <el-button type="primary" @click="dialogStatus">新增订单</el-button>
-    <el-dialog
-      title="新增订单"
-      :visible.sync="dialogVisible"
-      width="96%"
-      :before-close="handleClose"
-    >
+    <el-dialog title="新增订单" :visible.sync="dialogVisible" width="96%" :before-close="handleClose">
       <el-form
-        ref="form"
+        ref="addOrderForm"
         :model="orderData"
         label-width="80px"
         size="mini"
@@ -118,47 +113,28 @@
               :auto-upload="false"
               :on-exceed="handleExceed"
             >
-              <el-button slot="trigger" size="small" type="primary"
-                >选取文件</el-button
-              >
+              <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
               <el-button
                 style="margin-left: 10px;"
                 size="small"
                 type="success"
                 @click="uploadBtn"
-                >上传到服务器</el-button
-              >
-              <div slot="tip" class="el-upload__tip">
-                只能上传jpg/png文件，且不超过500kb
-              </div>
+              >上传到服务器</el-button>
+              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
             </el-upload>
           </el-col>
           <el-col :span="16">
             <div class="order-img">
-              <img
-                :src="this.orderData.order_pic"
-                @click="imgLook"
-                class="orderImg"
-              />
+              <img :src="this.orderData.order_pic" @click="imgLook" class="orderImg" />
             </div>
           </el-col>
         </el-row>
-        <el-button size="mini" type="primary" @click="addSubOrder()"
-          >新增明细</el-button
-        >
-        <el-table
-          :data="subOrderData"
-          style="width: 99.9%"
-          highlight-current-row
-        >
+        <el-button size="mini" type="primary" @click="addSubOrder()">新增明细</el-button>
+        <el-table :data="subOrderData" style="width: 99.9%" highlight-current-row>
           <!-- <el-table-column type="selection" width="40"></el-table-column> -->
           <el-table-column label="产品名称" width="150" fixed>
             <template slot-scope="scope">
-              <el-input
-                v-if="scope.row.status"
-                size="mini"
-                v-model="scope.row.pro_name"
-              ></el-input>
+              <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_name"></el-input>
               <span v-else>{{ scope.row.pro_name }}</span>
             </template>
           </el-table-column>
@@ -184,31 +160,48 @@
           </el-table-column>
           <el-table-column label="产品尺寸" width="120" fixed>
             <template slot-scope="scope">
-              <el-input
-                v-if="scope.row.status"
-                size="mini"
-                v-model="scope.row.pro_size"
-              ></el-input>
+              <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_size"></el-input>
               <span v-else>{{ scope.row.pro_size }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="产品颜色" width="120" fixed>
+          <el-table-column width="250" label="产品颜色" fixed>
             <template slot-scope="scope">
-              <el-input
-                v-if="scope.row.status"
-                size="mini"
-                v-model="scope.row.pro_color"
-              ></el-input>
-              <span v-else>{{ scope.row.pro_color }}</span>
+              <!-- <el-button type="primary" size="mini" @click="addColor(scope.row)">+</el-button>
+              <el-button type="primary" size="mini" @click="rmColor(scope.row)">-</el-button>
+              <el-table :data="scope.row.pro_color" :header-row-style="colorTableHeader">
+                <el-table-column width="120">
+                  <template slot-scope="scope">
+                    <el-autocomplete
+                      class="inline-input"
+                      v-model="scope.row.value"
+                      :fetch-suggestions="querySearch"
+                      placeholder="请输入内容"
+                      :trigger-on-focus="false"
+                      @select="handleSelect"
+                    ></el-autocomplete>
+                  </template>
+                </el-table-column>
+                <el-table-column width="100">
+                  <template slot-scope="scope">
+                    <div
+                      :style="{backgroundColor:scope.row.html_color,width:'80px', height:'30px'}"
+                    ></div>
+                  </template>
+                </el-table-column>
+              </el-table>-->
+              <el-popover placement="left-end" width="300" trigger="click">
+                <add-product-color
+                  :parentProColor="scope.row.pro_color"
+                  @getProColor="handleSelect"
+                  @delProColor="delProColor"
+                ></add-product-color>
+                <el-button slot="reference">hover 激活</el-button>
+              </el-popover>
             </template>
           </el-table-column>
           <el-table-column label="产品包装" width="120">
             <template slot-scope="scope">
-              <el-input
-                v-if="scope.row.status"
-                size="mini"
-                v-model="scope.row.pro_pack"
-              ></el-input>
+              <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_pack"></el-input>
               <span v-else>{{ scope.row.pro_pack }}</span>
             </template>
           </el-table-column>
@@ -226,11 +219,7 @@
           </el-table-column>
           <el-table-column label="数量" prop="pro_qt" width="100">
             <template slot-scope="scope">
-              <el-input
-                v-if="scope.row.status"
-                size="mini"
-                v-model="scope.row.pro_qt"
-              ></el-input>
+              <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_qt"></el-input>
               <span v-else>{{ scope.row.pro_qt }}</span>
             </template>
           </el-table-column>
@@ -247,48 +236,27 @@
           </el-table-column>
           <el-table-column label="重量(g)" width="80">
             <template slot-scope="scope">
-              <el-input
-                v-if="scope.row.status"
-                size="mini"
-                v-model="scope.row.pro_weight"
-              ></el-input>
+              <el-input v-if="scope.row.status" size="mini" v-model="scope.row.pro_weight"></el-input>
               <span v-else>{{ scope.row.pro_weight }}</span>
             </template>
           </el-table-column>
           <el-table-column label="汇率" width="80">
             <template slot-scope="scope">
-              <el-input
-                v-if="scope.row.status"
-                size="mini"
-                v-model="scope.row.sub_ex_rate"
-              ></el-input>
+              <el-input v-if="scope.row.status" size="mini" v-model="scope.row.sub_ex_rate"></el-input>
               <span v-else>{{ scope.row.sub_ex_rate }}</span>
             </template>
           </el-table-column>
           <el-table-column label="金额($)" prop="sub_amount" width="100">
             <template slot-scope="scope">
-              <el-input
-                v-if="scope.row.status"
-                size="mini"
-                v-model="scope.row.sub_amount"
-              ></el-input>
+              <el-input v-if="scope.row.status" size="mini" v-model="scope.row.sub_amount"></el-input>
               <span v-else>{{ scope.row.sub_amount }}</span>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="150" fixed="right">
             <template slot-scope="scope">
-              <el-button type="text" @click="addSubOrderRow(scope.row)"
-                >新增</el-button
-              >
-              <el-button type="text" @click="editSubOrderRow(scope.row)"
-                >修改</el-button
-              >
-              <el-button
-                size="mini"
-                type="text"
-                @click="delSubOrderRow(scope.$index, scope.row)"
-                >删除</el-button
-              >
+              <el-button type="text" @click="addSubOrderRow(scope.row)">新增</el-button>
+              <el-button type="text" @click="editSubOrderRow(scope.row)">修改</el-button>
+              <el-button size="mini" type="text" @click="delSubOrderRow(scope.$index, scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -313,9 +281,13 @@ import {
   postOrder,
   postSubOrder
 } from '@/api/order'
+import addProductColor from '@/components/common/addProductColor'
+// import { pantoneColor } from '@/api/pantoneColor'
 export default {
   name: 'AddOrder',
-  components: {},
+  components: {
+    addProductColor
+  },
   data() {
     return {
       //客户表数据
@@ -366,7 +338,6 @@ export default {
       }
     }
   },
-  // TODO:图片上传要新增两个字段md5  name  type
   methods: {
     //查看原图
     imgLook() {
@@ -481,10 +452,14 @@ export default {
         position: 'top-left'
       })
     },
+    //TODO:关闭新增订单,清空内容
     handleClose(done) {
       this.$confirm('请确认数据已保存!')
         .then(_ => {
           done()
+          this.orderData = {}
+          this.subOrderData = []
+          this.fileList = []
         })
         .catch(_ => {})
     },
@@ -501,7 +476,7 @@ export default {
           pro_name: '',
           pro_item: 1,
           pro_size: '',
-          pro_color: '',
+          pro_color: [],
           pro_pack: '',
           pro_desc: '',
           pro_qt: 0,
@@ -522,7 +497,7 @@ export default {
         pro_name: '',
         pro_item: 1,
         pro_size: '',
-        pro_color: '',
+        pro_color: [],
         pro_pack: '',
         pro_desc: '',
         pro_qt: 0,
@@ -537,6 +512,64 @@ export default {
     },
     editSubOrderRow(row) {
       row.status = 1
+    },
+    // //隐藏颜色表表头
+    // colorTableHeader({ row, rowIndex }) {
+    //   if (rowIndex === 0) {
+    //     return 'display: none'
+    //   }
+    // },
+    // //新增颜色
+    // addColor(row) {
+    //   row.pro_color.push({
+    //     value: '',
+    //     html_color: ''
+    //   })
+    // },
+    // //减少颜色
+    // rmColor(row) {},
+    // //搜索颜色
+    // querySearch(queryString, cb) {
+    //   var restaurants = this.restaurants
+    //   var results = queryString
+    //     ? restaurants.filter(this.createFilter(queryString))
+    //     : restaurants
+    //   // 调用 callback 返回建议列表的数据
+    //   setTimeout(() => {
+    //     cb(results)
+    //   }, 1000)
+    // },
+    // createFilter(queryString) {
+    //   return restaurant => {
+    //     return (
+    //       restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) !==
+    //       -1
+    //     )
+    //   }
+    // },
+    //删除颜色
+    delProColor(color) {
+      this.subOrderData.forEach(el => {
+        if (el.pro_color) {
+          el.pro_color.forEach((el1, index) => {
+            if (el1.value === color) {
+              el.pro_color.splice(index, 1)
+            }
+          })
+        }
+      })
+    },
+    //选择搜索后的颜色
+    handleSelect(item) {
+      this.subOrderData.forEach(el => {
+        if (el.pro_color) {
+          el.pro_color.forEach((el1, index) => {
+            if (el1.value === item.value) {
+              el.pro_color[index] = item
+            }
+          })
+        }
+      })
     },
     //订单明细合计
     subAmount(row) {

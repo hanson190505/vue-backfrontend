@@ -23,6 +23,7 @@ class UserApiViewSet(viewsets.ModelViewSet):
     allow_list = ['login', 'pub_key', 'register', 'logout']
 
     def get_permissions(self):
+        # 判定是注册,登录,登出
         for l in self.allow_list:
             if self.request.GET.get(l):
                 return []

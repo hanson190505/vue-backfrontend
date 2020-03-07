@@ -83,12 +83,6 @@
           <span>{{ scope.row.ship_cost }}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="操作" width="120" align="center">
-        <template slot-scope="scope">
-          <el-button @click="changeShipDetail(scope.row)" type="text" size="mini">修改</el-button>
-          <el-button @click="handleDelete(scope.$index, scope.row)" type="text" size="mini">删除</el-button>
-        </template>
-      </el-table-column>-->
     </el-table>
     <pagi-nation
       @pagination="pagination"
