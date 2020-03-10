@@ -100,7 +100,7 @@ class SubOrder(models.Model):
     pro_size = models.CharField('产品尺寸', max_length=64, default=0)
     # pro_color = models.CharField('产品颜色', max_length=64, default='color')
     # 产品颜色重构
-    pro_color = ArrayField(models.CharField(max_length=64, blank=True))
+    pro_color = models.CharField(max_length=1024, blank=True)
     pro_pack = models.CharField('产品包装', max_length=64, default='无')
     pro_desc = models.CharField("详细描述", max_length=400)
     pro_qt = models.DecimalField(

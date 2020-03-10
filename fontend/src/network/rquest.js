@@ -7,7 +7,7 @@ export function request(config) {
   // 创建一个axios实例
   const instance = axios.create({
     baseURL: process.env.VUE_APP_API_URL,
-    timeout: 5000,
+    timeout: 5000
   })
   //axios拦截器(请求局部拦截)
   instance.interceptors.request.use(config => {

@@ -166,29 +166,6 @@
           </el-table-column>
           <el-table-column width="250" label="产品颜色" fixed>
             <template slot-scope="scope">
-              <!-- <el-button type="primary" size="mini" @click="addColor(scope.row)">+</el-button>
-              <el-button type="primary" size="mini" @click="rmColor(scope.row)">-</el-button>
-              <el-table :data="scope.row.pro_color" :header-row-style="colorTableHeader">
-                <el-table-column width="120">
-                  <template slot-scope="scope">
-                    <el-autocomplete
-                      class="inline-input"
-                      v-model="scope.row.value"
-                      :fetch-suggestions="querySearch"
-                      placeholder="请输入内容"
-                      :trigger-on-focus="false"
-                      @select="handleSelect"
-                    ></el-autocomplete>
-                  </template>
-                </el-table-column>
-                <el-table-column width="100">
-                  <template slot-scope="scope">
-                    <div
-                      :style="{backgroundColor:scope.row.html_color,width:'80px', height:'30px'}"
-                    ></div>
-                  </template>
-                </el-table-column>
-              </el-table>-->
               <el-popover placement="left-end" width="300" trigger="click">
                 <add-product-color
                   :parentProColor="scope.row.pro_color"
@@ -413,6 +390,9 @@ export default {
                 // this.$store.state.orderdetail = res.data
                 //循环提交订单明细
                 for (const val of this.subOrderData) {
+                  //TODO:数据库数组字段只接受['a','b']结构,不接受现有pro_color结构,但是postman测试提交有效
+                  console.log(val)
+
                   postSubOrder(val)
                     .then(res => {
                       // //把返回的订单明细保存在vuex中
@@ -476,7 +456,7 @@ export default {
           pro_name: '',
           pro_item: 1,
           pro_size: '',
-          pro_color: [],
+          pro_color: '',
           pro_pack: '',
           pro_desc: '',
           pro_qt: 0,
@@ -497,7 +477,7 @@ export default {
         pro_name: '',
         pro_item: 1,
         pro_size: '',
-        pro_color: [],
+        pro_color: '',
         pro_pack: '',
         pro_desc: '',
         pro_qt: 0,
@@ -513,40 +493,6 @@ export default {
     editSubOrderRow(row) {
       row.status = 1
     },
-    // //隐藏颜色表表头
-    // colorTableHeader({ row, rowIndex }) {
-    //   if (rowIndex === 0) {
-    //     return 'display: none'
-    //   }
-    // },
-    // //新增颜色
-    // addColor(row) {
-    //   row.pro_color.push({
-    //     value: '',
-    //     html_color: ''
-    //   })
-    // },
-    // //减少颜色
-    // rmColor(row) {},
-    // //搜索颜色
-    // querySearch(queryString, cb) {
-    //   var restaurants = this.restaurants
-    //   var results = queryString
-    //     ? restaurants.filter(this.createFilter(queryString))
-    //     : restaurants
-    //   // 调用 callback 返回建议列表的数据
-    //   setTimeout(() => {
-    //     cb(results)
-    //   }, 1000)
-    // },
-    // createFilter(queryString) {
-    //   return restaurant => {
-    //     return (
-    //       restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) !==
-    //       -1
-    //     )
-    //   }
-    // },
     //删除颜色
     delProColor(color) {
       this.subOrderData.forEach(el => {
@@ -559,15 +505,17 @@ export default {
         }
       })
     },
-    //选择搜索后的颜色
+    //获取子组件选择搜索后的颜色
     handleSelect(item) {
       this.subOrderData.forEach(el => {
         if (el.pro_color) {
-          el.pro_color.forEach((el1, index) => {
-            if (el1.value === item.value) {
-              el.pro_color[index] = item
-            }
-          })
+          // el.pro_color.forEach((el1, index) => {
+          //   if (el1.value === item.value) {
+
+          //     JSON.stringify(item)
+          //   }
+          // })
+          this.subOrderData.pro_color += JSON.stringify(item) + '|'
         }
       })
     },

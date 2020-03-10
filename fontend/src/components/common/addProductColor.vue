@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-button type="primary" size="mini" @click="addColor(parentProColor)">+</el-button>
-    <el-table :data="parentProColor" :header-row-style="colorTableHeader">
+    <el-table :data="colorList" :header-row-style="colorTableHeader">
       <el-table-column width="120">
         <template slot-scope="scope">
           <el-autocomplete
@@ -43,6 +43,7 @@ export default {
   name: 'addProductColor',
   data() {
     return {
+      colorList: [],
       //TODO:pantone颜色数据要从后台获取
       restaurants: [
         {
@@ -4337,9 +4338,26 @@ export default {
     }
   },
   props: {
-    parentProColor: Array
+    parentProColor: Object
   },
   methods: {
+    //处理父组件传来的颜色数据
+    handleParentColor() {
+      console.log(this.parentProColor)
+      console.log(this.parentProColor.$index)
+      console.log(this.parentProColor.row.pro_color)
+      if (this.parentProColor.row.pro_color === 0) {
+        this.colorList = []
+      } else {
+        let l = []
+        this.parentProColor.row.pro_color.split('|').forEach(el => {
+          if (el !== '') {
+            l.push(JSON.parse(el))
+          }
+        })
+        this.colorList = l
+      }
+    },
     //隐藏颜色表表头
     colorTableHeader({ row, rowIndex }) {
       if (rowIndex === 0) {
@@ -4347,8 +4365,8 @@ export default {
       }
     },
     //新增颜色
-    addColor(row) {
-      row.push({
+    addColor() {
+      this.colorList.push({
         value: '',
         html_color: ''
       })
@@ -4378,8 +4396,16 @@ export default {
     },
     //选择搜索后的颜色
     setSelect(item) {
-      this.$emit('getProColor', item)
+      let promise = new Promise((resolve, reject) => {
+        this.$emit('getProColor', item, this.parentProColor.$index)
+        resolve()
+      }).then(res => {
+        this.handleParentColor()
+      })
     }
+  },
+  created() {
+    this.handleParentColor()
   }
 }
 </script>

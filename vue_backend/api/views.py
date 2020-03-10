@@ -129,6 +129,7 @@ class SubOrderViewSet(ModelViewSet):
             return self.queryset
 
     def create(self, request, *args, **kwargs):
+        print(self.request.data)
         subtoken = self.request.query_params.get('subtoken')
         if not subtoken:
             data = {
