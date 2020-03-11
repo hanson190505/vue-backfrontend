@@ -166,23 +166,14 @@
             <span v-else>{{ scope.row.pro_size }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="产品颜色" width="120" fixed>
+        <el-table-column label="产品颜色" width="200" fixed>
           <template slot-scope="scope">
-            <!-- <el-input
-              v-if="scope.row.status"
-              size="mini"
-              v-model="scope.row.pro_color"
-            ></el-input>
-            <span v-else>{{ scope.row.pro_color }}</span>
-            </template>-->
-            <el-popover placement="left-end" width="300" trigger="click">
-              <add-product-color
-                :parentProColor="scope"
-                @getProColor="handleSelect"
-                @delProColor="delProColor"
-              ></add-product-color>
-              <el-button slot="reference">hover 激活</el-button>
-            </el-popover>
+            <add-product-color
+              :parentProColor="scope"
+              @getProColor="handleSelect"
+              @delProColor="delProColor"
+              :addColorBtn="childAddColorBtn"
+            ></add-product-color>
           </template>
         </el-table-column>
         <el-table-column label="产品包装" width="120">
@@ -273,6 +264,7 @@ export default {
   },
   data() {
     return {
+      childAddColorBtn: true,
       btn: 'btn',
       //控制订单表状态
       formdisabl: true,
@@ -416,6 +408,7 @@ export default {
     },
     //新增订单明细
     addSubOrderRow(row) {
+      this.childAddColorBtn = false
       let newValue = {
         pro_name: '',
         pro_item: 1,
@@ -436,6 +429,7 @@ export default {
     //编辑订单明细
     editSubOrderRow(index, row) {
       row.status = 1
+      this.childAddColorBtn = false
     },
     //删除订单明细,index是当个订单明细在suborderdetail中的索引位置,row是当行数据
     delSubOrderRow(index, row) {
@@ -488,16 +482,16 @@ export default {
     //TODO:出货详情
     shipDetail() {},
     //删除颜色
-    delProColor(color) {
-      this.suborderdetail.forEach(el => {
-        if (el.pro_color) {
-          el.pro_color.forEach((el1, index) => {
-            if (el1.value === color) {
-              el.pro_color.splice(index, 1)
-            }
-          })
+    delProColor(value, index) {
+      let newValue = ''
+      this.suborderdetail[index].pro_color.split('|').forEach((el, i) => {
+        if (!(el.indexOf(value) !== -1)) {
+          if (el !== '') {
+            newValue += el + '|'
+          }
         }
       })
+      this.suborderdetail[index].pro_color = newValue
     },
     //获取子组件选择搜索后的颜色
     handleSelect(item, index) {

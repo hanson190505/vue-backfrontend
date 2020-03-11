@@ -1,38 +1,47 @@
 <template>
   <div>
-    <el-button type="primary" size="mini" @click="addColor(parentProColor)">+</el-button>
-    <el-table :data="colorList" :header-row-style="colorTableHeader">
-      <el-table-column width="120">
-        <template slot-scope="scope">
-          <el-autocomplete
-            class="inline-input"
-            v-model="scope.row.value"
-            :fetch-suggestions="querySearch"
-            placeholder="请输入内容"
-            :trigger-on-focus="false"
-            @select="setSelect"
-          ></el-autocomplete>
-        </template>
-      </el-table-column>
-      <el-table-column width="100">
-        <template slot-scope="scope">
-          <div
-            :style="{
+    <el-tag v-for="(item, index) in colorList" :key="index" :color="item.html_color">{{item.value}}</el-tag>
+    <el-popover placement="left-end" width="300" trigger="click">
+      <el-button type="primary" size="mini" @click="addColor(parentProColor)">+</el-button>
+      <el-table :data="colorList" :header-row-style="colorTableHeader">
+        <el-table-column width="120">
+          <template slot-scope="scope">
+            <el-autocomplete
+              class="inline-input"
+              v-model="scope.row.value"
+              :fetch-suggestions="querySearch"
+              placeholder="请输入内容"
+              :trigger-on-focus="false"
+              @select="setSelect"
+            ></el-autocomplete>
+          </template>
+        </el-table-column>
+        <el-table-column width="100">
+          <template slot-scope="scope">
+            <div
+              :style="{
               backgroundColor: scope.row.html_color,
               width: '80px',
               height: '30px'
             }"
-          ></div>
-        </template>
-      </el-table-column>
-      <el-table-column width="60">
-        <template slot-scope="scope">
-          <el-button type="warning" @click="rmColor(scope.$index, scope.row)">
-            <i class="el-icon-delete"></i>
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+            ></div>
+          </template>
+        </el-table-column>
+        <el-table-column width="60">
+          <template slot-scope="scope">
+            <el-button type="warning" @click="rmColor(scope.row, scope.$index)">
+              <i class="el-icon-delete"></i>
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-button
+        slot="reference"
+        @click="visible = !PopoverVisible"
+        size="mini"
+        :disabled="addColorBtn"
+      >+</el-button>
+    </el-popover>
   </div>
 </template>
 
@@ -43,6 +52,7 @@ export default {
   name: 'addProductColor',
   data() {
     return {
+      PopoverVisible: false,
       colorList: [],
       //TODO:pantone颜色数据要从后台获取
       restaurants: [
@@ -4338,14 +4348,18 @@ export default {
     }
   },
   props: {
-    parentProColor: Object
+    parentProColor: Object,
+    addColorBtn: {
+      type: Boolean,
+      default: true
+    }
   },
   methods: {
     //处理父组件传来的颜色数据
     handleParentColor() {
-      console.log(this.parentProColor)
-      console.log(this.parentProColor.$index)
-      console.log(this.parentProColor.row.pro_color)
+      // console.log(this.parentProColor)
+      // console.log(this.parentProColor.$index)
+      // console.log(this.parentProColor.row.pro_color)
       if (this.parentProColor.row.pro_color === 0) {
         this.colorList = []
       } else {
@@ -4372,8 +4386,13 @@ export default {
       })
     },
     //减少颜色
-    rmColor(index, row) {
-      this.$emit('delProColor', row.value)
+    rmColor(row, index) {
+      let promise = new Promise((resolve, reject) => {
+        this.$emit('delProColor', row.value, this.parentProColor.$index)
+        resolve()
+      }).then(res => {
+        this.handleParentColor()
+      })
     },
     //搜索颜色
     querySearch(queryString, cb) {

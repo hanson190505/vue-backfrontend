@@ -166,14 +166,12 @@
           </el-table-column>
           <el-table-column width="250" label="产品颜色" fixed>
             <template slot-scope="scope">
-              <el-popover placement="left-end" width="300" trigger="click">
-                <add-product-color
-                  :parentProColor="scope.row.pro_color"
-                  @getProColor="handleSelect"
-                  @delProColor="delProColor"
-                ></add-product-color>
-                <el-button slot="reference">hover 激活</el-button>
-              </el-popover>
+              <add-product-color
+                :parentProColor="scope"
+                @getProColor="handleSelect"
+                @delProColor="delProColor"
+                :addColorBtn="childAddColorBtn"
+              ></add-product-color>
             </template>
           </el-table-column>
           <el-table-column label="产品包装" width="120">
@@ -267,6 +265,7 @@ export default {
   },
   data() {
     return {
+      childAddColorBtn: true,
       //客户表数据
       customerData: [],
       orderData: {
@@ -390,9 +389,6 @@ export default {
                 // this.$store.state.orderdetail = res.data
                 //循环提交订单明细
                 for (const val of this.subOrderData) {
-                  //TODO:数据库数组字段只接受['a','b']结构,不接受现有pro_color结构,但是postman测试提交有效
-                  console.log(val)
-
                   postSubOrder(val)
                     .then(res => {
                       // //把返回的订单明细保存在vuex中
@@ -452,6 +448,7 @@ export default {
       if (!this.orderData.order_number) {
         this.$message.error('请完整填写订单信息!')
       } else {
+        this.childAddColorBtn = false
         let newValue = {
           pro_name: '',
           pro_item: 1,
@@ -473,6 +470,7 @@ export default {
     //新增订单明细
     addSubOrderRow(row) {
       // row.status = 0
+      this.childAddColorBtn = false
       let newValue = {
         pro_name: '',
         pro_item: 1,
@@ -494,30 +492,24 @@ export default {
       row.status = 1
     },
     //删除颜色
-    delProColor(color) {
-      this.subOrderData.forEach(el => {
-        if (el.pro_color) {
-          el.pro_color.forEach((el1, index) => {
-            if (el1.value === color) {
-              el.pro_color.splice(index, 1)
-            }
-          })
+    delProColor(value, index) {
+      let newValue = ''
+      this.subOrderData[index].pro_color.split('|').forEach((el, i) => {
+        if (!(el.indexOf(value) !== -1)) {
+          if (el !== '') {
+            newValue += el + '|'
+          }
         }
       })
+      this.subOrderData[index].pro_color = newValue
     },
     //获取子组件选择搜索后的颜色
-    handleSelect(item) {
-      this.subOrderData.forEach(el => {
-        if (el.pro_color) {
-          // el.pro_color.forEach((el1, index) => {
-          //   if (el1.value === item.value) {
-
-          //     JSON.stringify(item)
-          //   }
-          // })
-          this.subOrderData.pro_color += JSON.stringify(item) + '|'
-        }
-      })
+    handleSelect(item, index) {
+      if (this.subOrderData[index].pro_color === undefined) {
+        this.subOrderData[index].pro_color = JSON.stringify(item) + '|'
+      } else {
+        this.subOrderData[index].pro_color += JSON.stringify(item) + '|'
+      }
     },
     //订单明细合计
     subAmount(row) {
