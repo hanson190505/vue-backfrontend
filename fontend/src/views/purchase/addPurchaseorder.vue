@@ -1,27 +1,18 @@
 <template>
   <div>
-    <el-dialog
-      :visible.sync="dialogVisible"
-      width="90%"
-      :before-close="handleClose"
-    >
+    <el-dialog :visible.sync="dialogVisible" width="90%" :before-close="handleClose">
       <h3 class="purchase-title">采 购 单</h3>
       <hr />
-      <el-form
-        :model="addPurchaseData"
-        ref="addPurchaseData"
-        label-width="80px"
-      >
+      <el-form :model="addPurchaseData" ref="addPurchaseData" label-width="80px">
         <el-row>
           <el-col :span="6">
             <el-form-item label="采购单号:">
-              <el-input
-                v-model="addPurchaseData.purchase_number"
-                v-show="purchaserShow"
-              ></el-input>
-              <span v-show="!purchaserShow">{{
+              <el-input v-model="addPurchaseData.purchase_number" v-show="purchaserShow"></el-input>
+              <span v-show="!purchaserShow">
+                {{
                 addPurchaseData.purchase_number
-              }}</span>
+                }}
+              </span>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -67,17 +58,8 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="备注:">
-              <el-input
-                type="textarea"
-                :rows="2"
-                v-model="addPurchaseData.text"
-                placeholder="选填"
-              ></el-input>
+              <el-input type="textarea" :rows="2" v-model="addPurchaseData.text" placeholder="选填"></el-input>
             </el-form-item>
-            <!-- <el-form-item>
-              <el-button type="primary" @click="onSubmit">立即创建</el-button>
-              <el-button>取消</el-button>
-            </el-form-item>-->
           </el-col>
         </el-row>
       </el-form>
@@ -145,10 +127,7 @@
         </el-table-column>
         <el-table-column label="采购单价(¥)" width="100">
           <template slot-scope="scope">
-            <el-input
-              v-model="scope.row.purchase_price"
-              @blur="subAmount(scope.row)"
-            ></el-input>
+            <el-input v-model="scope.row.purchase_price" @blur="subAmount(scope.row)"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="采购金额(¥)" width="120" prop="purchase_amount">
@@ -173,25 +152,14 @@
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="60" align="center">
           <template slot-scope="scope">
-            <el-button
-              @click="handleDelete(scope.$index, scope.row)"
-              type="text"
-              size="mini"
-              >删除</el-button
-            >
+            <el-button @click="handleDelete(scope.$index, scope.row)" type="text" size="mini">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <el-button type="primary" @click="submitPurchaseDetail">保 存</el-button>
 
-      <el-dialog
-        :visible.sync="subdialogVisable"
-        width="99%"
-        :append-to-body="true"
-      >
-        <suborder-detail
-          @getSelectSuborder="getSelectSuborder"
-        ></suborder-detail>
+      <el-dialog :visible.sync="subdialogVisable" width="99%" :append-to-body="true">
+        <suborder-detail @getSelectSuborder="getSelectSuborder"></suborder-detail>
         <!-- <suborder-detail></suborder-detail> -->
         <span slot="footer">
           <el-button @click="addNewPurchaseDetail">确 定</el-button>

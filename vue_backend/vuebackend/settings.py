@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     'upload.apps.UploadConfig',
-    'webapi.apps.WebapiConfig'
+    'webapi.apps.WebapiConfig',
+    'ckeditor'
 ]
 
 REST_FRAMEWORK = {

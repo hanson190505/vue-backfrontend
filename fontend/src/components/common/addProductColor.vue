@@ -47,7 +47,6 @@
 
 <script>
 // import { pantoneColor } from '@/api/pantoneColor'
-// TODO:测试修改后的产品颜色字段上传功能
 export default {
   name: 'addProductColor',
   data() {
@@ -4348,6 +4347,7 @@ export default {
     }
   },
   props: {
+    ProductColor: Object,
     parentProColor: Object,
     addColorBtn: {
       type: Boolean,
@@ -4357,19 +4357,33 @@ export default {
   methods: {
     //处理父组件传来的颜色数据
     handleParentColor() {
-      // console.log(this.parentProColor)
+      if (this.ProductColor) {
+        if (this.ProductColor.pro_color.length === 0) {
+          this.colorList = []
+        } else {
+          let l = []
+          this.ProductColor.pro_color.split('|').forEach(el => {
+            if (el !== '') {
+              l.push(JSON.parse(el))
+            }
+          })
+          this.colorList = l
+        }
+      }
       // console.log(this.parentProColor.$index)
       // console.log(this.parentProColor.row.pro_color)
-      if (this.parentProColor.row.pro_color === 0) {
-        this.colorList = []
-      } else {
-        let l = []
-        this.parentProColor.row.pro_color.split('|').forEach(el => {
-          if (el !== '') {
-            l.push(JSON.parse(el))
-          }
-        })
-        this.colorList = l
+      if (this.parentProColor) {
+        if (this.parentProColor.row.pro_color === 0) {
+          this.colorList = []
+        } else {
+          let l = []
+          this.parentProColor.row.pro_color.split('|').forEach(el => {
+            if (el !== '') {
+              l.push(JSON.parse(el))
+            }
+          })
+          this.colorList = l
+        }
       }
     },
     //隐藏颜色表表头
@@ -4415,12 +4429,22 @@ export default {
     },
     //选择搜索后的颜色
     setSelect(item) {
-      let promise = new Promise((resolve, reject) => {
-        this.$emit('getProColor', item, this.parentProColor.$index)
-        resolve()
-      }).then(res => {
-        this.handleParentColor()
-      })
+      if (this.ProductColor) {
+        let promise = new Promise((resolve, reject) => {
+          this.$emit('getProColor', item)
+          resolve()
+        }).then(res => {
+          this.handleParentColor()
+        })
+      }
+      if (this.parentProColor) {
+        let promise = new Promise((resolve, reject) => {
+          this.$emit('getProColor', item, this.parentProColor.$index)
+          resolve()
+        }).then(res => {
+          this.handleParentColor()
+        })
+      }
     }
   },
   created() {

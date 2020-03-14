@@ -30,7 +30,11 @@
         <el-menu-item index="/shiporders">出货列表</el-menu-item>
         <el-menu-item index="/shipdetails">出货明细</el-menu-item>
       </el-submenu>
-      <el-submenu index="5" v-if="checkpermission()">
+      <el-submenu index="5">
+        <template slot="title">产品管理</template>
+        <el-menu-item index="/products">产品列表</el-menu-item>
+      </el-submenu>
+      <el-submenu index="6" v-if="checkpermission()">
         <template slot="title">系统管理</template>
         <el-menu-item index="/staffs">用户列表</el-menu-item>
       </el-submenu>

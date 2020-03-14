@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.db import models
-from django.contrib.postgres.fields import ArrayField, HStoreField
+from ckeditor.fields import RichTextField
 
 
 class ProductsType(models.Model):
@@ -40,16 +40,14 @@ class Products(models.Model):
     pro_color = models.CharField(max_length=1024, blank=True)
     pro_weight = models.DecimalField(verbose_name='单重(g)', max_digits=10, decimal_places=2, default=0)
     pro_pic = models.CharField(max_length=1024, blank=True)
-    pro_detail_pic = models.CharField(max_length=1024, blank=True)
-    pro_desc = models.TextField('详情', default='none')
-    is_banner = models.IntegerField(default=0)
-    is_font = models.IntegerField('首页展示', default=0)
+    pro_desc = RichTextField()
     is_delete = models.IntegerField(default=0)
+    is_edit = models.IntegerField(default=0)
 
     class Meta:
         verbose_name = '产品目录'
         verbose_name_plural = '产品目录'
 
     def __str__(self):
-        return self.pro_name
+        return '{}-{}'.format(self.pro_number, self.pro_name)
 

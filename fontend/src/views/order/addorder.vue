@@ -101,27 +101,8 @@
         </el-row>
         <el-row>
           <el-col :span="8">
-            <el-upload
-              class="upload-demo"
-              ref="upload"
-              :action="actionUrl"
-              :on-success="uploadSuccess"
-              :file-list="fileList"
-              :limit="1"
-              :data="uploadData"
-              accept="image/jpg, image/jpeg, image/png"
-              :auto-upload="false"
-              :on-exceed="handleExceed"
-            >
-              <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-              <el-button
-                style="margin-left: 10px;"
-                size="small"
-                type="success"
-                @click="uploadBtn"
-              >上传到服务器</el-button>
-              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-            </el-upload>
+            <!-- 图片上传 -->
+            <upload-pic :number="orderData.order_number" :owner="'order'" @sendPicUrl="getPicUrl"></upload-pic>
           </el-col>
           <el-col :span="16">
             <div class="order-img">
@@ -257,11 +238,12 @@ import {
   postSubOrder
 } from '@/api/order'
 import addProductColor from '@/components/common/addProductColor'
-// import { pantoneColor } from '@/api/pantoneColor'
+import uploadPic from '@/components/common/uploadPic'
 export default {
   name: 'AddOrder',
   components: {
-    addProductColor
+    addProductColor,
+    uploadPic
   },
   data() {
     return {
@@ -279,7 +261,7 @@ export default {
         text: '',
         order_pic: ''
       },
-      actionUrl: process.env.VUE_APP_ACTION_URL,
+      // actionUrl: process.env.VUE_APP_ACTION_URL,
       subOrderData: [],
       addOrderFormRoles: {
         order_number: [
@@ -305,13 +287,7 @@ export default {
       disabled: false,
       fileList: [],
       //放大图片弹出框
-      imgdialogVisible: false,
-      //图片上传附加数据
-      uploadData: {
-        token: window.localStorage.getItem('token'),
-        owner: 'order',
-        order_number: ''
-      }
+      imgdialogVisible: false
     }
   },
   methods: {
@@ -319,41 +295,12 @@ export default {
     imgLook() {
       this.imgdialogVisible = true
     },
-    //上传图片前控制
-    uploadBtn() {
-      if (!this.orderData.order_number) {
-        this.$message.error('请完整填写订单信息!')
-      } else {
-        this.uploadData.order_number = this.orderData.order_number
-        this.$refs.upload.submit()
-      }
-    },
-    //超出文件数量控制
-    handleExceed() {
-      this.$message.error('单次只能上传一张图片')
+    //获取上传图片组件发送的图片网址
+    getPicUrl(picurl) {
+      this.orderData.order_pic = picurl
     },
     beforeRemove() {},
     handleRemove(file) {},
-    //图片上传成功后的返回结果
-    uploadSuccess(res) {
-      switch (res.status) {
-        case 1000:
-          this.$message('上传成功')
-          this.orderData.order_pic = process.env.VUE_APP_API_PIC_URL + res.file
-          break
-        case 1001:
-          this.$message.error('图片尺寸太大,请选择500kb以下的图片')
-          break
-        case 1002:
-          this.$message.error('非法的文件格式,或图片已损坏')
-          break
-        case 1003:
-          this.$message('找到相同的图片')
-          this.orderData.order_pic = process.env.VUE_APP_API_PIC_URL + res.file
-        default:
-          break
-      }
-    },
     //打开新增订单表单
     dialogStatus() {
       this.dialogVisible = true
@@ -428,7 +375,7 @@ export default {
         position: 'top-left'
       })
     },
-    //TODO:关闭新增订单,清空内容
+    //关闭窗口处理
     handleClose(done) {
       this.$confirm('请确认数据已保存!')
         .then(_ => {

@@ -6,6 +6,10 @@ class Image(models.Model):
     md5 = models.CharField(max_length=128)
     owner = models.CharField(max_length=32)
     path = models.CharField(max_length=128)
+    is_home = models.IntegerField(default=0)
+    # 首页显示位置
+    home_index = models.IntegerField(default=0)
+    is_banner = models.IntegerField(default=0)
 
     # 我们还定义了通过文件md5值获取模型对象的类方法
     @classmethod

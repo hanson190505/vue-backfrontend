@@ -76,15 +76,7 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="count"
     ></el-pagination>
-    <!-- 客户明细查看 -->
-    <!-- <el-dialog :visible.sync="dialogVisable" width="30%" @close="handleClose">
-      <ul v-for="(item,index,i) in customerRow" :key="item.lite_name">
-        <el-row>
-          <el-col :span="6">{{customerTitle[i]}}</el-col>
-          <el-col :span="18">{{ item }}</el-col>
-        </el-row>
-      </ul>
-    </el-dialog>-->
+    <rich-text></rich-text>
   </div>
 </template>
 
@@ -92,30 +84,10 @@
 import { request } from '@/network/rquest'
 import addCustomer from '../customers/addcustomer'
 import ReCustomer from './recustomer'
+import richText from '../../components/ckeditor/richText'
 export default {
   data() {
     return {
-      //查看客户明细的标签
-      // customerTitle: [
-      //   '客户简称:',
-      //   '业务:',
-      //   '类别:',
-      //   '客户全称:',
-      //   '详细地址:',
-      //   '公司电话:',
-      //   '网址:',
-      //   '主营项目:',
-      //   'CEO:',
-      //   'CEO邮箱:',
-      //   'CEO电话:',
-      //   '联系人:',
-      //   '联系人邮箱:',
-      //   '联系人电话:',
-      //   '合作状态:',
-      //   '信用额度:',
-      //   '录入日期:',
-      //   '备注:'
-      // ],
       customerRow: {},
       dialogVisable: false,
       pagesize: 10,
@@ -133,7 +105,8 @@ export default {
   //注册组件
   components: {
     addCustomer,
-    ReCustomer
+    ReCustomer,
+    richText
   },
   methods: {
     handleClose() {},

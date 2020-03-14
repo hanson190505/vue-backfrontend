@@ -500,7 +500,6 @@ export default {
       } else {
         this.suborderdetail[index].pro_color += JSON.stringify(item) + '|'
       }
-      console.log(this.suborderdetail[index].pro_color)
     }
   },
   beforeCreate() {

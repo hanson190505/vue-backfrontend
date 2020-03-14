@@ -22,11 +22,12 @@ class ImageUploadVieSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         file = request.data['file']
         owner = request.data['owner']
-        file_name = ''
-        if owner == 'order':
-            file_name = request.data['order_number']
-        elif owner == 'product':
-            file_name = request.data['pro_number']
+        file_name = request.data['number']
+        print(request.data)
+        # if owner == 'order':
+        #     file_name = request.data['order_number']
+        # elif owner == 'product':
+        #     file_name = request.data['pro_number']
         year = str(datetime.now().year)
         month = str(datetime.now().month)
         ext = get_file_extension(file)
@@ -56,6 +57,9 @@ class ImageUploadVieSet(viewsets.ModelViewSet):
             upload_img.md5 = md5
             upload_img.path = sub_path+file.name
             upload_img.owner = owner
+            upload_img.is_home = request.data['is_home']
+            upload_img.home_index = request.data['home_index']
+            upload_img.is_banner = request.data['is_banner']
             upload_img.save()
         return Response({'file': upload_img.path, 'status': 1000}, status=status.HTTP_201_CREATED)
 
