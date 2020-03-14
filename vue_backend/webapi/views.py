@@ -11,13 +11,7 @@ class ProductTypeViewSet(viewsets.ModelViewSet):
     queryset = ProductsType.objects.filter(is_delete=0)
     serializer_class = ProductTypeSerializer
     pagination_class = SubOrderPagination
-    authentication_classes = GetTokenAuthentication
-
-    def get_authenticators(self):
-        return []
-
-    def get_permissions(self):
-        return []
+    authentication_classes = GetTokenAuthentication,
 
 
 class ProductsViewSet(viewsets.ModelViewSet):
@@ -26,14 +20,7 @@ class ProductsViewSet(viewsets.ModelViewSet):
     pagination_class = SubOrderPagination
     authentication_classes = GetTokenAuthentication,
 
-    def get_authenticators(self):
-        return []
-
-    def get_permissions(self):
-        return []
-
     def create(self, request, *args, **kwargs):
-        print(self.request.data)
         serializer = ProductsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)

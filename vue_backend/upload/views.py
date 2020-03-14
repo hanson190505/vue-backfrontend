@@ -5,6 +5,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import viewsets
+from middleware.pagenation import SubOrderPagination
 from upload.models import Image
 from upload.serializer import ImageSerializer
 from user.authentications import UploadTokenAuthentication, GetTokenAuthentication
@@ -17,17 +18,21 @@ class ImageUploadVieSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
     parser_class = (MultiPartParser, FormParser)
     serializer_class = ImageSerializer
-    authentication_classes = UploadTokenAuthentication,
+    pagination_class = SubOrderPagination
+    authentication_classes = GetTokenAuthentication,
+
+    # def get_authenticators(self):
+    #     print(self.request.method)
+    #     if self.request.method == 'POST':
+    #         return [UploadTokenAuthentication()]
+    #     else:
+    #         return [GetTokenAuthentication()]
 
     def create(self, request, *args, **kwargs):
         file = request.data['file']
         owner = request.data['owner']
         file_name = request.data['number']
         print(request.data)
-        # if owner == 'order':
-        #     file_name = request.data['order_number']
-        # elif owner == 'product':
-        #     file_name = request.data['pro_number']
         year = str(datetime.now().year)
         month = str(datetime.now().month)
         ext = get_file_extension(file)
@@ -62,6 +67,13 @@ class ImageUploadVieSet(viewsets.ModelViewSet):
             upload_img.is_banner = request.data['is_banner']
             upload_img.save()
         return Response({'file': upload_img.path, 'status': 1000}, status=status.HTTP_201_CREATED)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        path = 'image/'+instance.path
+        os.remove(path)
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class getExrateApiview(APIView):

@@ -33,7 +33,7 @@ export default {
   },
   data() {
     return {
-      productsData: {},
+      productsData: { pro_color: '', pro_pic: '' },
       addproductTypeVisible: false,
       addProductVisible: false
     }

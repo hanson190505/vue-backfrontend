@@ -1,6 +1,8 @@
 <template>
   <div>
-    <el-button type="primary" @click="picdialogVisible=true" size="mini">+</el-button>
+    <el-button type="primary" @click="picdialogVisible = true" size="mini"
+      >+</el-button
+    >
     <el-dialog title :visible.sync="picdialogVisible" width="50%">
       <el-upload
         class="upload-demo"
@@ -10,13 +12,24 @@
         :file-list="fileList"
         :limit="1"
         :data="uploadData"
+        :headers="myheaders"
         accept="image/jpg, image/jpeg, image/png"
         :auto-upload="false"
         :on-exceed="handleExceed"
       >
-        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-        <el-button style="margin-left: 10px;" size="small" type="success" @click="uploadBtn">上传到服务器</el-button>
-        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+        <el-button slot="trigger" size="small" type="primary"
+          >选取文件</el-button
+        >
+        <el-button
+          style="margin-left: 10px;"
+          size="small"
+          type="success"
+          @click="uploadBtn"
+          >上传到服务器</el-button
+        >
+        <div slot="tip" class="el-upload__tip">
+          只能上传jpg/png文件，且不超过500kb
+        </div>
       </el-upload>
     </el-dialog>
   </div>
@@ -55,12 +68,15 @@ export default {
       fileList: [],
       //图片上传附加数据
       uploadData: {
-        token: window.localStorage.getItem('token'),
+        // token: window.localStorage.getItem('token'),
         owner: this.owner,
         number: this.number,
         is_home: this.is_home,
         home_index: this.home_index,
         is_banner: this.is_banner
+      },
+      myheaders: {
+        authorization: window.localStorage.getItem('token')
       }
     }
   },
@@ -110,5 +126,4 @@ export default {
 }
 </script>
 
-<style>
-</style>
+<style></style>

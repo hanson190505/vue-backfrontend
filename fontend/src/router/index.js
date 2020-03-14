@@ -72,6 +72,11 @@ const routes = [{
         name: 'products',
         component: () => import('@/views/products/index.vue'),
       },
+      {
+        path: '/upload',
+        name: 'upload',
+        component: () => import('@/views/imageManage'),
+      },
     ]
   },
 ]
